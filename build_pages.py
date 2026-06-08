@@ -132,7 +132,7 @@ def head(title, desc, schema=''):
   <meta property="og:description" content="{desc}">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/real-hero.webp">
-  <link rel="stylesheet" href="styles.css?v=3.18">{schema_block}
+  <link rel="stylesheet" href="styles.css?v=3.19">{schema_block}
 </head>
 <body>{NAV}<main id="main">'''
 
@@ -278,33 +278,37 @@ def problem_picker():
 
 def transformation_home():
     return """
-<section class="section transformation-home refined-transformation">
-  <div class="container transformation-header">
-    <p class="eyebrow light">Problem → Outcome</p>
-    <h2>Clear fixes for the outdoor problems homeowners actually notice.</h2>
-    <p>Instead of dumping a list of services, this section shows the common property issue, what Terramorph does about it, and the finished result the homeowner is trying to get.</p>
-  </div>
-  <div class="container outcome-board" aria-label="Terramorph homeowner problems and expected outcomes">
-    <article class="outcome-row featured">
-      <div class="outcome-problem"><small>Homeowner problem</small><b>Standing water after rain</b><span>Soggy grass, runoff, low spots, or water moving toward patios and foundations.</span></div>
-      <div class="outcome-arrow" aria-hidden="true">→</div>
-      <div class="outcome-result"><small>Expected outcome</small><b>A drier, usable yard</b><span>Water is routed more intentionally so the property works better and still looks clean.</span></div>
-    </article>
-    <article class="outcome-row">
-      <div class="outcome-problem"><small>Homeowner problem</small><b>Builder-grade curb appeal</b><span>Plain beds, weak edges, tired mulch, disconnected plants, and a front yard that feels unfinished.</span></div>
-      <div class="outcome-arrow" aria-hidden="true">→</div>
-      <div class="outcome-result"><small>Expected outcome</small><b>A front yard that feels planned</b><span>Beds, borders, plants, mulch, rock, and maintenance fit together instead of looking patched.</span></div>
-    </article>
-    <article class="outcome-row">
-      <div class="outcome-problem"><small>Homeowner problem</small><b>No real outdoor living space</b><span>The backyard has nowhere comfortable to host, grill, sit, or connect the home to the yard.</span></div>
-      <div class="outcome-arrow" aria-hidden="true">→</div>
-      <div class="outcome-result"><small>Expected outcome</small><b>A patio or walkway people use</b><span>Pavers, stone, steps, seating areas, and hardscape details create a cleaner place to live outside.</span></div>
-    </article>
-    <article class="outcome-row">
-      <div class="outcome-problem"><small>Homeowner problem</small><b>The property looks hard to keep up with</b><span>Overgrown beds, messy edges, seasonal debris, weekly mowing, or snow access becomes a constant chore.</span></div>
-      <div class="outcome-arrow" aria-hidden="true">→</div>
-      <div class="outcome-result"><small>Expected outcome</small><b>Ongoing property work handled</b><span>Cleanups, mowing, bed upkeep, trimming, and seasonal support keep the place presentable.</span></div>
-    </article>
+<section class="section signature-work-home" aria-label="Terramorph featured outdoor work">
+  <div class="container signature-work-layout">
+    <div class="signature-copy">
+      <p class="eyebrow">Featured work</p>
+      <h2>Outdoor projects that make the property feel finished.</h2>
+      <p>From patios and walkways to entry landscaping, drainage, lighting, and upkeep, the work should look intentional from the street, the backyard, and every place people actually use the property.</p>
+      <div class="signature-points">
+        <span>Real project photos</span>
+        <span>Design, build, drainage, and upkeep</span>
+        <span>Serving Wood and Lucas County</span>
+      </div>
+      <a class="btn btn-primary" href="projects.html">View Project Photos</a>
+    </div>
+    <div class="signature-gallery">
+      <a class="signature-card large" href="paver-patios-hardscapes.html">
+        <img src="assets/real-patio.webp?v=3.19" alt="Terramorph paver patio and backyard hardscape project" loading="lazy">
+        <span><b>Paver patios and walkways</b><small>Outdoor living spaces, hardscape structure, steps, and gathering areas.</small></span>
+      </a>
+      <a class="signature-card" href="landscape-design.html">
+        <img src="assets/real-entry.webp?v=3.19" alt="Terramorph front entry landscape design and planting project" loading="lazy">
+        <span><b>Landscape install and curb appeal</b><small>Beds, plantings, mulch, rock, edging, sod, and clean property presentation.</small></span>
+      </a>
+      <a class="signature-card" href="drainage-solutions.html">
+        <img src="assets/real-drainage.webp?v=3.19" alt="Terramorph drainage and grading project" loading="lazy">
+        <span><b>Drainage and grading</b><small>Water routing, grading awareness, low spots, and wet-yard improvements.</small></span>
+      </a>
+      <a class="signature-card" href="outdoor-lighting.html">
+        <img src="assets/real-lighting.webp?v=3.19" alt="Terramorph outdoor lighting project at night" loading="lazy">
+        <span><b>Lighting and finishing details</b><small>Path lighting, accent lighting, visibility, and nighttime curb appeal.</small></span>
+      </a>
+    </div>
   </div>
 </section>"""
 
@@ -340,7 +344,7 @@ home = f'''
   <div class="container section-heading">
     <p class="eyebrow">Core Services</p>
     <h2>The major outdoor problems Terramorph can solve.</h2>
-    <p>Service cards now sit after the homeowner has picked a problem and seen the transformation story, so they feel like answers instead of a directory.</p>
+    <p>Start with the project you need handled. Terramorph can scope the main work and the related details around it so the whole property feels cleaner and more complete.</p>
   </div>
   <div class="container">{service_cards()}</div>
 </section>
@@ -571,7 +575,7 @@ contact = f'''
 contact_desc = 'Request a free estimate from Terramorph for landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, and property work.'
 (root/'contact.html').write_text(page('Request a Free Outdoor Project Estimate | Terramorph', contact_desc, contact, schema_for('contact.html', 'Request a Free Estimate', contact_desc)))
 
-review_notes = '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>V2.6 Review Notes | Terramorph</title><link rel="stylesheet" href="styles.css?v=3.18"></head><body><main class="section"><div class="container review-doc"><p class="eyebrow">V2.6 copy and polish summary</p><h1>Terramorph V2.6 copy, grammar, and punctuation pass</h1><h2>What changed</h2><ul><li>Expanded services to reflect the current Terramorph service mix: lawn care, mowing, landscape maintenance, seasonal cleanups, native habitat rehabilitation, fire pits, outdoor kitchens, concrete, drainage, lighting, plant installation, mulch, pruning, trimming, hauling, power washing, snow removal, holiday lighting, demolition, and site prep.</li><li>Replaced weak comparison imagery with stronger real Terramorph photos found on the Desktop.</li><li>Changed the middle-page typography from compressed decorative display styling to cleaner Inter/Manrope typography with better spacing and readability.</li><li>Reduced the heavy boxed/card feeling so service sections scan cleaner and feel more professional.</li><li>Kept trust, phone calls, free estimates, reviews, Google, BBB, licensed/insured, and local Northwest Ohio proof visible.</li></ul><p><a class="btn btn-primary" href="index.html">Open V2.6 Homepage</a></p></div></main></body></html>'''
+review_notes = '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>V2.6 Review Notes | Terramorph</title><link rel="stylesheet" href="styles.css?v=3.19"></head><body><main class="section"><div class="container review-doc"><p class="eyebrow">V2.6 copy and polish summary</p><h1>Terramorph V2.6 copy, grammar, and punctuation pass</h1><h2>What changed</h2><ul><li>Expanded services to reflect the current Terramorph service mix: lawn care, mowing, landscape maintenance, seasonal cleanups, native habitat rehabilitation, fire pits, outdoor kitchens, concrete, drainage, lighting, plant installation, mulch, pruning, trimming, hauling, power washing, snow removal, holiday lighting, demolition, and site prep.</li><li>Replaced weak comparison imagery with stronger real Terramorph photos found on the Desktop.</li><li>Changed the middle-page typography from compressed decorative display styling to cleaner Inter/Manrope typography with better spacing and readability.</li><li>Reduced the heavy boxed/card feeling so service sections scan cleaner and feel more professional.</li><li>Kept trust, phone calls, free estimates, reviews, Google, BBB, licensed/insured, and local Northwest Ohio proof visible.</li></ul><p><a class="btn btn-primary" href="index.html">Open V2.6 Homepage</a></p></div></main></body></html>'''
 (root/'review-notes.html').write_text(review_notes)
 
 readme = '''# Terramorph V2.6 Website Mockup

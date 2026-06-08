@@ -159,3 +159,26 @@ body.quote-popup-open{overflow:hidden}
 .outcome-board{position:relative;z-index:1;display:grid;gap:14px}.outcome-row{display:grid;grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr);align-items:stretch;gap:0;background:rgba(255,253,248,.96);border:1px solid rgba(241,211,132,.34);box-shadow:0 22px 54px rgba(0,0,0,.22);border-radius:24px;overflow:hidden;color:#101713!important}.outcome-row.featured{border-color:rgba(241,211,132,.74);box-shadow:0 28px 70px rgba(0,0,0,.30)}.outcome-problem,.outcome-result{padding:26px 28px;display:flex;flex-direction:column;gap:9px}.outcome-problem{background:#fffdf8}.outcome-result{background:linear-gradient(135deg,#f4ead8,#fffaf0)}.outcome-row small{width:max-content;text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;font-weight:950;padding:7px 10px;border-radius:999px}.outcome-problem small{background:#eee4d4;color:#2f382f!important}.outcome-result small{background:#173721;color:#f1d384!important}.outcome-row b{display:block;font-family:var(--font-display);font-size:clamp(1.35rem,2.2vw,1.9rem);line-height:1.05;letter-spacing:-.03em;color:#101713!important}.outcome-row span{display:block;color:#344338!important;line-height:1.52;font-size:.98rem}.outcome-arrow{display:grid;place-items:center;background:#173721;color:#f1d384;font-size:2rem;font-weight:950}.outcome-row:hover{transform:translateY(-2px);transition:transform .18s ease,box-shadow .18s ease;box-shadow:0 30px 76px rgba(0,0,0,.32)}
 @media(max-width:900px){.transformation-header{grid-template-columns:1fr;gap:18px}.outcome-row{grid-template-columns:1fr}.outcome-arrow{height:44px;transform:rotate(90deg)}.refined-transformation{padding:70px 0!important}}
 @media(max-width:560px){.refined-transformation{padding:58px 0!important}.transformation-header{margin-bottom:24px}.outcome-problem,.outcome-result{padding:22px}.outcome-row{border-radius:18px}.outcome-row b{font-size:1.32rem}.outcome-row span{font-size:.94rem}.outcome-board{gap:12px}}
+
+
+/* V3.19 removed disliked problem-to-outcome homepage block; premium photo-led featured work replacement */
+.signature-work-home{background:#fffdf8;color:var(--ink);position:relative;overflow:hidden}
+.signature-work-home:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(216,170,77,.10),rgba(13,36,24,.04) 45%,rgba(98,124,69,.10));pointer-events:none}
+.signature-work-layout{position:relative;z-index:1;display:grid;grid-template-columns:minmax(320px,.82fr) minmax(0,1.18fr);gap:44px;align-items:center}
+.signature-copy{background:#f7f2e8;border:1px solid var(--line);padding:38px;box-shadow:0 22px 60px rgba(7,10,8,.10)}
+.signature-copy h2{font-family:var(--font-display);font-size:clamp(2.35rem,4.9vw,4.9rem);line-height:.98;letter-spacing:-.045em;margin:8px 0 18px;color:var(--ink);text-wrap:balance}
+.signature-copy p{font-size:1.06rem;line-height:1.65;color:var(--muted);margin:0 0 22px}
+.signature-points{display:grid;gap:10px;margin:22px 0 26px}
+.signature-points span{display:flex;gap:10px;align-items:center;font-weight:900;color:var(--forest)}
+.signature-points span:before{content:"";width:9px;height:9px;background:var(--gold);display:inline-block;flex:0 0 auto}
+.signature-gallery{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;align-items:stretch}
+.signature-card{position:relative;min-height:196px;overflow:hidden;background:#101712;color:#fff;box-shadow:0 22px 55px rgba(7,10,8,.18);isolation:isolate}
+.signature-card.large{grid-row:span 3;min-height:620px}
+.signature-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.05) contrast(1.05);transform:scale(1.01);transition:transform .24s ease}
+.signature-card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,8,6,.04),rgba(5,8,6,.78));z-index:1}
+.signature-card span{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:22px;background:linear-gradient(180deg,rgba(13,36,24,0),rgba(13,36,24,.92))}
+.signature-card b{display:block;font-family:var(--font-display);font-size:clamp(1.25rem,2vw,1.75rem);line-height:1.05;margin-bottom:7px;letter-spacing:-.025em;color:#fff}
+.signature-card small{display:block;color:#e8efe4;font-weight:700;line-height:1.4;max-width:420px}
+.signature-card:hover img{transform:scale(1.045)}
+@media(max-width:980px){.signature-work-layout{grid-template-columns:1fr}.signature-copy{padding:30px}.signature-gallery{grid-template-columns:1fr 1fr}.signature-card{min-height:245px}.signature-card.large{grid-row:auto;grid-column:span 2;min-height:430px}}
+@media(max-width:620px){.signature-gallery{grid-template-columns:1fr}.signature-card.large{grid-column:auto;min-height:360px}.signature-card{min-height:280px}.signature-copy{padding:24px}.signature-copy h2{font-size:clamp(2.2rem,12vw,3.5rem)}}
