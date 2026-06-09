@@ -195,3 +195,6 @@ body.quote-popup-open{overflow:hidden}
 .quote-popup-simple{grid-template-columns:.95fr 1.05fr}.popup-direct-actions{padding:34px;display:flex;flex-direction:column;justify-content:center;gap:14px;background:#fffdf8}.popup-direct-actions h3{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.8rem);line-height:1;margin:0;color:var(--ink)}.popup-direct-actions p{color:#4f5a50;line-height:1.55}.popup-direct-actions .btn{width:max-content}
 .city-service-card h3{font-size:1.35rem!important;line-height:1.1!important}.city-service-hero .page-hero-content{max-width:980px}
 @media(max-width:760px){.jobber-embed-wrap{min-height:620px;padding:4px}.quote-popup-simple{grid-template-columns:1fr}.popup-direct-actions .btn{width:100%;justify-content:center}}
+
+/* Hide Jobber embed security/error fallback and show direct CRM link instead when needed */
+.jobber-embed-unavailable .jobber-embed-wrap{display:none}.jobber-embed-wrap .jobber-flash--error{display:none!important}

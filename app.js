@@ -42,5 +42,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.querySelectorAll('[data-close-popup]').forEach(el => el.addEventListener('click', closeQuotePopup));
   document.addEventListener('keydown', event => { if(event.key === 'Escape') closeQuotePopup(); });
+
+  window.setTimeout(() => {
+    document.querySelectorAll('.jobber-quote-panel').forEach(panel => {
+      const wrap = panel.querySelector('.jobber-embed-wrap');
+      if(wrap && /Form is currently unavailable|Something went wrong/i.test(wrap.textContent || '')){
+        panel.classList.add('jobber-embed-unavailable');
+      }
+    });
+  }, 2500);
+
   window.setTimeout(openQuotePopup, 12000);
 });
