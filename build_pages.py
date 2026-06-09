@@ -142,7 +142,7 @@ def head(title, desc, schema=''):
   <meta property="og:description" content="{desc}">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/real-hero.webp">
-  <link rel="stylesheet" href="styles.css?v=3.22">{schema_block}
+  <link rel="stylesheet" href="styles.css?v=3.23">{schema_block}
 </head>
 <body>{NAV}<main id="main">'''
 
@@ -690,7 +690,7 @@ contact = f'''
 contact_desc = 'Request a free estimate from Terramorph for landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, and property work.'
 (root/'contact.html').write_text(page('Request a Free Outdoor Project Estimate | Terramorph', contact_desc, contact, schema_for('contact.html', 'Request a Free Estimate', contact_desc)))
 
-review_notes = '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>V2.6 Review Notes | Terramorph</title><link rel="stylesheet" href="styles.css?v=3.22"></head><body><main class="section"><div class="container review-doc"><p class="eyebrow">V2.6 copy and polish summary</p><h1>Terramorph V2.6 copy, grammar, and punctuation pass</h1><h2>What changed</h2><ul><li>Expanded services to reflect the current Terramorph service mix: lawn care, mowing, landscape maintenance, seasonal cleanups, native habitat rehabilitation, fire pits, outdoor kitchens, concrete, drainage, lighting, plant installation, mulch, pruning, trimming, hauling, power washing, snow removal, holiday lighting, demolition, and site prep.</li><li>Replaced weak comparison imagery with stronger real Terramorph photos found on the Desktop.</li><li>Changed the middle-page typography from compressed decorative display styling to cleaner Inter/Manrope typography with better spacing and readability.</li><li>Reduced the heavy boxed/card feeling so service sections scan cleaner and feel more professional.</li><li>Kept trust, phone calls, free estimates, reviews, Google, BBB, licensed/insured, and local Northwest Ohio proof visible.</li></ul><p><a class="btn btn-primary" href="index.html">Open V2.6 Homepage</a></p></div></main></body></html>'''
+review_notes = '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>V2.6 Review Notes | Terramorph</title><link rel="stylesheet" href="styles.css?v=3.23"></head><body><main class="section"><div class="container review-doc"><p class="eyebrow">V2.6 copy and polish summary</p><h1>Terramorph V2.6 copy, grammar, and punctuation pass</h1><h2>What changed</h2><ul><li>Expanded services to reflect the current Terramorph service mix: lawn care, mowing, landscape maintenance, seasonal cleanups, native habitat rehabilitation, fire pits, outdoor kitchens, concrete, drainage, lighting, plant installation, mulch, pruning, trimming, hauling, power washing, snow removal, holiday lighting, demolition, and site prep.</li><li>Replaced weak comparison imagery with stronger real Terramorph photos found on the Desktop.</li><li>Changed the middle-page typography from compressed decorative display styling to cleaner Inter/Manrope typography with better spacing and readability.</li><li>Reduced the heavy boxed/card feeling so service sections scan cleaner and feel more professional.</li><li>Kept trust, phone calls, free estimates, reviews, Google, BBB, licensed/insured, and local Northwest Ohio proof visible.</li></ul><p><a class="btn btn-primary" href="index.html">Open V2.6 Homepage</a></p></div></main></body></html>'''
 (root/'review-notes.html').write_text(review_notes)
 
 readme = '''# Terramorph V2.6 Website Mockup
@@ -754,9 +754,9 @@ def post_process_html():
         url = BASE_URL + ('/' if path.name == 'index.html' else '/' + path.name)
         html = html.replace('<meta property="og:image" content="assets/real-hero.webp">', f'<meta property="og:image" content="{BASE_URL}/assets/real-hero.webp">\n  <meta property="og:url" content="{url}">\n  <meta name="twitter:card" content="summary_large_image">\n  <link rel="canonical" href="{url}">')
         html = html.replace('Request a Outdoor Lighting Quote', 'Request an Outdoor Lighting Quote')
-        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.22"></script>')
+        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.23"></script>')
         path.write_text(html)
 
 write_static_seo_files()
 post_process_html()
-print('wrote V3.22 Jobber CRM + city/service SEO pages')
+print('wrote V3.23 Jobber CRM fallback + city/service SEO pages')
