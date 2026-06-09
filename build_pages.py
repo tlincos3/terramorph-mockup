@@ -3,6 +3,7 @@ from pathlib import Path
 root = Path('/Users/Jarvis/Desktop/Terramorph-Mockup')
 PHONE = '419-637-4498'
 TEL = '4196374498'
+BASE_URL = 'https://terramorphllc.com'
 
 NAV = f'''
 <a class="skip-link" href="#main">Skip to content</a>
@@ -11,7 +12,7 @@ NAV = f'''
     <div class="topbar-proof">
       <span>★★★★★ 200+ Google Reviews</span>
       <span>BBB Member</span>
-      <span>Licensed And Insured</span>
+      <span>Licensed and insured</span>
       <span>Wood and Lucas County</span>
     </div>
     <a class="topbar-phone" href="tel:{TEL}">Call {PHONE}</a>
@@ -168,7 +169,7 @@ def quote_popup():
       <p class="eyebrow">Free estimate</p>
       <h2 id="quote-popup-title">Get a free quote for your property.</h2>
       <p id="quote-popup-desc">Leave your contact info, property address, and what you are looking to have done so Terramorph can follow up with the right next step.</p>
-      <div class="popup-trust"><span>★★★★★ 200+ Google Reviews</span><span>Licensed And Insured</span><span>Serving Wood and Lucas County</span></div>
+      <div class="popup-trust"><span>★★★★★ 200+ Google Reviews</span><span>Licensed and insured</span><span>Serving Wood and Lucas County</span></div>
     </div>
     <form class="quote-form popup-form" onsubmit="handleQuote(event)">
       <div class="field"><label for="popup-name">Full name</label><input id="popup-name" name="name" autocomplete="name" required placeholder="Full name"></div>
@@ -189,7 +190,7 @@ def trust_band():
     <div class="trust-logo"><img src="assets/google-verified.png" alt="Google Verified badge"><span>Google Verified</span></div>
     <div class="trust-logo"><img src="assets/bbb-logo.svg" alt="BBB Better Business Bureau logo"><span>BBB Member</span></div>
     <div class="trust-feature"><strong>Regional</strong><span>Serving Wood and Lucas County</span><small>Northwest Ohio-specific expertise for outdoor projects, drainage, and property upkeep.</small></div>
-    <div class="trust-feature"><strong>Insured</strong><span>Licensed And Insured</span><small>Professional protection before work starts.</small></div>
+    <div class="trust-feature"><strong>Insured</strong><span>Licensed and insured</span><small>Professional protection before work starts.</small></div>
   </div>
 </section>'''
 
@@ -245,7 +246,7 @@ def local_authority():
     </div>
     <div class="authority-list">
       <div><b>Diagnosis first</b><span>Crews look at grade, water movement, soil, sun exposure, access, plant health, and long-term maintenance before rushing into a scope.</span></div>
-      <div><b>Licensed And Insured</b><span>Professional protection and accountability for residential, commercial, and industrial properties.</span></div>
+      <div><b>Licensed and insured</b><span>Professional protection and accountability for residential, commercial, and industrial properties.</span></div>
       <div><b>Certified training</b><span>Team members bring training and practical field experience for safer recommendations, cleaner installs, and better problem-solving.</span></div>
       <div><b>Local conditions</b><span>Clay soil, flat lots, freeze-thaw cycles, drainage problems, and Northwest Ohio weather are accounted for in the work.</span></div>
     </div>
@@ -323,7 +324,7 @@ def process_home():
 
 home = f'''
 <section class="hero-v2">
-  <div class="hero-media" aria-hidden="true"><img src="assets/real-hero.webp" alt=""></div>
+  <div class="hero-media"><img src="assets/real-hero.webp" alt="Terramorph landscaping, hardscape, and outdoor property transformation in Northwest Ohio"></div>
   <div class="hero-overlay"></div>
   <div class="container hero-content">
     <div class="hero-copy">
@@ -332,7 +333,7 @@ home = f'''
       <p class="hero-lead">Landscape design, paver patios, drainage, lighting, cleanups, maintenance, and snow service for homeowners and properties that need outdoor work handled with real follow-through.</p>
       <div class="cta-row"><a class="btn btn-gold" href="contact.html">Get A Free Estimate</a><a class="btn btn-outline-light" href="#start-here">Choose My Project</a><a class="btn btn-outline-light" href="projects.html">See Work</a><a class="btn btn-call" href="tel:{TEL}">Call {PHONE}</a></div>
       <div class="above-fold-trust">
-        <span>★★★★★ 200+ Google Reviews</span><span>Named Customer Reviews</span><span>BBB Member</span><span>Licensed And Insured</span><span>Serving Wood and Lucas County with Northwest Ohio-specific expertise</span>
+        <span>★★★★★ 200+ Google Reviews</span><span>Named Customer Reviews</span><span>BBB Member</span><span>Licensed and insured</span><span>Serving Wood and Lucas County with Northwest Ohio-specific expertise</span>
       </div>
     </div>
   </div>
@@ -383,16 +384,18 @@ def faq_section(items):
 
 def schema_for(page_name, title, desc, faqs=None, service=None):
     import json
+    page_url = BASE_URL + ('/' if page_name == 'index.html' else '/' + page_name)
     base = {
       "@context":"https://schema.org",
       "@graph":[
-        {"@type":"LocalBusiness","@id":"https://www.terramorph.example/#business","name":"Terramorph","telephone":"419-637-4498","areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"description":"Landscape design, patios, drainage, lighting, lawn maintenance, cleanups, and outdoor property work in Wood and Lucas County."},
-        {"@type":"WebPage","name":title,"description":desc,"url":"https://www.terramorph.example/"+page_name},
-        {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.terramorph.example/"},{"@type":"ListItem","position":2,"name":title,"item":"https://www.terramorph.example/"+page_name}]}
+        {"@type":["LocalBusiness","LandscapingBusiness"],"@id":BASE_URL+"/#business","name":"Terramorph LLC","url":BASE_URL+"/","image":BASE_URL+"/assets/logo.png","logo":BASE_URL+"/assets/logo.png","telephone":"419-637-4498","priceRange":"Free estimates","areaServed":[{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"},{"@type":"City","name":"Perrysburg, OH"},{"@type":"City","name":"Toledo, OH"},{"@type":"AdministrativeArea","name":"Northwest Ohio"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
+        {"@type":"WebSite","@id":BASE_URL+"/#website","url":BASE_URL+"/","name":"Terramorph LLC","publisher":{"@id":BASE_URL+"/#business"}},
+        {"@type":"WebPage","name":title,"description":desc,"url":page_url,"isPartOf":{"@id":BASE_URL+"/#website"}},
+        {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":BASE_URL+"/"},{"@type":"ListItem","position":2,"name":title,"item":page_url}]}
       ]
     }
     if service:
-        base["@graph"].append({"@type":"Service","name":service,"provider":{"@id":"https://www.terramorph.example/#business"},"areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"]})
+        base["@graph"].append({"@type":"Service","name":service,"provider":{"@id":BASE_URL+"/#business"},"areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"url":page_url})
     if faqs:
         base["@graph"].append({"@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in faqs]})
     return json.dumps(base, separators=(',',':'))
@@ -446,7 +449,7 @@ def service_page(filename, title, eyebrow, image, headline, lead, problem, outco
 </section>
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>Real work examples without staged pairings.</h2></div><div class="container">{photo_gallery()}</div></section>
 {faq_section(SERVICE_FAQS.get(title, DEFAULT_FAQS))}
-<section class="section quote-section"><div class="container quote-grid">{quote_form('Request a ' + title + ' Quote')}<div class="cta-proof"><p class="eyebrow">Why homeowners reach out</p><h2>Reviews, proof, and a simple free estimate request.</h2>{review_stack(2)}</div></div></section>
+<section class="section quote-section"><div class="container quote-grid">{quote_form(('Request an Outdoor Lighting Quote' if title == 'Outdoor Lighting' else 'Request a ' + title + ' Quote'))}<div class="cta-proof"><p class="eyebrow">Why homeowners reach out</p><h2>Reviews, proof, and a simple free estimate request.</h2>{review_stack(2)}</div></div></section>
 '''
     desc = f'{title} in Toledo, Wood County, Lucas County, and Northwest Ohio by Terramorph. Free estimates for homeowners and property owners.'
     schema = schema_for(filename, f'{title} | Terramorph', desc, SERVICE_FAQS.get(title, DEFAULT_FAQS), title)
@@ -466,7 +469,7 @@ def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, 
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>See the kind of work this estimate can start.</h2></div><div class="container">{photo_gallery()}</div></section>
 {review_section()}
 {faq_section(faqs)}
-<section class="section quote-section"><div class="container quote-grid">{quote_form(form_title)}<div class="cta-proof"><p class="eyebrow">Built for Facebook and mobile leads</p><h2>Simple page, real photos, reviews, call button, and free estimate form.</h2>{review_stack(3)}</div></div></section>
+<section class="section quote-section"><div class="container quote-grid">{quote_form(form_title)}<div class="cta-proof"><p class="eyebrow">Built for fast mobile decisions</p><h2>Real photos, clear reviews, a visible call button, and a simple free estimate form.</h2>{review_stack(3)}</div></div></section>
 '''
     desc = f'{title} from Terramorph for Wood and Lucas County homeowners. Real photos, reviews, phone call, and free estimate request.'
     schema = schema_for(filename, title, desc, faqs, service)
@@ -554,7 +557,7 @@ about_desc = 'About Terramorph: landscape design, patios, drainage, lighting, ma
 areas = f'''
 <section class="page-hero premium-page-hero">
   <div class="page-hero-image"><img src="assets/real-lawn-pool.webp" alt="Northwest Ohio lawn and landscape maintenance"></div><div class="hero-overlay"></div>
-  <div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / Local Expertise</p><p class="eyebrow light">Northwest Ohio authority</p><h1>Licensed And Insured local expertise for Perrysburg, Toledo, Wood County, and Lucas County.</h1><p>Terramorph serves residential, commercial, and industrial properties with trained team members who understand drainage diagnosis, hardscape durability, plant health, snow response, and Northwest Ohio soil and weather conditions.</p><div class="cta-row"><a class="btn btn-gold" href="contact.html">Check My Property</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div>
+  <div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / Local Expertise</p><p class="eyebrow light">Northwest Ohio authority</p><h1>Licensed and insured local expertise for Perrysburg, Toledo, Wood County, and Lucas County.</h1><p>Terramorph serves residential, commercial, and industrial properties with trained team members who understand drainage diagnosis, hardscape durability, plant health, snow response, and Northwest Ohio soil and weather conditions.</p><div class="cta-row"><a class="btn btn-gold" href="contact.html">Check My Property</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div>
 </section>
 {trust_band()}
 {local_authority()}
@@ -607,4 +610,35 @@ Professional cleanup pass for Terramorph with cleaner typography, real Terramorp
 (root/'README.md').write_text(readme)
 home_desc = 'Terramorph provides landscape design, paver patios, drainage, outdoor lighting, seasonal cleanups, lawn maintenance, and property work in Wood and Lucas County.'
 (root/'index.html').write_text(page('Landscape Design, Patios, Drainage & Outdoor Work | Terramorph', home_desc, home, schema_for('index.html', 'Terramorph', home_desc, DEFAULT_FAQS)))
-print('wrote V2 pages')
+
+thank_you = f"""
+<section class="page-hero premium-page-hero compact-hero"><div class="hero-overlay"></div><div class="container page-hero-content"><p class="eyebrow light">Quote request received</p><h1>Thanks — Terramorph has your request.</h1><p>If the project is urgent, call now so the next step can be handled faster.</p><div class="cta-row"><a class="btn btn-gold" href="tel:{TEL}">Call {PHONE}</a><a class="btn btn-outline-light" href="index.html">Back to Home</a></div></div></section>
+<section class="section"><div class="container local-grid"><div><p class="eyebrow">What happens next</p><h2>Terramorph reviews your property details, service need, timeline, and photos if provided.</h2><p>You can speed up the estimate by having photos, property address, and a clear description ready.</p></div><div class="authority-list"><div><b>1. Review</b><span>Project type, location, access, timeline, and visible property conditions.</span></div><div><b>2. Follow-up</b><span>Terramorph confirms the best next step by phone.</span></div><div><b>3. Estimate</b><span>A site review or quote path is scheduled based on the project.</span></div></div></div></section>
+"""
+(root/'thank-you.html').write_text(page('Quote Request Received | Terramorph', 'Thank-you page for Terramorph quote requests in Wood and Lucas County.', thank_you, schema_for('thank-you.html', 'Quote Request Received', 'Thank-you page for Terramorph quote requests.')))
+
+def write_static_seo_files():
+    pages = ['index.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','projects.html','about.html','service-areas.html','contact.html','lp-patios.html','lp-drainage.html','lp-landscape-design.html','thank-you.html']
+    sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    priorities = {'index.html':'1.0','contact.html':'0.9','drainage-solutions.html':'0.9','paver-patios-hardscapes.html':'0.9','landscape-design.html':'0.9'}
+    for page_name in pages:
+        loc = BASE_URL + ('/' if page_name == 'index.html' else '/' + page_name)
+        sitemap += f'  <url><loc>{loc}</loc><changefreq>monthly</changefreq><priority>{priorities.get(page_name, "0.7")}</priority></url>\n'
+    sitemap += '</urlset>\n'
+    (root/'sitemap.xml').write_text(sitemap)
+    (root/'robots.txt').write_text(f'User-agent: *\nAllow: /\nSitemap: {BASE_URL}/sitemap.xml\n')
+
+def post_process_html():
+    for path in root.glob('*.html'):
+        if path.name == 'review-notes.html':
+            continue
+        html = path.read_text()
+        url = BASE_URL + ('/' if path.name == 'index.html' else '/' + path.name)
+        html = html.replace('<meta property="og:image" content="assets/real-hero.webp">', f'<meta property="og:image" content="{BASE_URL}/assets/real-hero.webp">\n  <meta property="og:url" content="{url}">\n  <meta name="twitter:card" content="summary_large_image">\n  <link rel="canonical" href="{url}">')
+        html = html.replace('Request a Outdoor Lighting Quote', 'Request an Outdoor Lighting Quote')
+        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.20"></script>')
+        path.write_text(html)
+
+write_static_seo_files()
+post_process_html()
+print('wrote V3.20 SEO/CRO final pages')

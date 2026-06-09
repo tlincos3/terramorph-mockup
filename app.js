@@ -11,11 +11,15 @@ function completeQuote(form){
   const first = nameValue ? nameValue.split(/\s+/)[0] : 'there';
   if(success){
     success.style.display = 'block';
-    success.textContent = `Thanks, ${first}. Your request is in. Terramorph will follow up to learn more, answer questions, and schedule a free estimate.`;
+    success.textContent = `Thanks, ${first}. Your request is ready. If this is urgent, call Terramorph now at 419-637-4498.`;
   }
   const btn = form.querySelector('button[type="submit"]');
   if(btn) btn.textContent = 'Request Sent ✓';
   window.localStorage?.setItem('terramorphQuotePopupSubmitted', '1');
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({event:'quote_form_submit', service: form.querySelector('[name="service"]')?.value || 'unspecified'});
+  if(typeof fbq === 'function') fbq('track', 'Lead');
+  window.setTimeout(() => { window.location.href = 'thank-you.html'; }, 700);
 }
 
 function handleQuote(event){
