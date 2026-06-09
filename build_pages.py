@@ -1,8 +1,8 @@
 from pathlib import Path
 
 root = Path('/Users/Jarvis/Desktop/Terramorph-Mockup')
-PHONE = '419-637-4498'
-TEL = '4196374498'
+PHONE = '419-637-4030'
+TEL = '4196374030'
 BASE_URL = 'https://terramorphllc.com'
 JOBBER_QUOTE_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new'
 JOBBER_FACEBOOK_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new?utm_source=facebook&source=social_media'
@@ -391,7 +391,7 @@ def schema_for(page_name, title, desc, faqs=None, service=None):
     base = {
       "@context":"https://schema.org",
       "@graph":[
-        {"@type":["LocalBusiness","LandscapingBusiness"],"@id":BASE_URL+"/#business","name":"Terramorph LLC","url":BASE_URL+"/","image":BASE_URL+"/assets/logo.png","logo":BASE_URL+"/assets/logo.png","telephone":"419-637-4498","priceRange":"Free estimates","areaServed":[{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"},{"@type":"City","name":"Perrysburg, OH"},{"@type":"City","name":"Toledo, OH"},{"@type":"AdministrativeArea","name":"Northwest Ohio"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
+        {"@type":["LocalBusiness","LandscapingBusiness"],"@id":BASE_URL+"/#business","name":"Terramorph LLC","url":BASE_URL+"/","image":BASE_URL+"/assets/logo.png","logo":BASE_URL+"/assets/logo.png","telephone":"419-637-4030","priceRange":"Free estimates","areaServed":[{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"},{"@type":"City","name":"Perrysburg, OH"},{"@type":"City","name":"Toledo, OH"},{"@type":"AdministrativeArea","name":"Northwest Ohio"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
         {"@type":"WebSite","@id":BASE_URL+"/#website","url":BASE_URL+"/","name":"Terramorph LLC","publisher":{"@id":BASE_URL+"/#business"}},
         {"@type":"WebPage","name":title,"description":desc,"url":page_url,"isPartOf":{"@id":BASE_URL+"/#website"}},
         {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":BASE_URL+"/"},{"@type":"ListItem","position":2,"name":title,"item":page_url}]}
