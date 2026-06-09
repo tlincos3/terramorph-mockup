@@ -12,7 +12,7 @@
   <meta property="og:url" content="https://terramorphllc.com/thank-you.html">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://terramorphllc.com/thank-you.html">
-  <link rel="stylesheet" href="styles.css?v=3.19">
+  <link rel="stylesheet" href="styles.css?v=3.22">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["LocalBusiness","LandscapingBusiness"],"@id":"https://terramorphllc.com/#business","name":"Terramorph LLC","url":"https://terramorphllc.com/","image":"https://terramorphllc.com/assets/logo.png","logo":"https://terramorphllc.com/assets/logo.png","telephone":"419-637-4498","priceRange":"Free estimates","areaServed":[{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"},{"@type":"City","name":"Perrysburg, OH"},{"@type":"City","name":"Toledo, OH"},{"@type":"AdministrativeArea","name":"Northwest Ohio"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},{"@type":"WebSite","@id":"https://terramorphllc.com/#website","url":"https://terramorphllc.com/","name":"Terramorph LLC","publisher":{"@id":"https://terramorphllc.com/#business"}},{"@type":"WebPage","name":"Quote Request Received","description":"Thank-you page for Terramorph quote requests.","url":"https://terramorphllc.com/thank-you.html","isPartOf":{"@id":"https://terramorphllc.com/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://terramorphllc.com/"},{"@type":"ListItem","position":2,"name":"Quote Request Received","item":"https://terramorphllc.com/thank-you.html"}]}]}</script>
 </head>
 <body>
@@ -39,6 +39,7 @@
       <a href="paver-patios-hardscapes.html">Patios</a>
       <a href="drainage-solutions.html">Drainage</a>
       <a href="guides.html">Guides</a>
+      <a href="service-areas.html">Areas</a>
       <a href="projects.html">Projects</a>
       <a href="about.html">About</a>
       <a href="contact.html">Quote</a>
@@ -56,22 +57,20 @@
 </main>
 <div class="quote-popup" id="quote-popup" role="dialog" aria-modal="true" aria-labelledby="quote-popup-title" aria-describedby="quote-popup-desc" hidden>
   <div class="quote-popup-backdrop" data-close-popup></div>
-  <section class="quote-popup-card" tabindex="-1">
+  <section class="quote-popup-card quote-popup-simple" tabindex="-1">
     <button class="quote-popup-close" type="button" aria-label="Close free quote popup" data-close-popup>×</button>
     <div class="quote-popup-copy">
       <p class="eyebrow">Free estimate</p>
-      <h2 id="quote-popup-title">Get a free quote for your property.</h2>
-      <p id="quote-popup-desc">Leave your contact info, property address, and what you are looking to have done so Terramorph can follow up with the right next step.</p>
+      <h2 id="quote-popup-title">Send your request straight to Terramorph.</h2>
+      <p id="quote-popup-desc">Quotes now run through Jobber, so property details, service needs, photos, and follow-up stay organized in the CRM.</p>
       <div class="popup-trust"><span>★★★★★ 200+ Google Reviews</span><span>Licensed and insured</span><span>Serving Wood and Lucas County</span></div>
     </div>
-    <form class="quote-form popup-form" onsubmit="handleQuote(event)">
-      <div class="field"><label for="popup-name">Full name</label><input id="popup-name" name="name" autocomplete="name" required placeholder="Full name"></div>
-      <div class="field"><label for="popup-phone">Phone number</label><input id="popup-phone" name="phone" autocomplete="tel" inputmode="tel" required placeholder="(419) 000-0000"></div>
-      <div class="field"><label for="popup-email">Email</label><input id="popup-email" name="email" autocomplete="email" inputmode="email" type="email" required placeholder="you@example.com"></div>
-      <div class="field"><label for="popup-address">Property address</label><input id="popup-address" name="address" autocomplete="street-address" required placeholder="Street address"></div>
-      <div class="field full"><label for="popup-notes">What are you looking to have done?</label><textarea id="popup-notes" name="notes" required placeholder="Landscape install, patio, drainage, lighting, lawn maintenance, cleanup, snow removal..."></textarea></div>
-      <div class="full form-actions"><button class="btn btn-gold" type="submit">Get My Free Quote</button><a class="btn btn-primary" href="tel:4196374498">Call 419-637-4498</a><div class="success" role="status" aria-live="polite"></div></div>
-    </form>
+    <div class="popup-direct-actions">
+      <h3>Ready for an estimate?</h3>
+      <p>Open the secure Jobber quote form or call now if the project is urgent.</p>
+      <a class="btn btn-gold" href="https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new" target="_blank" rel="noopener">Open Quote Form</a>
+      <a class="btn btn-primary" href="tel:4196374498">Call 419-637-4498</a>
+    </div>
   </section>
 </div>
 <div class="sticky-mobile" aria-label="Mobile lead actions">
@@ -112,5 +111,5 @@
     </div>
   </div>
 </footer>
-<script src="app.js?v=3.20"></script>
+<script src="app.js?v=3.22"></script>
 </body></html>

@@ -12,7 +12,8 @@ Professional cleanup pass for Terramorph with cleaner typography, real Terramorp
 - `projects.html` — project proof hub
 - `about.html` — About page
 - `service-areas.html` — local authority / SEO page
-- `contact.html` — free estimate form
+- nine city/service SEO pages for Toledo, Perrysburg, and Maumee landscaping, drainage, and patios
+- `contact.html` — Jobber CRM quote form
 - `review-notes.html` — summary of changes
 
 ## V2.6 priorities implemented
@@ -26,3 +27,5 @@ Professional cleanup pass for Terramorph with cleaner typography, real Terramorp
 - Accessibility improvements
 - Added an About page explaining the local, diagnosis-first approach
 - Added Outdoor Project Guides hub and eight SEO guide pages with FAQ/article schema and quote CTAs
+- Connected quote requests to Jobber CRM embedded request form
+- Added city/service SEO pages for Toledo, Perrysburg, and Maumee core services
