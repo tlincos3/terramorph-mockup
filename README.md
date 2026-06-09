@@ -7,6 +7,8 @@ Professional cleanup pass for Terramorph with cleaner typography, real Terramorp
 - `landscape-design.html` — landscape design landing page
 - `paver-patios-hardscapes.html` — patio/hardscape landing page
 - `drainage-solutions.html` — drainage landing page
+- `guides.html` — Outdoor Project Guides SEO hub
+- eight long-form guide pages for drainage, native landscaping, patios, cleanups, and landscape beds
 - `projects.html` — project proof hub
 - `about.html` — About page
 - `service-areas.html` — local authority / SEO page
@@ -23,3 +25,4 @@ Professional cleanup pass for Terramorph with cleaner typography, real Terramorp
 - Sitewide grammar, punctuation, capitalization, and copy polish
 - Accessibility improvements
 - Added an About page explaining the local, diagnosis-first approach
+- Added Outdoor Project Guides hub and eight SEO guide pages with FAQ/article schema and quote CTAs
