@@ -84,6 +84,7 @@ FOOT = f'''
       <h2>Start</h2>
       <a href="tel:{TEL}">Call {PHONE}</a>
       <a href="contact.html">Request a quote</a>
+      <a href="privacy.html">Privacy Policy</a>
       <p>Free estimates, clear communication, dependable scheduling, and professional follow-through for Northwest Ohio homeowners.</p>
     </div>
   </div>
@@ -142,7 +143,7 @@ def head(title, desc, schema=''):
   <meta property="og:description" content="{desc}">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/real-hero.webp">
-  <link rel="stylesheet" href="styles.css?v=3.23">{schema_block}
+  <link rel="stylesheet" href="styles.css?v=3.24">{schema_block}
 </head>
 <body>{NAV}<main id="main">'''
 
@@ -690,7 +691,42 @@ contact = f'''
 contact_desc = 'Request a free estimate from Terramorph for landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, and property work.'
 (root/'contact.html').write_text(page('Request a Free Outdoor Project Estimate | Terramorph', contact_desc, contact, schema_for('contact.html', 'Request a Free Estimate', contact_desc)))
 
-review_notes = '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>V2.6 Review Notes | Terramorph</title><link rel="stylesheet" href="styles.css?v=3.23"></head><body><main class="section"><div class="container review-doc"><p class="eyebrow">V2.6 copy and polish summary</p><h1>Terramorph V2.6 copy, grammar, and punctuation pass</h1><h2>What changed</h2><ul><li>Expanded services to reflect the current Terramorph service mix: lawn care, mowing, landscape maintenance, seasonal cleanups, native habitat rehabilitation, fire pits, outdoor kitchens, concrete, drainage, lighting, plant installation, mulch, pruning, trimming, hauling, power washing, snow removal, holiday lighting, demolition, and site prep.</li><li>Replaced weak comparison imagery with stronger real Terramorph photos found on the Desktop.</li><li>Changed the middle-page typography from compressed decorative display styling to cleaner Inter/Manrope typography with better spacing and readability.</li><li>Reduced the heavy boxed/card feeling so service sections scan cleaner and feel more professional.</li><li>Kept trust, phone calls, free estimates, reviews, Google, BBB, licensed/insured, and local Northwest Ohio proof visible.</li></ul><p><a class="btn btn-primary" href="index.html">Open V2.6 Homepage</a></p></div></main></body></html>'''
+privacy = f'''
+<section class="page-hero premium-page-hero compact-hero">
+  <div class="hero-overlay"></div>
+  <div class="container page-hero-content">
+    <p class="crumb"><a href="index.html">Home</a> / Privacy Policy</p>
+    <p class="eyebrow light">Privacy Policy</p>
+    <h1>Terramorph Privacy Policy</h1>
+    <p>How Terramorph LLC collects, uses, and protects information submitted through this website, phone calls, and quote requests.</p>
+  </div>
+</section>
+<section class="section legal-page">
+  <div class="container narrow-copy">
+    <p><strong>Last updated:</strong> June 9, 2026</p>
+    <h2>Information we collect</h2>
+    <p>Terramorph may collect information you choose to provide when requesting an estimate, calling, emailing, or using our online quote form. This can include your name, phone number, email address, property address, project details, service needs, preferred timeline, photos, and any notes you submit.</p>
+    <h2>How we use information</h2>
+    <p>We use submitted information to respond to quote requests, schedule site visits, prepare estimates, communicate about projects, improve our services, and keep accurate customer and project records.</p>
+    <h2>Quote forms and third-party tools</h2>
+    <p>Terramorph uses Jobber and related business tools to manage quote requests, scheduling, customer communication, and project follow-up. When you open or submit a quote request, your information may be processed by those service providers so Terramorph can respond and manage the request.</p>
+    <h2>Website analytics and advertising</h2>
+    <p>This website may use standard analytics, advertising, pixels, cookies, or tracking links to understand website traffic, measure marketing performance, and improve future advertising. These tools may collect browser, device, page visit, referral, and interaction information.</p>
+    <h2>Information sharing</h2>
+    <p>Terramorph does not sell your personal information. We may share information with service providers that help operate the website, process quote requests, manage customer communication, provide advertising analytics, or perform business operations. We may also share information when required by law or to protect our business, customers, or property.</p>
+    <h2>Data security</h2>
+    <p>We use reasonable administrative and technical safeguards to protect information. No website, email, or online form can guarantee perfect security, so avoid submitting highly sensitive information through website forms.</p>
+    <h2>Your choices</h2>
+    <p>You can request updates, corrections, or removal of your contact information from active marketing lists by contacting Terramorph. Some records may be retained when needed for business, legal, accounting, or project-history purposes.</p>
+    <h2>Contact</h2>
+    <p>For privacy questions, call <a href="tel:{TEL}">{PHONE}</a> or submit a request through the website contact page.</p>
+  </div>
+</section>
+'''
+privacy_desc = 'Privacy Policy for Terramorph LLC website visitors, quote requests, analytics, advertising, and customer communication.'
+(root/'privacy.html').write_text(page('Privacy Policy | Terramorph LLC', privacy_desc, privacy, schema_for('privacy.html', 'Privacy Policy', privacy_desc)))
+
+review_notes = '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>V2.6 Review Notes | Terramorph</title><link rel="stylesheet" href="styles.css?v=3.24"></head><body><main class="section"><div class="container review-doc"><p class="eyebrow">V2.6 copy and polish summary</p><h1>Terramorph V2.6 copy, grammar, and punctuation pass</h1><h2>What changed</h2><ul><li>Expanded services to reflect the current Terramorph service mix: lawn care, mowing, landscape maintenance, seasonal cleanups, native habitat rehabilitation, fire pits, outdoor kitchens, concrete, drainage, lighting, plant installation, mulch, pruning, trimming, hauling, power washing, snow removal, holiday lighting, demolition, and site prep.</li><li>Replaced weak comparison imagery with stronger real Terramorph photos found on the Desktop.</li><li>Changed the middle-page typography from compressed decorative display styling to cleaner Inter/Manrope typography with better spacing and readability.</li><li>Reduced the heavy boxed/card feeling so service sections scan cleaner and feel more professional.</li><li>Kept trust, phone calls, free estimates, reviews, Google, BBB, licensed/insured, and local Northwest Ohio proof visible.</li></ul><p><a class="btn btn-primary" href="index.html">Open V2.6 Homepage</a></p></div></main></body></html>'''
 (root/'review-notes.html').write_text(review_notes)
 
 readme = '''# Terramorph V2.6 Website Mockup
@@ -709,6 +745,7 @@ Professional cleanup pass for Terramorph with cleaner typography, real Terramorp
 - `service-areas.html` — local authority / SEO page
 - nine city/service SEO pages for Toledo, Perrysburg, and Maumee landscaping, drainage, and patios
 - `contact.html` — Jobber CRM quote form
+- `privacy.html` — privacy policy
 - `review-notes.html` — summary of changes
 
 ## V2.6 priorities implemented
@@ -736,7 +773,7 @@ thank_you = f"""
 (root/'thank-you.html').write_text(page('Quote Request Received | Terramorph', 'Thank-you page for Terramorph quote requests in Wood and Lucas County.', thank_you, schema_for('thank-you.html', 'Quote Request Received', 'Thank-you page for Terramorph quote requests.')))
 
 def write_static_seo_files():
-    pages = ['index.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','lp-patios.html','lp-drainage.html','lp-landscape-design.html','thank-you.html']
+    pages = ['index.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','lp-patios.html','lp-drainage.html','lp-landscape-design.html','thank-you.html']
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     priorities = {'index.html':'1.0','contact.html':'0.9','drainage-solutions.html':'0.9','paver-patios-hardscapes.html':'0.9','landscape-design.html':'0.9'}
     for page_name in pages:
@@ -754,7 +791,7 @@ def post_process_html():
         url = BASE_URL + ('/' if path.name == 'index.html' else '/' + path.name)
         html = html.replace('<meta property="og:image" content="assets/real-hero.webp">', f'<meta property="og:image" content="{BASE_URL}/assets/real-hero.webp">\n  <meta property="og:url" content="{url}">\n  <meta name="twitter:card" content="summary_large_image">\n  <link rel="canonical" href="{url}">')
         html = html.replace('Request a Outdoor Lighting Quote', 'Request an Outdoor Lighting Quote')
-        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.23"></script>')
+        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.24"></script>')
         path.write_text(html)
 
 write_static_seo_files()

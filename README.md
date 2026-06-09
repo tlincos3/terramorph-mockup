@@ -14,6 +14,7 @@ Professional cleanup pass for Terramorph with cleaner typography, real Terramorp
 - `service-areas.html` — local authority / SEO page
 - nine city/service SEO pages for Toledo, Perrysburg, and Maumee landscaping, drainage, and patios
 - `contact.html` — Jobber CRM quote form
+- `privacy.html` — privacy policy
 - `review-notes.html` — summary of changes
 
 ## V2.6 priorities implemented

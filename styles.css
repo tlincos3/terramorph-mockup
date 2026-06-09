@@ -198,3 +198,8 @@ body.quote-popup-open{overflow:hidden}
 
 /* Hide Jobber embed security/error fallback and show direct CRM link instead when needed */
 .jobber-embed-unavailable .jobber-embed-wrap{display:none}.jobber-embed-wrap .jobber-flash--error{display:none!important}
+
+
+/* V3.24 privacy/legal page */
+.legal-page{background:#fffdf8}.narrow-copy{max-width:860px;background:#fff;border:1px solid var(--line);box-shadow:0 22px 70px rgba(7,10,8,.08);padding:44px}.narrow-copy h2{font-family:var(--font-display);font-size:clamp(1.45rem,2.4vw,2.2rem);line-height:1.08;letter-spacing:-.025em;margin:30px 0 10px;color:var(--readable-ink,#101713)}.narrow-copy p{font-size:1.02rem;line-height:1.72;color:var(--muted);margin:0 0 16px}.narrow-copy a{color:var(--readable-green,#174829);font-weight:900;text-decoration:underline;text-underline-offset:3px}.footer a[href="privacy.html"]{color:var(--gold-2);font-weight:900}
+@media(max-width:760px){.narrow-copy{padding:28px}.narrow-copy p{font-size:.98rem}}
