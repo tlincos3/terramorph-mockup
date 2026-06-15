@@ -31,10 +31,40 @@ function applyJobberAttribution(){
   });
 }
 
+function metaTrack(eventName, parameters = {}, options = {}){
+  if(typeof fbq !== 'function') return;
+  try {
+    if(options.eventId){
+      fbq('track', eventName, parameters, {eventID: options.eventId});
+    } else {
+      fbq('track', eventName, parameters);
+    }
+  } catch(error) {
+    console.warn('Meta Pixel tracking failed', eventName, error);
+  }
+}
+
+function getTrackingContext(){
+  return {
+    page_title: document.title,
+    page_path: window.location.pathname,
+    page_url: window.location.href,
+    jobber_source: getJobberSource() || 'direct'
+  };
+}
+
 function trackQuoteIntent(source){
+  const context = {source: source || 'jobber', ...getTrackingContext()};
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({event:'quote_intent', source: source || 'jobber', jobber_source: getJobberSource() || 'direct'});
-  if(typeof fbq === 'function') fbq('track', 'Lead');
+  window.dataLayer.push({event:'quote_intent', ...context});
+  metaTrack('Lead', {content_name: 'Terramorph quote intent', content_category: context.source, ...context});
+}
+
+function trackPhoneClick(link){
+  const context = {source: 'phone_click', phone_number: (link?.getAttribute('href') || '').replace(/^tel:/, ''), ...getTrackingContext()};
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({event:'phone_click', ...context});
+  metaTrack('Contact', {content_name: 'Terramorph phone click', content_category: 'phone_call', ...context});
 }
 
 function openQuotePopup(){
@@ -58,6 +88,9 @@ function closeQuotePopup(){
 
 document.addEventListener('DOMContentLoaded', () => {
   applyJobberAttribution();
+  if(window.location.pathname.endsWith('/thank-you.html') || window.location.pathname.endsWith('/thank-you')){
+    trackQuoteIntent('thank_you_page');
+  }
   document.querySelectorAll('.links a').forEach(link => link.addEventListener('click', () => {
     const menu = document.querySelector('.links');
     const button = document.querySelector('.mobile-menu');
@@ -66,6 +99,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }));
   document.querySelectorAll('a[href*="clienthub.getjobber.com"], a[href="#quote"]').forEach(link => {
     link.addEventListener('click', () => trackQuoteIntent(link.href.includes('clienthub') ? 'jobber_direct' : 'onsite_quote'));
+  });
+  document.querySelectorAll('a[href^="tel:"]').forEach(link => {
+    link.addEventListener('click', () => trackPhoneClick(link));
   });
   document.querySelectorAll('[data-close-popup]').forEach(el => el.addEventListener('click', closeQuotePopup));
   document.addEventListener('keydown', event => { if(event.key === 'Escape') closeQuotePopup(); });
