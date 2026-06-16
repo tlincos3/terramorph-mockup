@@ -253,3 +253,7 @@ html,body{max-width:100%;overflow-x:hidden}.conversion-hero,.meta-landing-hero,.
   .conversion-trust-grid span{min-width:0!important;width:auto!important;text-align:center!important;font-size:.72rem!important;line-height:1.2!important;padding:9px 6px!important;}
   .conversion-trust-grid span:last-child{grid-column:1 / -1;font-size:.7rem!important;}
 }
+/* V3.41 conversion fix: reserve Jobber iframe space to prevent load-time layout shift */
+.jobber-embed-wrap .jobber-inline-work-request,
+.jobber-embed-wrap iframe.jobber-work-request{min-height:520px!important;width:100%!important;}
+@media(max-width:760px){.jobber-embed-wrap .jobber-inline-work-request,.jobber-embed-wrap iframe.jobber-work-request{min-height:620px!important;}}

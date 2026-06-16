@@ -70,6 +70,7 @@ function trackPhoneClick(link){
   const context = {source: 'phone_click', phone_number: (link?.getAttribute('href') || '').replace(/^tel:/, ''), ...getTrackingContext()};
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({event:'phone_click', ...context});
+  metaTrack('Lead', {content_name: 'Terramorph phone lead', content_category: 'phone_call', lead_type: 'phone_call', ...context});
   metaTrack('Contact', {content_name: 'Terramorph phone click', content_category: 'phone_call', ...context});
 }
 
