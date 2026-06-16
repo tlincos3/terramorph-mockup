@@ -26,7 +26,11 @@ function applyJobberAttribution(){
   const source = getJobberSource();
   if(!source) return;
   document.querySelectorAll('a[href*="clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new"]').forEach(link => {
-    link.href = JOBBER_SOURCE_URLS[source];
+    const url = new URL(link.href);
+    url.searchParams.set('utm_source', source);
+    url.searchParams.set('source', 'social_media');
+    if(!url.searchParams.get('utm_medium')) url.searchParams.set('utm_medium', 'website');
+    link.href = url.toString();
     link.dataset.jobberSource = source;
   });
 }
@@ -45,10 +49,12 @@ function metaTrack(eventName, parameters = {}, options = {}){
 }
 
 function getTrackingContext(){
+  const service = document.querySelector('[data-funnel-service]')?.dataset.funnelService || document.querySelector('[data-service]')?.dataset.service || '';
   return {
     page_title: document.title,
     page_path: window.location.pathname,
     page_url: window.location.href,
+    service_category: service || 'general',
     jobber_source: getJobberSource() || 'direct'
   };
 }
@@ -88,6 +94,9 @@ function closeQuotePopup(){
 
 document.addEventListener('DOMContentLoaded', () => {
   applyJobberAttribution();
+  if(document.querySelector('[data-funnel-service]')){
+    metaTrack('ViewContent', {content_name: 'Terramorph service landing page', content_category: getTrackingContext().service_category, ...getTrackingContext()});
+  }
   if(window.location.pathname.endsWith('/thank-you.html') || window.location.pathname.endsWith('/thank-you')){
     trackQuoteIntent('thank_you_page');
   }

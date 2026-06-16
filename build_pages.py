@@ -1,6 +1,6 @@
 from pathlib import Path
 
-root = Path('/Users/Jarvis/Desktop/Terramorph-Mockup')
+root = Path(__file__).resolve().parent
 PHONE = '419-637-4030'
 TEL = '4196374030'
 BASE_URL = 'https://terramorphllc.com'
@@ -52,7 +52,7 @@ NAV = f'''
 FOOT = f'''
 <div class="sticky-mobile" aria-label="Mobile lead actions">
   <a class="btn btn-quiet" href="tel:{TEL}">Call</a>
-  <a class="btn btn-primary" href="contact.html">Get quote</a>
+  <a class="btn btn-primary" href="#quote">Quote</a>
 </div>
 <footer class="footer">
   <div class="container footer-grid">
@@ -132,6 +132,19 @@ PROJECT_PHOTOS = [
 
 def head(title, desc, schema=''):
     schema_block = f'\n  <script type="application/ld+json">{schema}</script>' if schema else ''
+    meta_pixel = '''
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1286455403443187');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1286455403443187&ev=PageView&noscript=1" /></noscript>
+  <!-- End Meta Pixel Code -->'''
     return f'''<!doctype html>
 <html lang="en">
 <head>
@@ -143,25 +156,30 @@ def head(title, desc, schema=''):
   <meta property="og:description" content="{desc}">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/real-hero.webp">
-  <link rel="stylesheet" href="styles.css?v=3.24">{schema_block}
+  <link rel="stylesheet" href="styles.css?v=3.40">{schema_block}{meta_pixel}
 </head>
 <body>{NAV}<main id="main">'''
 
 def page(title, desc, body, schema=''):
     return head(title, desc, schema) + body + '</main>' + quote_popup() + FOOT + '</body></html>'
 
-def quote_form(title='Request a Premium Project Quote'):
+def quote_form(title='Request a Premium Project Quote', service='Outdoor Transformation', source='website', cta='Open Secure Quote Form'):
+    service_slug = service.lower().replace(' and ', '-').replace('&', 'and').replace(' ', '-').replace('/', '-')
+    direct_url = f"{JOBBER_QUOTE_URL}?utm_source={source}&utm_medium=website&utm_campaign={service_slug}-quote&source=social_media"
     return f'''
-<section class="quote-panel jobber-quote-panel" id="quote" aria-labelledby="quote-title">
-  <p class="eyebrow light">Start with a fast quote</p>
+<section class="quote-panel jobber-quote-panel" id="quote" aria-labelledby="quote-title" data-service="{service}">
+  <p class="eyebrow light">Fast free estimate</p>
   <h2 id="quote-title">{title}</h2>
-  <p>Use the secure Terramorph Jobber request form below. New requests go directly into the CRM so the team can follow up with the right service, city, photos, and timeline.</p>
+  <p>Tell Terramorph what is happening, where the property is, and when you want it handled. The request goes into Jobber so the team can follow up with the right service, city, photos, and timeline.</p>
+  <div class="quote-speed-row" aria-label="Fast estimate expectations">
+    <span>✓ Free estimate</span><span>✓ Photos help</span><span>✓ Wood + Lucas County</span>
+  </div>
   <div class="jobber-embed-wrap" aria-label="Terramorph Jobber quote request form">
     <div id="{JOBBER_EMBED_ID}"></div>
     <link rel="stylesheet" href="https://d3ey4dbjkt2f6s.cloudfront.net/assets/external/work_request_embed.css" media="screen" />
     <script src="https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js" clienthub_id="{JOBBER_EMBED_ID}" form_url="{JOBBER_EMBED_FORM_URL}"></script>
   </div>
-  <div class="jobber-fallback"><p>If the embedded form does not load, open the secure request form directly.</p><a class="btn btn-gold" href="{JOBBER_QUOTE_URL}" target="_blank" rel="noopener">Open Jobber Quote Form</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
+  <div class="jobber-fallback"><p>If the embedded form does not load, open the secure request form directly.</p><a class="btn btn-gold" href="{direct_url}" target="_blank" rel="noopener" data-quote-service="{service}">{cta}</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
 </section>'''
 
 def quote_popup():
@@ -459,20 +477,20 @@ def service_page(filename, title, eyebrow, image, headline, lead, problem, outco
     (root / filename).write_text(page(f'{title} in Wood and Lucas County | Terramorph', desc, body, schema))
 
 
-def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, service, form_title):
+def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, service, form_title, offer, symptoms, next_steps):
     faqs = SERVICE_FAQS.get(service, DEFAULT_FAQS)
     body = f'''
-<section class="page-hero premium-page-hero meta-landing-hero">
+<section class="page-hero premium-page-hero meta-landing-hero conversion-hero" data-funnel-service="{service}">
   <div class="page-hero-image"><img src="assets/{image}" alt="{title} project photo"></div><div class="hero-overlay"></div>
-  <div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / {title}</p><p class="eyebrow light">{eyebrow}</p><h1>{headline}</h1><p>{lead}</p><div class="cta-row"><a class="btn btn-gold" href="#quote">Get A Free Estimate</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div>
+  <div class="container page-hero-content"><p class="eyebrow light">{eyebrow}</p><h1>{headline}</h1><p>{lead}</p><div class="offer-card"><b>{offer}</b><span>Send the problem, city, timeline, and photos if you have them. Terramorph follows up with the best next step.</span></div><div class="cta-row"><a class="btn btn-gold" href="#quote">Get My Free Assessment</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div><div class="above-fold-trust"><span>★★★★★ 200+ Google Reviews</span><span>BBB Member</span><span>Licensed + insured</span><span>Local crew</span></div></div>
 </section>
-{trust_band()}
-<section class="section"><div class="container problem-grid"><div class="problem-card dark"><p class="eyebrow light">Good fit if</p><h2>{bullets[0]}</h2></div><div class="problem-card light-card"><p class="eyebrow">What to expect</p><h2>{bullets[1]}</h2></div></div></section>
-<section class="section clay-section"><div class="container local-grid"><div><p class="eyebrow">Why request now</p><h2>{bullets[2]}</h2><p>{bullets[3]}</p></div><div class="authority-list"><div><b>Fast next step</b><span>Submit the form or call and Terramorph can review the property, service need, timeline, and photos.</span></div><div><b>Real project proof</b><span>Project photos and named reviews stay close to the quote path so the page feels credible, not generic.</span></div><div><b>Local conditions</b><span>Wood and Lucas County soil, drainage, freeze-thaw, and weather are considered before recommending work.</span></div><div><b>Clear estimate</b><span>The goal is a practical scope, clean communication, and a path to getting the work handled.</span></div></div></div></section>
+<section class="conversion-trust-strip" aria-label="Terramorph credibility"><div class="container conversion-trust-grid"><span>★★★★★ 200+ Google Reviews</span><span>Google Verified</span><span>BBB Member</span><span>Licensed + insured</span><span>Serving Toledo, Perrysburg, Maumee, Wood County, Lucas County</span></div></section>
+<section class="section pain-proof-section"><div class="container pain-proof-grid"><div class="pain-card"><p class="eyebrow light">This is for you if</p><h2>{bullets[0]}</h2><ul>{''.join(f'<li>{item}</li>' for item in symptoms)}</ul><a class="btn btn-gold" href="#quote">See What This Would Cost</a></div><div class="proof-card"><p class="eyebrow">What Terramorph checks</p><h2>{bullets[1]}</h2><div class="proof-steps">{''.join(f'<div><b>{i+1}. {title}</b><span>{copy}</span></div>' for i,(title,copy) in enumerate(next_steps))}</div></div></div></section>
+<section class="section clay-section"><div class="container local-grid"><div><p class="eyebrow">Why request now</p><h2>{bullets[2]}</h2><p>{bullets[3]}</p><a class="btn btn-primary" href="#quote">Start My Free Assessment</a></div><div class="authority-list"><div><b>Fast next step</b><span>Submit the form or call and Terramorph can review the property, service need, timeline, and photos.</span></div><div><b>Real project proof</b><span>Project photos and named reviews stay close to the quote path so the page feels credible, not generic.</span></div><div><b>Local conditions</b><span>Wood and Lucas County soil, drainage, freeze-thaw, and weather are considered before recommending work.</span></div><div><b>Clear estimate</b><span>The goal is a practical scope, clean communication, and a path to getting the work handled.</span></div></div></div></section>
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>See the kind of work this estimate can start.</h2></div><div class="container">{photo_gallery()}</div></section>
 {review_section()}
 {faq_section(faqs)}
-<section class="section quote-section"><div class="container quote-grid">{quote_form(form_title)}<div class="cta-proof"><p class="eyebrow">Built for fast mobile decisions</p><h2>Real photos, clear reviews, a visible call button, and a simple free estimate form.</h2>{review_stack(3)}</div></div></section>
+<section class="section quote-section"><div class="container quote-grid">{quote_form(form_title, service=service, source='facebook', cta='Open Secure Quote Form')}<div class="cta-proof"><p class="eyebrow">Built for fast homeowner decisions</p><h2>One clear offer, visible proof, a call button, and a short quote path.</h2>{review_stack(3)}<ul class="check-list"><li>See real project proof before requesting an estimate.</li><li>Call or use the secure quote form when you are ready.</li><li>Send photos so Terramorph can understand the property faster.</li></ul></div></div></section>
 '''
     desc = f'{title} from Terramorph for Wood and Lucas County homeowners. Real photos, reviews, phone call, and free estimate request.'
     schema = schema_for(filename, title, desc, faqs, service)
@@ -485,9 +503,9 @@ service_page('outdoor-lighting.html', 'Outdoor Lighting', 'Outdoor lighting for 
 service_page('lawn-maintenance.html', 'Lawn Maintenance', 'Recurring lawn and property upkeep', 'real-lawn.webp', 'Keep the property clean, edged, and professionally maintained.', 'Residential and commercial mowing, edging, trimming, weeding, bed upkeep, brush control, and recurring property presentation for Wood and Lucas County properties.', 'The property starts looking overgrown, uneven, or neglected because mowing, edging, beds, weeds, and trimming are not handled consistently.', 'A cleaner, better-maintained property with dependable upkeep and less weekend work for the owner.', 'Set Up Maintenance')
 service_page('seasonal-cleanups.html', 'Seasonal Cleanups', 'Spring and fall cleanup service', 'real-mulch.webp', 'Reset the property before or after the season hits.', 'Spring and fall cleanups, leaf removal, pruning, trimming, debris removal, bed resets, mulch preparation, and hauling for Northwest Ohio properties.', 'Leaves, branches, overgrowth, dead material, and messy beds make the property look neglected and harder to maintain.', 'A cleaner property reset with debris removed, beds cleaned up, and the outdoor space ready for the next season.', 'Schedule Cleanup')
 
-meta_landing_page('lp-patios.html', 'Paver Patio Estimate', 'Patio and outdoor living estimate', 'real-patio.webp?v=3.14', 'Turn the backyard into a patio, walkway, or outdoor living space people actually use.', 'Request a free estimate for paver patios, walkways, seating areas, fire pits, outdoor kitchens, and hardscape upgrades in Wood and Lucas County.', ['You want a better place to grill, host, relax, or connect the backyard to the home.', 'Terramorph reviews layout, base conditions, drainage, materials, access, and the finished look before scoping the project.', 'A better patio starts with a better plan.', 'Use this landing page when the goal is outdoor living, better backyard function, or a hardscape upgrade.'], 'Paver Patios and Hardscapes', 'Request My Patio Estimate')
-meta_landing_page('lp-drainage.html', 'Drainage Solution Estimate', 'Wet yard and standing water estimate', 'real-drainage.webp', 'Stop fighting standing water after every rain.', 'Request a free estimate for drainage diagnosis, grading, runoff routing, soggy lawn fixes, downspout planning, and wet-yard solutions in Northwest Ohio.', ['Standing water, soggy grass, runoff, or drainage near patios and foundations is making the property frustrating.', 'Terramorph reviews grade, water movement, soil, low spots, downspouts, and practical ways to route water intentionally.', 'Drainage work needs local judgment.', 'Flat lots, clay soil, heavy rain, and freeze-thaw cycles make Northwest Ohio drainage different from a generic landscape job.'], 'Drainage Solutions', 'Request My Drainage Estimate')
-meta_landing_page('lp-landscape-design.html', 'Landscape Design And Installation Estimate', 'Landscape design and install estimate', 'real-entry.webp?v=3.14', 'Make the front yard, beds, and outdoor space feel planned instead of patched together.', 'Request a free estimate for landscape design, plant installation, mulch, rock, edging, sod, bed shaping, and full-property outdoor improvements.', ['The property looks builder-grade, tired, disconnected, or hard to maintain.', 'Terramorph reviews curb appeal, beds, plantings, grading, access, drainage, maintenance, and how the whole property should feel finished.', 'Design and installation should work together.', 'The right plan connects plants, beds, edges, mulch, lighting, patios, drainage, and upkeep instead of treating them as separate guesses.'], 'Landscape Design', 'Request My Landscape Estimate')
+meta_landing_page('lp-patios.html', 'Paver Patio Estimate', 'Patio and outdoor living estimate', 'real-patio.webp?v=3.14', 'Build the patio without the guesswork.', 'Request a free patio assessment for pavers, walkways, seating areas, fire pits, and backyard hardscape upgrades.', ['You want a better place to grill, host, relax, or connect the backyard to the home — but need a real plan and estimate first.', 'Terramorph reviews layout, base conditions, drainage, materials, access, and the finished look before scoping the project.', 'A better patio starts with a better plan.', 'The right patio plan connects daily use, backyard flow, drainage, materials, and budget before work starts.'], 'Paver Patios and Hardscapes', 'Request My Patio Estimate', 'Free Patio Cost + Layout Assessment', ['No useful place to grill or host', 'Old concrete or uneven walkways', 'Backyard feels disconnected from the house', 'Need drainage considered before hardscape work'], [('Layout', 'How the patio connects to doors, grill zones, walkways, seating, and yard flow.'), ('Base + drainage', 'Soil, grade, water movement, and freeze-thaw risk before a patio is priced.'), ('Scope', 'Materials, access, timeline, and budget range for the finished outdoor living space.')])
+meta_landing_page('lp-drainage.html', 'Drainage Solution Estimate', 'Wet yard and standing water estimate', 'real-drainage.webp', 'Stop standing water after every rain.', 'Request a free drainage assessment for standing water, soggy lawn, runoff, grading, and downspout issues.', ['Standing water, soggy grass, runoff, or drainage near patios and foundations is making the property frustrating after every heavy rain.', 'Terramorph reviews grade, water movement, soil, low spots, downspouts, and practical ways to route water intentionally.', 'Drainage work needs local judgment.', 'Flat lots, clay soil, heavy rain, and freeze-thaw cycles make Northwest Ohio drainage different from a generic landscape job.'], 'Drainage Solutions', 'Request My Drainage Estimate', 'Free Yard Drainage Assessment', ['Standing water after rain', 'Soggy lawn or soft low spots', 'Water near the house, garage, patio, or beds', 'Downspouts dumping into the wrong area'], [('Source', 'Where the water starts: roof, neighbor runoff, driveway, grade, clay soil, or low spots.'), ('Route', 'Where water can move safely without creating a new problem.'), ('Fix', 'Practical options such as grading, downspout routing, swales, drains, or finished landscape solutions.')])
+meta_landing_page('lp-landscape-design.html', 'Landscape Design And Installation Estimate', 'Landscape design and install estimate', 'real-entry.webp?v=3.14', 'Make the yard look designed.', 'Request a free landscape review for front beds, curb appeal, plantings, mulch, rock, edging, and full-yard refreshes.', ['The property looks builder-grade, tired, disconnected, or hard to maintain — and you want a clear plan before spending money.', 'Terramorph reviews curb appeal, beds, plantings, grading, access, drainage, maintenance, and how the whole property should feel finished.', 'Design and installation should work together.', 'The right plan connects plants, beds, edges, mulch, lighting, patios, drainage, and upkeep instead of treating them as separate guesses.'], 'Landscape Design', 'Request My Landscape Estimate', 'Free Curb Appeal + Landscape Plan Review', ['Front beds look empty, overgrown, or outdated', 'Not sure what plants/materials fit the house', 'Need mulch, rock, edging, sod, or plant installation', 'Want design, install, and maintenance to connect'], [('Curb appeal', 'What people see from the street, entry, driveway, and outdoor living areas.'), ('Conditions', 'Sun, soil, grade, water movement, maintenance, and existing plant material.'), ('Plan', 'A practical design/install scope that connects budget to the finished look.')])
 
 
 GUIDES = [
@@ -726,7 +744,7 @@ privacy = f'''
 privacy_desc = 'Privacy Policy for Terramorph LLC website visitors, quote requests, analytics, advertising, and customer communication.'
 (root/'privacy.html').write_text(page('Privacy Policy | Terramorph LLC', privacy_desc, privacy, schema_for('privacy.html', 'Privacy Policy', privacy_desc)))
 
-review_notes = '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>V2.6 Review Notes | Terramorph</title><link rel="stylesheet" href="styles.css?v=3.24"></head><body><main class="section"><div class="container review-doc"><p class="eyebrow">V2.6 copy and polish summary</p><h1>Terramorph V2.6 copy, grammar, and punctuation pass</h1><h2>What changed</h2><ul><li>Expanded services to reflect the current Terramorph service mix: lawn care, mowing, landscape maintenance, seasonal cleanups, native habitat rehabilitation, fire pits, outdoor kitchens, concrete, drainage, lighting, plant installation, mulch, pruning, trimming, hauling, power washing, snow removal, holiday lighting, demolition, and site prep.</li><li>Replaced weak comparison imagery with stronger real Terramorph photos found on the Desktop.</li><li>Changed the middle-page typography from compressed decorative display styling to cleaner Inter/Manrope typography with better spacing and readability.</li><li>Reduced the heavy boxed/card feeling so service sections scan cleaner and feel more professional.</li><li>Kept trust, phone calls, free estimates, reviews, Google, BBB, licensed/insured, and local Northwest Ohio proof visible.</li></ul><p><a class="btn btn-primary" href="index.html">Open V2.6 Homepage</a></p></div></main></body></html>'''
+review_notes = '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>V2.6 Review Notes | Terramorph</title><link rel="stylesheet" href="styles.css?v=3.40"></head><body><main class="section"><div class="container review-doc"><p class="eyebrow">V2.6 copy and polish summary</p><h1>Terramorph V2.6 copy, grammar, and punctuation pass</h1><h2>What changed</h2><ul><li>Expanded services to reflect the current Terramorph service mix: lawn care, mowing, landscape maintenance, seasonal cleanups, native habitat rehabilitation, fire pits, outdoor kitchens, concrete, drainage, lighting, plant installation, mulch, pruning, trimming, hauling, power washing, snow removal, holiday lighting, demolition, and site prep.</li><li>Replaced weak comparison imagery with stronger real Terramorph photos found on the Desktop.</li><li>Changed the middle-page typography from compressed decorative display styling to cleaner Inter/Manrope typography with better spacing and readability.</li><li>Reduced the heavy boxed/card feeling so service sections scan cleaner and feel more professional.</li><li>Kept trust, phone calls, free estimates, reviews, Google, BBB, licensed/insured, and local Northwest Ohio proof visible.</li></ul><p><a class="btn btn-primary" href="index.html">Open V2.6 Homepage</a></p></div></main></body></html>'''
 (root/'review-notes.html').write_text(review_notes)
 
 readme = '''# Terramorph V2.6 Website Mockup
@@ -791,9 +809,9 @@ def post_process_html():
         url = BASE_URL + ('/' if path.name == 'index.html' else '/' + path.name)
         html = html.replace('<meta property="og:image" content="assets/real-hero.webp">', f'<meta property="og:image" content="{BASE_URL}/assets/real-hero.webp">\n  <meta property="og:url" content="{url}">\n  <meta name="twitter:card" content="summary_large_image">\n  <link rel="canonical" href="{url}">')
         html = html.replace('Request a Outdoor Lighting Quote', 'Request an Outdoor Lighting Quote')
-        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.24"></script>')
+        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.40"></script>')
         path.write_text(html)
 
 write_static_seo_files()
 post_process_html()
-print('wrote V3.23 Jobber CRM fallback + city/service SEO pages')
+print('wrote V3.40 Meta funnel conversion pages')
