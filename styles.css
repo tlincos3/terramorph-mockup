@@ -192,9 +192,14 @@ body.quote-popup-open{overflow:hidden}
 .jobber-quote-panel{background:linear-gradient(145deg,#1a2119,#0f1611)!important;border:1px solid rgba(241,211,132,.28)}
 .jobber-embed-wrap{background:#fff;border:1px solid rgba(255,255,255,.18);margin-top:22px;min-height:520px;padding:10px;box-shadow:0 22px 60px rgba(0,0,0,.24)}
 .jobber-fallback{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px}.jobber-fallback p{margin:0;color:#e8efe3!important;flex:1 1 260px}
+.jobber-direct-card{margin-top:22px;padding:26px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);box-shadow:0 22px 60px rgba(0,0,0,.18)}
+.jobber-direct-card h3{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.7rem);line-height:1;margin:8px 0 14px;color:#fff}
+.jobber-direct-card p{color:#e8efe3}
+.jobber-direct-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.jobber-direct-actions .btn{min-width:220px}
 .quote-popup-simple{grid-template-columns:.95fr 1.05fr}.popup-direct-actions{padding:34px;display:flex;flex-direction:column;justify-content:center;gap:14px;background:#fffdf8}.popup-direct-actions h3{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.8rem);line-height:1;margin:0;color:var(--ink)}.popup-direct-actions p{color:#4f5a50;line-height:1.55}.popup-direct-actions .btn{width:max-content}
 .city-service-card h3{font-size:1.35rem!important;line-height:1.1!important}.city-service-hero .page-hero-content{max-width:980px}
-@media(max-width:760px){.jobber-embed-wrap{min-height:620px;padding:4px}.quote-popup-simple{grid-template-columns:1fr}.popup-direct-actions .btn{width:100%;justify-content:center}}
+@media(max-width:760px){.jobber-embed-wrap{min-height:620px;padding:4px}.jobber-direct-card{padding:20px}.jobber-direct-actions .btn{width:100%;justify-content:center}.quote-popup-simple{grid-template-columns:1fr}.popup-direct-actions .btn{width:100%;justify-content:center}}
 
 /* Hide Jobber embed security/error fallback and show direct CRM link instead when needed */
 .jobber-embed-unavailable .jobber-embed-wrap{display:none}.jobber-embed-wrap .jobber-flash--error{display:none!important}

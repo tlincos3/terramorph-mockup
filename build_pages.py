@@ -156,16 +156,38 @@ def head(title, desc, schema=''):
   <meta property="og:description" content="{desc}">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/real-hero.webp">
-  <link rel="stylesheet" href="styles.css?v=3.41">{schema_block}{meta_pixel}
+  <link rel="stylesheet" href="styles.css?v=3.42">{schema_block}{meta_pixel}
 </head>
 <body>{NAV}<main id="main">'''
 
 def page(title, desc, body, schema=''):
     return head(title, desc, schema) + body + '</main>' + quote_popup() + FOOT + '</body></html>'
 
-def quote_form(title='Request a Premium Project Quote', service='Outdoor Transformation', source='website', cta='Open Secure Quote Form'):
+def quote_form(title='Request a Premium Project Quote', service='Outdoor Transformation', source='website', cta='Open Secure Quote Form', direct_only=False, same_tab=False):
     service_slug = service.lower().replace(' and ', '-').replace('&', 'and').replace(' ', '-').replace('/', '-')
     direct_url = f"{JOBBER_QUOTE_URL}?utm_source={source}&utm_medium=website&utm_campaign={service_slug}-quote&source=social_media"
+    target_attrs = '' if same_tab else ' target="_blank" rel="noopener"'
+    if direct_only:
+        return f'''
+<section class="quote-panel jobber-quote-panel jobber-direct-panel" id="quote" aria-labelledby="quote-title" data-service="{service}">
+  <p class="eyebrow light">Fast free estimate</p>
+  <h2 id="quote-title">{title}</h2>
+  <p>Open the secure Terramorph request form, send the property details into Jobber, and return to the Terramorph thank-you page after the form is completed.</p>
+  <div class="quote-speed-row" aria-label="Fast estimate expectations">
+    <span>✓ Free estimate</span><span>✓ Real CRM intake</span><span>✓ Wood + Lucas County</span>
+  </div>
+  <div class="jobber-direct-card">
+    <p class="eyebrow">Secure request path</p>
+    <h3>Send the request straight into Jobber.</h3>
+    <p>Best for paid traffic: the homeowner completes the secure Terramorph form, the request stays organized in the CRM, and the submission can come back to Terramorph’s thank-you page for cleaner Meta lead tracking.</p>
+    <ul class="check-list">
+      <li>Send service need, city, timeline, and photos.</li>
+      <li>Keep the request inside Terramorph’s CRM.</li>
+      <li>Return to Terramorph after submission for cleaner lead measurement.</li>
+    </ul>
+    <div class="jobber-direct-actions"><a class="btn btn-gold" href="{direct_url}" data-quote-service="{service}"{target_attrs}>{cta}</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
+  </div>
+</section>'''
     return f'''
 <section class="quote-panel jobber-quote-panel" id="quote" aria-labelledby="quote-title" data-service="{service}">
   <p class="eyebrow light">Fast free estimate</p>
@@ -179,7 +201,7 @@ def quote_form(title='Request a Premium Project Quote', service='Outdoor Transfo
     <link rel="stylesheet" href="https://d3ey4dbjkt2f6s.cloudfront.net/assets/external/work_request_embed.css" media="screen" />
     <script src="https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js" clienthub_id="{JOBBER_EMBED_ID}" form_url="{JOBBER_EMBED_FORM_URL}"></script>
   </div>
-  <div class="jobber-fallback"><p>If the embedded form does not load, open the secure request form directly.</p><a class="btn btn-gold" href="{direct_url}" target="_blank" rel="noopener" data-quote-service="{service}">{cta}</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
+  <div class="jobber-fallback"><p>If the embedded form does not load, open the secure request form directly.</p><a class="btn btn-gold" href="{direct_url}" data-quote-service="{service}"{target_attrs}>{cta}</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
 </section>'''
 
 def quote_popup():
@@ -197,7 +219,7 @@ def quote_popup():
     <div class="popup-direct-actions">
       <h3>Ready for an estimate?</h3>
       <p>Open the secure Jobber quote form or call now if the project is urgent.</p>
-      <a class="btn btn-gold" href="{JOBBER_QUOTE_URL}" target="_blank" rel="noopener">Open Quote Form</a>
+      <a class="btn btn-gold" href="{JOBBER_QUOTE_URL}">Open Quote Form</a>
       <a class="btn btn-primary" href="tel:{TEL}">Call {PHONE}</a>
     </div>
   </section>
@@ -490,7 +512,7 @@ def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, 
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>See the kind of work this estimate can start.</h2></div><div class="container">{photo_gallery()}</div></section>
 {review_section()}
 {faq_section(faqs)}
-<section class="section quote-section"><div class="container quote-grid">{quote_form(form_title, service=service, source='facebook', cta='Open Secure Quote Form')}<div class="cta-proof"><p class="eyebrow">Built for fast homeowner decisions</p><h2>One clear offer, visible proof, a call button, and a short quote path.</h2>{review_stack(3)}<ul class="check-list"><li>See real project proof before requesting an estimate.</li><li>Call or use the secure quote form when you are ready.</li><li>Send photos so Terramorph can understand the property faster.</li></ul></div></div></section>
+<section class="section quote-section"><div class="container quote-grid">{quote_form(form_title, service=service, source='facebook', cta='Open Secure Quote Form', direct_only=True, same_tab=True)}<div class="cta-proof"><p class="eyebrow">Built for fast homeowner decisions</p><h2>One clear offer, visible proof, a call button, and a short quote path.</h2>{review_stack(3)}<ul class="check-list"><li>See real project proof before requesting an estimate.</li><li>Open the secure quote form and complete the request in Jobber.</li><li>Return to Terramorph’s thank-you page after submission for cleaner tracking.</li></ul></div></div></section>
 '''
     desc = f'{title} from Terramorph for Wood and Lucas County homeowners. Real photos, reviews, phone call, and free estimate request.'
     schema = schema_for(filename, title, desc, faqs, service)
@@ -812,9 +834,9 @@ def post_process_html():
         url = BASE_URL + ('/' if path.name == 'index.html' else '/' + path.name)
         html = html.replace('<meta property="og:image" content="assets/real-hero.webp">', f'<meta property="og:image" content="{BASE_URL}/assets/real-hero.webp">\n  <meta property="og:url" content="{url}">\n  <meta name="twitter:card" content="summary_large_image">\n  <link rel="canonical" href="{url}">')
         html = html.replace('Request a Outdoor Lighting Quote', 'Request an Outdoor Lighting Quote')
-        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.41"></script>')
+        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.42"></script>')
         path.write_text(html)
 
 write_static_seo_files()
 post_process_html()
-print('wrote V3.41 Meta funnel conversion pages')
+print('wrote V3.42 Meta funnel conversion pages')
