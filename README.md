@@ -1,6 +1,6 @@
-# Terramorph V2.6 Website Mockup
+# Terramorph V3.43 Website
 
-Professional cleanup pass for Terramorph with cleaner typography, real Terramorph project photos, expanded services, corrected grammar and punctuation, consistent capitalization, and simpler homeowner-facing copy.
+Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consistency, citation cleanup support, high-intent service-area landing pages, and conversion tracking into Jobber.
 
 ## Open
 - `index.html` — homepage
@@ -17,14 +17,14 @@ Professional cleanup pass for Terramorph with cleaner typography, real Terramorp
 - `privacy.html` — privacy policy
 - `review-notes.html` — summary of changes
 
-## V2.6 priorities implemented
-- Broader service coverage
-- Real Terramorph images from Desktop files
-- Cleaner mid-page typography
-- Less compressed heading treatment
+## V3.43 priorities implemented
+- Official NAP/entity block for citation tools and directory cleanup
+- Stronger LocalBusiness, LandscapingBusiness, HomeAndConstructionBusiness, service, FAQ, breadcrumb, and offer catalog schema
+- Canonical URLs, Open Graph, Twitter cards, and absolute social preview images across generated pages
+- SameAs signals for BBB, Yelp, and Nextdoor where public profiles are visible
 - Fewer heavy boxed/card sections
 - Reviews, trust, Google reviews, BBB Membership, license/insurance, phone, and free estimate CTAs
-- Sitewide grammar, punctuation, capitalization, and copy polish
+- Sitewide NAP consistency note in footer and official business information section
 - Accessibility improvements
 - Added an About page explaining the local, diagnosis-first approach
 - Added Outdoor Project Guides hub and eight SEO guide pages with FAQ/article schema and quote CTAs

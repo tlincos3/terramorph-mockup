@@ -262,3 +262,10 @@ html,body{max-width:100%;overflow-x:hidden}.conversion-hero,.meta-landing-hero,.
 .jobber-embed-wrap .jobber-inline-work-request,
 .jobber-embed-wrap iframe.jobber-work-request{min-height:520px!important;width:100%!important;}
 @media(max-width:760px){.jobber-embed-wrap .jobber-inline-work-request,.jobber-embed-wrap iframe.jobber-work-request{min-height:620px!important;}}
+
+/* V3.43 audit response: local entity / NAP authority block */
+.official-business-section{background:#fffdf8;border-block:1px solid var(--line)}
+.official-business-card{display:grid;grid-template-columns:.9fr 1.1fr;gap:28px;align-items:start;background:#fff;border:1px solid var(--line);box-shadow:0 22px 70px rgba(7,10,8,.08);padding:34px}
+.official-business-card h2{font-family:var(--font-display);font-size:clamp(2rem,3.4vw,3.6rem);line-height:1;letter-spacing:-.035em;margin:8px 0 14px;color:#101713}
+.official-business-card p{color:#3d493f;line-height:1.6;margin:0 0 14px}.nap-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0}.nap-grid div{background:#fffdf8;border:1px solid #e7ddc8;padding:15px}.nap-grid dt{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;font-weight:950;color:var(--readable-green);margin:0 0 6px}.nap-grid dd{margin:0;color:#101713;font-weight:900;line-height:1.35}.nap-grid a{color:var(--readable-green);text-decoration:underline;text-underline-offset:3px}.official-nap{margin-top:12px;color:#d9e6d5!important;font-size:.82rem!important}
+@media(max-width:900px){.official-business-card{grid-template-columns:1fr;padding:26px}.nap-grid{grid-template-columns:1fr}}
