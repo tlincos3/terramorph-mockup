@@ -13,6 +13,7 @@ const JOBBER_SOURCE_URLS = {
 };
 const TRACKING_STORAGE_KEY = 'terramorphAttributionContext';
 const PENDING_JOBBER_KEY = 'terramorphPendingJobberLead';
+const QUICK_LEAD_KEY = 'terramorphQuickLeadContext';
 const SOCIAL_SOURCES = new Set(['facebook', 'instagram', 'google']);
 const TRACKING_PARAM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'msclkid'];
 
@@ -139,6 +140,7 @@ function metaTrackCustom(eventName, parameters = {}){
 
 function getTrackingContext(){
   const stored = getMergedTrackingContext();
+  const quickLead = readStoredJson(QUICK_LEAD_KEY) || {};
   const service = document.querySelector('[data-funnel-service]')?.dataset.funnelService || document.querySelector('[data-service]')?.dataset.service || stored.service_category || '';
   return {
     page_title: document.title,
@@ -150,7 +152,10 @@ function getTrackingContext(){
     utm_medium: stored.utm_medium || '',
     utm_campaign: stored.utm_campaign || '',
     utm_content: stored.utm_content || '',
-    fbclid: stored.fbclid || ''
+    fbclid: stored.fbclid || '',
+    lead_service: quickLead.service || '',
+    lead_city: quickLead.city || '',
+    lead_timeline: quickLead.timeline || ''
   };
 }
 
@@ -211,6 +216,92 @@ function trackCompletedQuoteLead(){
   window.localStorage?.removeItem(PENDING_JOBBER_KEY);
 }
 
+
+function buildQuickLeadEventId(){
+  return `quick-lead-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function collectQuickLeadFields(form){
+  const data = new FormData(form);
+  return {
+    name: String(data.get('name') || '').trim(),
+    phone: String(data.get('phone') || '').trim(),
+    city: String(data.get('city') || '').trim(),
+    service: String(data.get('service') || form.dataset.service || getTrackingContext().service_category || '').trim(),
+    timeline: String(data.get('timeline') || '').trim(),
+    problem: String(data.get('problem') || '').trim()
+  };
+}
+
+function getQuickLeadJobberUrl(form, quickLead){
+  const base = form.dataset.jobberUrl || JOBBER_SOURCE_URLS.facebook || `https://${JOBBER_REQUEST_PATH}`;
+  const url = applyJobberContextToUrl(base);
+  const params = {
+    tm_lead_source: 'quick_form',
+    tm_name: quickLead.name,
+    tm_phone: quickLead.phone,
+    tm_city: quickLead.city,
+    tm_service: quickLead.service,
+    tm_timeline: quickLead.timeline,
+    tm_problem: quickLead.problem
+  };
+  Object.entries(params).forEach(([key, value]) => {
+    if(value) url.searchParams.set(key, value);
+  });
+  return url;
+}
+
+function handleQuickLeadSubmit(form, event){
+  event.preventDefault();
+  const button = form.querySelector('[type="submit"]');
+  const status = form.querySelector('[data-quick-lead-status]');
+  const quickLead = collectQuickLeadFields(form);
+  const missing = [];
+  if(!quickLead.name) missing.push('name');
+  if(!quickLead.phone) missing.push('phone');
+  if(!quickLead.city) missing.push('city');
+  if(!quickLead.problem) missing.push('project details');
+  if(missing.length){
+    if(status) status.textContent = `Add ${missing.join(', ')} so Terramorph knows what to review.`;
+    form.classList.add('quick-lead-form-error');
+    return;
+  }
+
+  const eventId = buildQuickLeadEventId();
+  const context = {
+    source: 'paid_landing_quick_form',
+    lead_stage: 'quick_form_continue_to_jobber',
+    ...getTrackingContext(),
+    lead_service: quickLead.service,
+    lead_city: quickLead.city,
+    lead_timeline: quickLead.timeline,
+    lead_problem_length: quickLead.problem.length
+  };
+  writeStoredJson(QUICK_LEAD_KEY, {
+    ...quickLead,
+    event_id: eventId,
+    created_at: new Date().toISOString(),
+    ...getMergedTrackingContext()
+  });
+  writeStoredJson(PENDING_JOBBER_KEY, {
+    id: eventId,
+    created_at: new Date().toISOString(),
+    destination_url: getQuickLeadJobberUrl(form, quickLead).toString(),
+    quick_lead: true,
+    ...getMergedTrackingContext()
+  });
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({event: 'quick_lead_continue', ...context});
+  metaTrack('Lead', {content_name: 'Terramorph quick quote lead', content_category: quickLead.service || 'paid_landing', ...context}, {eventId});
+  metaTrackCustom('QuickLeadContinue', context);
+  if(button){
+    button.disabled = true;
+    button.textContent = 'Opening secure quote form…';
+  }
+  if(status) status.textContent = 'Good — opening the secure Terramorph quote form so the request reaches the team.';
+  window.location.href = getQuickLeadJobberUrl(form, quickLead).toString();
+}
+
 function openQuotePopup(){
   const popup = document.querySelector('#quote-popup');
   if(!popup || popup.dataset.opened === 'true') return;
@@ -257,6 +348,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.querySelectorAll('a[href^="tel:"]').forEach(link => {
     link.addEventListener('click', () => trackPhoneClick(link));
+  });
+  document.querySelectorAll('[data-quick-lead-form]').forEach(form => {
+    form.addEventListener('submit', event => handleQuickLeadSubmit(form, event));
   });
   document.querySelectorAll('[data-close-popup]').forEach(el => el.addEventListener('click', closeQuotePopup));
   document.addEventListener('keydown', event => { if(event.key === 'Escape') closeQuotePopup(); });

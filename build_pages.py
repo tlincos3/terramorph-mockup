@@ -200,27 +200,61 @@ def page(title, desc, body, schema=''):
         page_name = ''
     return head(title, desc, schema, page_name) + body + '</main>' + quote_popup() + FOOT + '</body></html>'
 
+def quick_lead_form(service, offer):
+    return f"""
+<section class="quick-lead-card" aria-labelledby="quick-lead-title" data-service="{service}">
+  <div class="quick-lead-copy">
+    <p class="eyebrow light">Fast first step</p>
+    <h2 id="quick-lead-title">Start the free assessment before the full quote form.</h2>
+    <p>{offer}. Send the basics first, then continue into Terramorph's secure Jobber form so the team gets the full request.</p>
+    <div class="quick-lead-proof"><span>★★★★★ 200+ Google Reviews</span><span>Licensed + insured</span><span>Wood + Lucas County</span></div>
+  </div>
+  <form class="quick-lead-form" data-quick-lead-form data-service="{service}" data-jobber-url="{JOBBER_QUOTE_URL}" novalidate>
+    <label>Name <input name="name" autocomplete="name" required></label>
+    <label>Phone <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required></label>
+    <label>City <input name="city" autocomplete="address-level2" required></label>
+    <label>Timeline
+      <select name="timeline">
+        <option value="">Choose one</option>
+        <option>ASAP</option>
+        <option>This month</option>
+        <option>1-3 months</option>
+        <option>Planning ahead</option>
+      </select>
+    </label>
+    <label class="quick-lead-wide">What needs fixed or built?
+      <textarea name="problem" rows="3" placeholder="Example: standing water near patio after rain, soggy backyard, downspout issue..." required></textarea>
+    </label>
+    <input type="hidden" name="service" value="{service}">
+    <button class="btn btn-gold" type="submit">Continue to Secure Quote Form</button>
+    <p class="quick-lead-status" data-quick-lead-status>Step 1 captures the lead signal; Step 2 sends the full request into Jobber.</p>
+  </form>
+</section>"""
+
 def quote_form(title='Request a Premium Project Quote', service='Outdoor Transformation', source='website', cta='Open Secure Quote Form', direct_only=False, same_tab=False):
     service_slug = service.lower().replace(' and ', '-').replace('&', 'and').replace(' ', '-').replace('/', '-')
-    direct_url = f"{JOBBER_QUOTE_URL}?utm_source={source}&utm_medium=website&utm_campaign={service_slug}-quote&source=social_media"
+    if source and source != 'website':
+        direct_url = f"{JOBBER_QUOTE_URL}?utm_source={source}&utm_medium=website&utm_campaign={service_slug}-quote&source=social_media"
+    else:
+        direct_url = f"{JOBBER_QUOTE_URL}?utm_campaign={service_slug}-quote"
     target_attrs = '' if same_tab else ' target="_blank" rel="noopener"'
     if direct_only:
         return f'''
 <section class="quote-panel jobber-quote-panel jobber-direct-panel" id="quote" aria-labelledby="quote-title" data-service="{service}">
   <p class="eyebrow light">Fast free estimate</p>
   <h2 id="quote-title">{title}</h2>
-  <p>Open the secure Terramorph request form, send the property details into Jobber, and return to the Terramorph thank-you page after the form is completed.</p>
+  <p>Open the secure Terramorph request form, send the property details into Jobber, with the ad/source details kept on the quote path.</p>
   <div class="quote-speed-row" aria-label="Fast estimate expectations">
     <span>✓ Free estimate</span><span>✓ Real CRM intake</span><span>✓ Wood + Lucas County</span>
   </div>
   <div class="jobber-direct-card">
     <p class="eyebrow">Secure request path</p>
     <h3>Send the request straight into Jobber.</h3>
-    <p>Best for paid traffic: the homeowner completes the secure Terramorph form, the request stays organized in the CRM, and the submission can come back to Terramorph’s thank-you page for cleaner Meta lead tracking.</p>
+    <p>Best for paid traffic: the homeowner completes the secure Terramorph form, the request stays organized in the CRM, while the ad/source details stay attached for cleaner follow-up and reporting.</p>
     <ul class="check-list">
       <li>Send service need, city, timeline, and photos.</li>
       <li>Keep the request inside Terramorph’s CRM.</li>
-      <li>Return to Terramorph after submission for cleaner lead measurement.</li>
+      <li>Keep the original ad/source details attached to the quote path.</li>
     </ul>
     <div class="jobber-direct-actions"><a class="btn btn-gold" href="{direct_url}" data-quote-service="{service}"{target_attrs}>{cta}</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
   </div>
@@ -568,12 +602,13 @@ def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, 
   <div class="container page-hero-content"><p class="eyebrow light">{eyebrow}</p><h1>{headline}</h1><p>{lead}</p><div class="offer-card"><b>{offer}</b><span>Send the problem, city, timeline, and photos if you have them. Terramorph follows up with the best next step.</span></div><div class="cta-row"><a class="btn btn-gold" href="#quote">Get My Free Assessment</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div><div class="above-fold-trust"><span>★★★★★ 200+ Google Reviews</span><span>BBB Member</span><span>Licensed + insured</span><span>Local crew</span></div></div>
 </section>
 <section class="conversion-trust-strip" aria-label="Terramorph credibility"><div class="container conversion-trust-grid"><span>★★★★★ 200+ Google Reviews</span><span>Google Verified</span><span>BBB Member</span><span>Licensed + insured</span><span>Serving Toledo, Perrysburg, Maumee, Wood County, Lucas County</span></div></section>
+<section class="section quick-lead-section"><div class="container">{quick_lead_form(service, offer)}</div></section>
 <section class="section pain-proof-section"><div class="container pain-proof-grid"><div class="pain-card"><p class="eyebrow light">This is for you if</p><h2>{bullets[0]}</h2><ul>{''.join(f'<li>{item}</li>' for item in symptoms)}</ul><a class="btn btn-gold" href="#quote">See What This Would Cost</a></div><div class="proof-card"><p class="eyebrow">What Terramorph checks</p><h2>{bullets[1]}</h2><div class="proof-steps">{''.join(f'<div><b>{i+1}. {title}</b><span>{copy}</span></div>' for i,(title,copy) in enumerate(next_steps))}</div></div></div></section>
 <section class="section clay-section"><div class="container local-grid"><div><p class="eyebrow">Why request now</p><h2>{bullets[2]}</h2><p>{bullets[3]}</p><a class="btn btn-primary" href="#quote">Start My Free Assessment</a></div><div class="authority-list"><div><b>Fast next step</b><span>Submit the form or call and Terramorph can review the property, service need, timeline, and photos.</span></div><div><b>Real project proof</b><span>Project photos and named reviews stay close to the quote path so the page feels credible, not generic.</span></div><div><b>Local conditions</b><span>Wood and Lucas County soil, drainage, freeze-thaw, and weather are considered before recommending work.</span></div><div><b>Clear estimate</b><span>The goal is a practical scope, clean communication, and a path to getting the work handled.</span></div></div></div></section>
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>See the kind of work this estimate can start.</h2></div><div class="container">{photo_gallery()}</div></section>
 {review_section()}
 {faq_section(faqs)}
-<section class="section quote-section"><div class="container quote-grid">{quote_form(form_title, service=service, source='facebook', cta='Open Secure Quote Form', direct_only=True, same_tab=True)}<div class="cta-proof"><p class="eyebrow">Built for fast homeowner decisions</p><h2>One clear offer, visible proof, a call button, and a short quote path.</h2>{review_stack(3)}<ul class="check-list"><li>See real project proof before requesting an estimate.</li><li>Open the secure quote form and complete the request in Jobber.</li><li>Return to Terramorph’s thank-you page after submission for cleaner tracking.</li></ul></div></div></section>
+<section class="section quote-section"><div class="container quote-grid">{quote_form(form_title, service=service, source='website', cta='Open Secure Quote Form', direct_only=True, same_tab=True)}<div class="cta-proof"><p class="eyebrow">Built for fast homeowner decisions</p><h2>One clear offer, visible proof, a call button, and a short quote path.</h2>{review_stack(3)}<ul class="check-list"><li>See real project proof before requesting an estimate.</li><li>Open the secure quote form and complete the request in Jobber.</li><li>Keep ad/source details attached through the quote path for cleaner follow-up.</li></ul></div></div></section>
 '''
     desc = f'{title} from Terramorph for Wood and Lucas County homeowners. Real photos, reviews, phone call, and free estimate request.'
     schema = schema_for(filename, title, desc, faqs, service)
