@@ -157,6 +157,15 @@ function metaTrackCustom(eventName, parameters = {}){
 function pushAnalyticsEvent(eventName, context = {}){
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({event: eventName, ...context});
+
+  if(typeof gtag === 'function'){
+    try {
+      const {event, ...ga4Params} = context || {};
+      gtag('event', eventName, ga4Params);
+    } catch(error) {
+      console.warn('GA4 event tracking failed', eventName, error);
+    }
+  }
 }
 
 function getTrackingContext(){
