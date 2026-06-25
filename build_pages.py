@@ -147,6 +147,7 @@ PROJECT_PHOTOS = [
 def head(title, desc, schema='', page_name=''):
     canonical_url = BASE_URL + ('/' if page_name in ('', 'index.html') else '/' + page_name)
     schema_block = f'\n  <script type="application/ld+json">{schema}</script>' if schema else ''
+    robots_block = '\n  <meta name="robots" content="noindex, nofollow">' if page_name in ('thank-you.html', 'review-notes.html') else ''
     meta_pixel = '''
   <!-- Meta Pixel Code -->
   <script>
@@ -182,7 +183,7 @@ def head(title, desc, schema='', page_name=''):
   <meta name="format-detection" content="telephone=yes">
   <link rel="preconnect" href="https://connect.facebook.net">
   <link rel="preconnect" href="https://clienthub.getjobber.com">
-  <link rel="stylesheet" href="styles.css?v=3.43">{schema_block}{meta_pixel}
+  <link rel="stylesheet" href="styles.css?v=3.44">{robots_block}{schema_block}{meta_pixel}
 </head>
 <body>{NAV}<main id="main">'''
 
@@ -866,11 +867,11 @@ privacy = f'''
 privacy_desc = 'Privacy Policy for Terramorph LLC website visitors, quote requests, analytics, advertising, and customer communication.'
 (root/'privacy.html').write_text(page('Privacy Policy | Terramorph LLC', privacy_desc, privacy, schema_for('privacy.html', 'Privacy Policy', privacy_desc)))
 
-review_notes_body = '''<section class="section"><div class="container review-doc"><p class="eyebrow">V3.43 audit response summary</p><h1>Terramorph local SEO, citation, and conversion response</h1><h2>What changed</h2><ul><li>Added official business information blocks so Google, Meta, and directories have one consistent NAP/entity source.</li><li>Strengthened LocalBusiness/LandscapingBusiness/HomeAndConstructionBusiness schema, sameAs links, contact point, service areas, categories, and service offer catalog.</li><li>Added canonical, Open Graph, Twitter card, and absolute social image metadata across generated pages.</li><li>Kept high-intent quote CTAs, Jobber tracking, phone clicks, city/service pages, proof, reviews, and local service-area copy visible near conversion points.</li></ul><p><a class="btn btn-primary" href="index.html">Open homepage</a></p></div></section>'''
-review_notes_desc = 'Summary of Terramorph V3.43 local SEO, NAP, citation, and conversion improvements.'
-(root/'review-notes.html').write_text(page('V3.43 Audit Response Notes | Terramorph', review_notes_desc, review_notes_body, schema_for('review-notes.html', 'V3.43 Audit Response Notes', review_notes_desc)))
+review_notes_body = '''<section class="section"><div class="container review-doc"><p class="eyebrow">V3.44 audit response summary</p><h1>Terramorph local SEO, citation, and conversion response</h1><h2>What changed</h2><ul><li>Added official business information blocks so Google, Meta, and directories have one consistent NAP/entity source.</li><li>Strengthened LocalBusiness/LandscapingBusiness/HomeAndConstructionBusiness schema, sameAs links, contact point, service areas, categories, and service offer catalog.</li><li>Added canonical, Open Graph, Twitter card, and absolute social image metadata across generated pages.</li><li>Kept high-intent quote CTAs, Jobber tracking, phone clicks, city/service pages, proof, reviews, and local service-area copy visible near conversion points.</li></ul><p><a class="btn btn-primary" href="index.html">Open homepage</a></p></div></section>'''
+review_notes_desc = 'Summary of Terramorph V3.44 local SEO, NAP, citation, and conversion improvements.'
+(root/'review-notes.html').write_text(page('V3.44 Audit Response Notes | Terramorph', review_notes_desc, review_notes_body, schema_for('review-notes.html', 'V3.44 Audit Response Notes', review_notes_desc)))
 
-readme = '''# Terramorph V3.43 Website
+readme = '''# Terramorph V3.44 Website
 
 Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consistency, citation cleanup support, high-intent service-area landing pages, and conversion tracking into Jobber.
 
@@ -889,7 +890,7 @@ Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consi
 - `privacy.html` — privacy policy
 - `review-notes.html` — summary of changes
 
-## V3.43 priorities implemented
+## V3.44 priorities implemented
 - Official NAP/entity block for citation tools and directory cleanup
 - Stronger LocalBusiness, LandscapingBusiness, HomeAndConstructionBusiness, service, FAQ, breadcrumb, and offer catalog schema
 - Canonical URLs, Open Graph, Twitter cards, and absolute social preview images across generated pages
@@ -914,7 +915,7 @@ thank_you = f"""
 (root/'thank-you.html').write_text(page('Quote Request Received | Terramorph', 'Thank-you page for Terramorph quote requests in Wood and Lucas County.', thank_you, schema_for('thank-you.html', 'Quote Request Received', 'Thank-you page for Terramorph quote requests.')))
 
 def write_static_seo_files():
-    pages = ['index.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','lp-patios.html','lp-drainage.html','lp-landscape-design.html','lp-outdoor-lighting.html','thank-you.html','review-notes.html']
+    pages = ['index.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','lp-patios.html','lp-drainage.html','lp-landscape-design.html','lp-outdoor-lighting.html']
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     priorities = {'index.html':'1.0','contact.html':'0.9','drainage-solutions.html':'0.9','paver-patios-hardscapes.html':'0.9','landscape-design.html':'0.9'}
     for page_name in pages:
@@ -930,9 +931,9 @@ def post_process_html():
         url = BASE_URL + ('/' if path.name == 'index.html' else '/' + path.name)
         html = html.replace('<meta property="og:image" content="assets/real-hero.webp">', f'<meta property="og:image" content="{BASE_URL}/assets/real-hero.webp">\n  <meta property="og:url" content="{url}">\n  <meta name="twitter:card" content="summary_large_image">\n  <link rel="canonical" href="{url}">')
         html = html.replace('Request a Outdoor Lighting Quote', 'Request an Outdoor Lighting Quote')
-        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.43"></script>')
+        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.44"></script>')
         path.write_text(html)
 
 write_static_seo_files()
 post_process_html()
-print('wrote V3.43 audit response local SEO/CRO pages')
+print('wrote V3.44 audit response local SEO/CRO pages')

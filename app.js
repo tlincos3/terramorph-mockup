@@ -16,6 +16,7 @@ const PENDING_JOBBER_KEY = 'terramorphPendingJobberLead';
 const QUICK_LEAD_KEY = 'terramorphQuickLeadContext';
 const SOCIAL_SOURCES = new Set(['facebook', 'instagram', 'google']);
 const TRACKING_PARAM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'msclkid'];
+const THANK_YOU_LEAD_KEY = 'terramorphThankYouLeadTracked';
 
 function getJobberSource(){
   const params = new URLSearchParams(window.location.search);
@@ -46,6 +47,17 @@ function writeStoredJson(key, value){
   }
 }
 
+function getCookieValue(name){
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = document.cookie.match(new RegExp('(?:^|; )' + escaped + '=([^;]*)'));
+  return match ? decodeURIComponent(match[1]) : '';
+}
+
+function getFbcFromFbclid(fbclid){
+  if(!fbclid) return '';
+  return `fb.1.${Math.floor(Date.now() / 1000)}.${fbclid}`;
+}
+
 function getCurrentTrackingParams(){
   const params = new URLSearchParams(window.location.search);
   const context = {};
@@ -60,6 +72,10 @@ function getCurrentTrackingParams(){
   if(!context.utm_medium && document.querySelector('[data-funnel-service]') && context.utm_source){
     context.utm_medium = 'paid_social';
   }
+  const fbp = getCookieValue('_fbp');
+  const fbc = getCookieValue('_fbc') || getFbcFromFbclid(context.fbclid);
+  if(fbp) context.fbp = fbp;
+  if(fbc) context.fbc = fbc;
   context.landing_page = window.location.pathname;
   context.landing_url = window.location.href;
   context.landing_title = document.title;
@@ -138,6 +154,11 @@ function metaTrackCustom(eventName, parameters = {}){
   }
 }
 
+function pushAnalyticsEvent(eventName, context = {}){
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({event: eventName, ...context});
+}
+
 function getTrackingContext(){
   const stored = getMergedTrackingContext();
   const quickLead = readStoredJson(QUICK_LEAD_KEY) || {};
@@ -152,7 +173,12 @@ function getTrackingContext(){
     utm_medium: stored.utm_medium || '',
     utm_campaign: stored.utm_campaign || '',
     utm_content: stored.utm_content || '',
+    utm_term: stored.utm_term || '',
     fbclid: stored.fbclid || '',
+    gclid: stored.gclid || '',
+    msclkid: stored.msclkid || '',
+    fbp: stored.fbp || getCookieValue('_fbp') || '',
+    fbc: stored.fbc || getCookieValue('_fbc') || getFbcFromFbclid(stored.fbclid) || '',
     lead_service: quickLead.service || '',
     lead_city: quickLead.city || '',
     lead_timeline: quickLead.timeline || ''
@@ -165,16 +191,14 @@ function trackQuoteIntent(source, link){
     destination_url: link?.href || '',
     ...getTrackingContext()
   };
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({event:'quote_intent', ...context});
+  pushAnalyticsEvent('quote_intent', context);
   metaTrack('Contact', {content_name: 'Terramorph quote intent', content_category: context.source, lead_stage: 'intent', ...context});
   metaTrackCustom('QuoteIntent', context);
 }
 
 function trackPhoneClick(link){
   const context = {source: 'phone_click', phone_number: (link?.getAttribute('href') || '').replace(/^tel:/, ''), ...getTrackingContext()};
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({event:'phone_click', ...context});
+  pushAnalyticsEvent('phone_click', context);
   metaTrack('Lead', {content_name: 'Terramorph phone lead', content_category: 'phone_call', lead_type: 'phone_call', ...context});
   metaTrack('Contact', {content_name: 'Terramorph phone click', content_category: 'phone_call', ...context});
 }
@@ -209,13 +233,36 @@ function trackCompletedQuoteLead(){
     fbclid: pending.fbclid || '',
     jobber_destination: pending.destination_url || ''
   };
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({event:'quote_submit', ...context});
+  pushAnalyticsEvent('quote_submit', context);
   metaTrack('Lead', {content_name: 'Terramorph quote request submitted', content_category: 'jobber_submission', lead_stage: 'submitted', ...context}, {eventId: `jobber-submission-${pending.id}`});
   metaTrackCustom('QuoteSubmitted', context);
   window.localStorage?.removeItem(PENDING_JOBBER_KEY);
+  window.sessionStorage?.setItem(THANK_YOU_LEAD_KEY, pending.id);
 }
 
+function trackThankYouFallbackLead(){
+  if(!(window.location.pathname.endsWith('/thank-you.html') || window.location.pathname.endsWith('/thank-you'))) return;
+  if(window.sessionStorage?.getItem(THANK_YOU_LEAD_KEY)) return;
+  const context = getTrackingContext();
+  const hasAttributionContext = Boolean(
+    context.fbclid || context.gclid || context.msclkid ||
+    context.utm_source || context.utm_campaign ||
+    context.lead_service || context.lead_city || context.lead_timeline
+  );
+  if(!hasAttributionContext){
+    pushAnalyticsEvent('quote_thank_you_view_unattributed', {source: 'thank_you_page_unattributed', ...context});
+    return;
+  }
+  const eventId = `thank-you-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  const fallbackContext = {
+    source: 'thank_you_page_attributed_fallback',
+    lead_stage: 'submitted_or_returned',
+    ...context
+  };
+  pushAnalyticsEvent('quote_submit_fallback', fallbackContext);
+  metaTrackCustom('QuoteThankYouFallback', fallbackContext);
+  window.sessionStorage?.setItem(THANK_YOU_LEAD_KEY, eventId);
+}
 
 function buildQuickLeadEventId(){
   return `quick-lead-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -290,8 +337,7 @@ function handleQuickLeadSubmit(form, event){
     quick_lead: true,
     ...getMergedTrackingContext()
   });
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({event: 'quick_lead_continue', ...context});
+  pushAnalyticsEvent('quick_lead_continue', context);
   metaTrack('Lead', {content_name: 'Terramorph quick quote lead', content_category: quickLead.service || 'paid_landing', ...context}, {eventId});
   metaTrackCustom('QuickLeadContinue', context);
   if(button){
@@ -323,12 +369,14 @@ function closeQuotePopup(){
 
 document.addEventListener('DOMContentLoaded', () => {
   persistTrackingContext();
+  pushAnalyticsEvent('terramorph_page_view', getTrackingContext());
   applyJobberAttribution();
   if(document.querySelector('[data-funnel-service]')){
     metaTrack('ViewContent', {content_name: 'Terramorph service landing page', content_category: getTrackingContext().service_category, ...getTrackingContext()});
   }
   if(window.location.pathname.endsWith('/thank-you.html') || window.location.pathname.endsWith('/thank-you')){
     trackCompletedQuoteLead();
+    trackThankYouFallbackLead();
   }
   document.querySelectorAll('.links a').forEach(link => link.addEventListener('click', () => {
     const menu = document.querySelector('.links');

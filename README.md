@@ -1,4 +1,4 @@
-# Terramorph V3.43 Website
+# Terramorph V3.44 Website
 
 Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consistency, citation cleanup support, high-intent service-area landing pages, and conversion tracking into Jobber.
 
@@ -17,7 +17,7 @@ Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consi
 - `privacy.html` — privacy policy
 - `review-notes.html` — summary of changes
 
-## V3.43 priorities implemented
+## V3.44 priorities implemented
 - Official NAP/entity block for citation tools and directory cleanup
 - Stronger LocalBusiness, LandscapingBusiness, HomeAndConstructionBusiness, service, FAQ, breadcrumb, and offer catalog schema
 - Canonical URLs, Open Graph, Twitter cards, and absolute social preview images across generated pages
