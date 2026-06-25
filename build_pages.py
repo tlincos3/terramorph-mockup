@@ -244,18 +244,18 @@ def quote_form(title='Request a Premium Project Quote', service='Outdoor Transfo
 <section class="quote-panel jobber-quote-panel jobber-direct-panel" id="quote" aria-labelledby="quote-title" data-service="{service}">
   <p class="eyebrow light">Fast free estimate</p>
   <h2 id="quote-title">{title}</h2>
-  <p>Open the secure Terramorph request form, send the property details into Jobber, with the ad/source details kept on the quote path.</p>
+  <p>Open the secure Terramorph request form and send the property details, photos, timeline, and service need in one place.</p>
   <div class="quote-speed-row" aria-label="Fast estimate expectations">
-    <span>✓ Free estimate</span><span>✓ Real CRM intake</span><span>✓ Wood + Lucas County</span>
+    <span>✓ Free estimate</span><span>✓ Secure request form</span><span>✓ Wood + Lucas County</span>
   </div>
   <div class="jobber-direct-card">
     <p class="eyebrow">Secure request path</p>
-    <h3>Send the request straight into Jobber.</h3>
-    <p>Best for paid traffic: the homeowner completes the secure Terramorph form, the request stays organized in the CRM, while the ad/source details stay attached for cleaner follow-up and reporting.</p>
+    <h3>Send the request straight to Terramorph.</h3>
+    <p>Complete the secure Terramorph form so the team has the details needed to follow up with the right next step.</p>
     <ul class="check-list">
       <li>Send service need, city, timeline, and photos.</li>
-      <li>Keep the request inside Terramorph’s CRM.</li>
-      <li>Keep the original ad/source details attached to the quote path.</li>
+      <li>Help the team understand the property before follow-up.</li>
+      <li>Get a clear next step without a long back-and-forth.</li>
     </ul>
     <div class="jobber-direct-actions"><a class="btn btn-gold" href="{direct_url}" data-quote-service="{service}"{target_attrs}>{cta}</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
   </div>
@@ -285,7 +285,7 @@ def quote_popup():
     <div class="quote-popup-copy">
       <p class="eyebrow">Free estimate</p>
       <h2 id="quote-popup-title">Send your request straight to Terramorph.</h2>
-      <p id="quote-popup-desc">Quotes now run through Jobber, so property details, service needs, photos, and follow-up stay organized in the CRM.</p>
+      <p id="quote-popup-desc">Send property details, service needs, photos, and timeline in one secure request so Terramorph can follow up with the right next step.</p>
       <div class="popup-trust"><span>★★★★★ 200+ Google Reviews</span><span>Licensed and insured</span><span>Serving Wood and Lucas County</span></div>
     </div>
     <div class="popup-direct-actions">
@@ -609,7 +609,7 @@ def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, 
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>See the kind of work this estimate can start.</h2></div><div class="container">{photo_gallery()}</div></section>
 {review_section()}
 {faq_section(faqs)}
-<section class="section quote-section"><div class="container quote-grid">{quote_form(form_title, service=service, source='website', cta='Open Secure Quote Form', direct_only=True, same_tab=True)}<div class="cta-proof"><p class="eyebrow">Built for fast homeowner decisions</p><h2>One clear offer, visible proof, a call button, and a short quote path.</h2>{review_stack(3)}<ul class="check-list"><li>See real project proof before requesting an estimate.</li><li>Open the secure quote form and complete the request in Jobber.</li><li>Keep ad/source details attached through the quote path for cleaner follow-up.</li></ul></div></div></section>
+<section class="section quote-section"><div class="container quote-grid">{quote_form(form_title, service=service, source='website', cta='Open Secure Quote Form', direct_only=True, same_tab=True)}<div class="cta-proof"><p class="eyebrow">Built for fast homeowner decisions</p><h2>One clear offer, visible proof, a call button, and a short quote path.</h2>{review_stack(3)}<ul class="check-list"><li>See real project proof before requesting an estimate.</li><li>Open the secure quote form and send the project details.</li><li>Help Terramorph respond with the right next step faster.</li></ul></div></div></section>
 '''
     desc = f'{title} from Terramorph for Wood and Lucas County homeowners. Real photos, reviews, phone call, and free estimate request.'
     schema = schema_for(filename, title, desc, faqs, service)
@@ -777,7 +777,7 @@ def city_service_card(item):
     return f'''<a class="guide-card city-service-card" href="{item['file']}"><span>{item['city']} &middot; {item['service']}</span><h3>{item['headline']}</h3><p>{item['lead']}</p><b>Open local page &rarr;</b></a>'''
 
 def city_service_schema(item):
-    faqs = [(f'Does Terramorph offer {item["service"].lower()} in {item["city"]}?', f'Yes. Terramorph serves {item["city"]} and nearby Wood and Lucas County areas with {item["service"].lower()} and related outdoor property work.'),('Can I request a free estimate online?', 'Yes. Use the secure Jobber quote form on this page to send the service need, property details, photos, and timeline directly into Terramorph’s CRM.'),('What other services can be included?', 'Terramorph can review related needs such as drainage, patios, beds, lighting, cleanups, maintenance, mulch, rock, trimming, and property improvements.')]
+    faqs = [(f'Does Terramorph offer {item["service"].lower()} in {item["city"]}?', f'Yes. Terramorph serves {item["city"]} and nearby Wood and Lucas County areas with {item["service"].lower()} and related outdoor property work.'),('Can I request a free estimate online?', 'Yes. Use the secure quote form on this page to send the service need, property details, photos, and timeline directly to Terramorph.'),('What other services can be included?', 'Terramorph can review related needs such as drainage, patios, beds, lighting, cleanups, maintenance, mulch, rock, trimming, and property improvements.')]
     desc = f"Terramorph provides {item['keyword']} for homeowners and property owners, with free estimates through Jobber."
     return schema_for(item['file'], item['headline'] + ' | Terramorph', desc, faqs, item['service'])
 
@@ -791,10 +791,10 @@ def city_service_page(item):
   <div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / <a href="service-areas.html">Service Areas</a> / {item['city']} {item['service']}</p><p class="eyebrow light">{item['keyword']}</p><h1>{item['headline']}</h1><p>{item['lead']}</p><div class="cta-row"><a class="btn btn-gold" href="#quote">{item['cta']}</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div>
 </section>
 {trust_band()}
-<section class="section"><div class="container local-grid"><div><p class="eyebrow">Local fit</p><h2>{item['city']} outdoor work needs local judgment.</h2><p>{item['angle']}</p><p>Terramorph positions the estimate around the actual property: grade, water movement, access, materials, maintenance expectations, budget, and the outcome the owner wants.</p></div><div class="authority-list"><div><b>Property review</b><span>Service need, city, address, photos, timeline, and visible site conditions.</span></div><div><b>Connected services</b><span>Drainage, patios, beds, lighting, cleanups, and maintenance can be scoped together when it makes sense.</span></div><div><b>Northwest Ohio conditions</b><span>Clay soil, flat lots, freeze-thaw, and heavy rain are considered before recommendations.</span></div><div><b>Jobber follow-up</b><span>Quote requests go directly into the CRM so the team can respond with the right next step.</span></div></div></div></section>
+<section class="section"><div class="container local-grid"><div><p class="eyebrow">Local fit</p><h2>{item['city']} outdoor work needs local judgment.</h2><p>{item['angle']}</p><p>Terramorph positions the estimate around the actual property: grade, water movement, access, materials, maintenance expectations, budget, and the outcome the owner wants.</p></div><div class="authority-list"><div><b>Property review</b><span>Service need, city, address, photos, timeline, and visible site conditions.</span></div><div><b>Connected services</b><span>Drainage, patios, beds, lighting, cleanups, and maintenance can be scoped together when it makes sense.</span></div><div><b>Northwest Ohio conditions</b><span>Clay soil, flat lots, freeze-thaw, and heavy rain are considered before recommendations.</span></div><div><b>Fast follow-up</b><span>Quote requests include the details the team needs to respond with the right next step.</span></div></div></div></section>
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Related {item['city']} services</p><h2>Other outdoor work Terramorph can review nearby.</h2></div><div class="container guide-grid">{related}</div></section>
 {faq_section(faqs)}
-<section class="section quote-section"><div class="container quote-grid">{quote_form(item['cta'])}<div class="cta-proof"><p class="eyebrow">Fast estimate path</p><h2>Submit through Jobber so the request lands in Terramorph’s CRM.</h2>{review_stack(2)}</div></div></section>
+<section class="section quote-section"><div class="container quote-grid">{quote_form(item['cta'])}<div class="cta-proof"><p class="eyebrow">Fast estimate path</p><h2>Send photos, timeline, and service details in one secure request.</h2>{review_stack(2)}</div></div></section>
 <section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">More local pages</p><h2>Compare by service area and project type.</h2></div><div class="container guide-grid related-guides">{service_related}</div></section>
 '''
     desc = f"{item['headline']} Free estimates from Terramorph through Jobber for {item['city']} and Northwest Ohio properties."
@@ -814,7 +814,7 @@ areas = f'''
 {trust_band()}
 {local_authority()}
 {official_business_info()}
-<section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">City/service SEO pages</p><h2>Local estimate pages for high-intent searches.</h2><p>Use these pages for homeowners searching by city and service, then route quote requests directly into Jobber.</p></div><div class="container guide-grid">{''.join(city_service_card(x) for x in CITY_SERVICE_PAGES)}</div></section>
+<section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">Local service pages</p><h2>Estimate information by city and project type.</h2><p>Use these pages to review the most relevant Terramorph services for your city, then request a free estimate through Jobber.</p></div><div class="container guide-grid">{''.join(city_service_card(x) for x in CITY_SERVICE_PAGES)}</div></section>
 <section class="section"><div class="container section-heading compact"><p class="eyebrow">Priority service areas</p><h2>Focused on Northwest Ohio.</h2></div><div class="container areas">{''.join(f'<a class="area" href="{CITY_LINKS.get(x, "contact.html")}">{x}<span>Design • patios • drainage • lighting</span></a>' for x in ['Perrysburg','Toledo','Maumee','Sylvania','Rossford','Oregon','Waterville','Whitehouse','Monclova','Ottawa Hills','Bowling Green','Wood County','Lucas County','Northwest Ohio'])}</div></section>
 <section class="section quote-section"><div class="container quote-grid">{quote_form('Get a Local Property Estimate')}<div class="cta-proof"><p class="eyebrow">Local estimates</p><h2>Tell us where you are and what you need done.</h2><p>Whether it is drainage, design, a patio, cleanup, mowing, mulch, trimming, or bed maintenance, Terramorph can point you toward the right next step.</p></div></div></section>
 '''
@@ -884,9 +884,9 @@ Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consi
 - eight long-form guide pages for drainage, native landscaping, patios, cleanups, and landscape beds
 - `projects.html` — project proof hub
 - `about.html` — About page
-- `service-areas.html` — local authority / SEO page
-- nine city/service SEO pages for Toledo, Perrysburg, and Maumee landscaping, drainage, and patios
-- `contact.html` — Jobber CRM quote form
+- `service-areas.html` — local service area hub
+- nine city/service pages for Toledo, Perrysburg, and Maumee landscaping, drainage, and patios
+- `contact.html` — secure quote form
 - `privacy.html` — privacy policy
 - `review-notes.html` — summary of changes
 
@@ -901,8 +901,8 @@ Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consi
 - Accessibility improvements
 - Added an About page explaining the local, diagnosis-first approach
 - Added Outdoor Project Guides hub and eight SEO guide pages with FAQ/article schema and quote CTAs
-- Connected quote requests to Jobber CRM embedded request form
-- Added city/service SEO pages for Toledo, Perrysburg, and Maumee core services
+- Connected quote requests to the embedded secure request form
+- Added city/service pages for Toledo, Perrysburg, and Maumee core services
 '''
 (root/'README.md').write_text(readme)
 home_desc = 'Terramorph provides landscape design, paver patios, drainage, outdoor lighting, seasonal cleanups, lawn maintenance, and property work in Wood and Lucas County.'
@@ -936,4 +936,10 @@ def post_process_html():
 
 write_static_seo_files()
 post_process_html()
-print('wrote V3.44 audit response local SEO/CRO pages')
+try:
+    import seo_expansion
+    seo_expansion.generate(globals())
+    post_process_html()
+    print('wrote V3.45 local SEO/ad expansion pages')
+except Exception as exc:
+    raise RuntimeError('seo expansion generation failed') from exc

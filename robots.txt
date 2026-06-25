@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
 Sitemap: https://terramorphllc.com/sitemap.xml
+Sitemap: https://terramorphllc.com/image-sitemap.xml
