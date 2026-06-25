@@ -148,6 +148,15 @@ def head(title, desc, schema='', page_name=''):
     canonical_url = BASE_URL + ('/' if page_name in ('', 'index.html') else '/' + page_name)
     schema_block = f'\n  <script type="application/ld+json">{schema}</script>' if schema else ''
     robots_block = '\n  <meta name="robots" content="noindex, nofollow">' if page_name in ('thank-you.html', 'review-notes.html') else ''
+    ga4_tag = '''
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QRTSH6WXYK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QRTSH6WXYK');
+  </script>'''
     meta_pixel = '''
   <!-- Meta Pixel Code -->
   <script>
@@ -181,9 +190,10 @@ def head(title, desc, schema='', page_name=''):
   <meta name="twitter:description" content="{desc}">
   <meta name="twitter:image" content="{BASE_URL}/assets/real-hero.webp">
   <meta name="format-detection" content="telephone=yes">
+  <link rel="preconnect" href="https://www.googletagmanager.com">
   <link rel="preconnect" href="https://connect.facebook.net">
   <link rel="preconnect" href="https://clienthub.getjobber.com">
-  <link rel="stylesheet" href="styles.css?v=3.44">{robots_block}{schema_block}{meta_pixel}
+  <link rel="stylesheet" href="styles.css?v=3.44">{robots_block}{schema_block}{ga4_tag}{meta_pixel}
 </head>
 <body>{NAV}<main id="main">'''
 
