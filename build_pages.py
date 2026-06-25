@@ -190,6 +190,7 @@ def head(title, desc, schema='', page_name=''):
   <meta name="twitter:description" content="{desc}">
   <meta name="twitter:image" content="{BASE_URL}/assets/real-hero.webp">
   <meta name="format-detection" content="telephone=yes">
+  <meta name="facebook-domain-verification" content="2s5mtnhpfztxtlwe85t8eflj8ubajd">
   <link rel="preconnect" href="https://www.googletagmanager.com">
   <link rel="preconnect" href="https://connect.facebook.net">
   <link rel="preconnect" href="https://clienthub.getjobber.com">
