@@ -285,17 +285,17 @@ def generate(ctx):
 
     readme = root / 'README.md'
     text = readme.read_text()
-    text = text.replace('# Terramorph V3.48 Website', '# Terramorph V3.45 Website')
-    text = text.replace('## V3.48 priorities implemented', '## V3.45 priorities implemented')
+    text = text.replace('# Terramorph V3.45 Website', '# Terramorph V3.48 Website')
+    text = text.replace('## V3.45 priorities implemented', '## V3.48 priorities implemented')
     if 'V3.45 SEO/ad expansion' not in text:
-        text += '''\n## V3.45 local growth/ad expansion\n- Added 28 more city/service pages for Sylvania, Bowling Green, Holland, Waterville, Whitehouse, Oregon, and Rossford.\n- Added 10 local planning example pages for common Northwest Ohio project scenarios.\n- Added a review request page to support Google Business Profile review generation.\n- Added 4 dedicated Meta ad landing pages for backyard patios, standing water, curb appeal, and spring cleanup.\n- Updated sitemap with all new indexable service, guide, planning, and ad landing pages while keeping thank-you/review notes excluded.\n'''
+        text += '''\n## V3.48 local growth/ad expansion\n- Added 28 more city/service pages for Sylvania, Bowling Green, Holland, Waterville, Whitehouse, Oregon, and Rossford.\n- Added 10 local planning example pages for common Northwest Ohio project scenarios.\n- Added a review request page to support Google Business Profile review generation.\n- Added 4 dedicated Meta ad landing pages for backyard patios, standing water, curb appeal, and spring cleanup.\n- Updated sitemap with all new indexable service, guide, planning, and ad landing pages while keeping thank-you/review notes excluded.\n'''
     readme.write_text(text)
 
     checklist = root / 'SEO_META_TRACKING_CHECKLIST.md'
     if checklist.exists():
         c = checklist.read_text()
         if 'V3.45 added landing pages' not in c:
-            c += '''\n## V3.45 added landing pages\n\nRecommended Meta/Google campaign destinations added in this expansion:\n\n```text\nhttps://terramorphllc.com/lp-backyard-patio-estimate.html?utm_source=facebook&utm_medium=paid_social&utm_campaign=backyard_patio_estimate&utm_content={{ad.name}}\nhttps://terramorphllc.com/lp-standing-water-yard.html?utm_source=facebook&utm_medium=paid_social&utm_campaign=standing_water_drainage&utm_content={{ad.name}}\nhttps://terramorphllc.com/lp-curb-appeal-upgrade.html?utm_source=facebook&utm_medium=paid_social&utm_campaign=curb_appeal_upgrade&utm_content={{ad.name}}\nhttps://terramorphllc.com/lp-spring-cleanup.html?utm_source=facebook&utm_medium=paid_social&utm_campaign=spring_cleanup&utm_content={{ad.name}}\n```\n'''
+            c += '''\n## V3.48 added landing pages\n\nRecommended Meta/Google campaign destinations added in this expansion:\n\n```text\nhttps://terramorphllc.com/lp-backyard-patio-estimate.html?utm_source=facebook&utm_medium=paid_social&utm_campaign=backyard_patio_estimate&utm_content={{ad.name}}\nhttps://terramorphllc.com/lp-standing-water-yard.html?utm_source=facebook&utm_medium=paid_social&utm_campaign=standing_water_drainage&utm_content={{ad.name}}\nhttps://terramorphllc.com/lp-curb-appeal-upgrade.html?utm_source=facebook&utm_medium=paid_social&utm_campaign=curb_appeal_upgrade&utm_content={{ad.name}}\nhttps://terramorphllc.com/lp-spring-cleanup.html?utm_source=facebook&utm_medium=paid_social&utm_campaign=spring_cleanup&utm_content={{ad.name}}\n```\n'''
             checklist.write_text(c)
 
     # Final metadata normalization keeps generated titles SERP-safe after all pages are written.

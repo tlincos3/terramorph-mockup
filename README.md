@@ -1,6 +1,6 @@
-# Terramorph V3.45 Website
+# Terramorph V3.48 Website
 
-Final optimization build focused on local SEO, Google/AI entity clarity, NAP consistency, citation support, unique service-area pages, high-intent guides, conversion tracking into Jobber, crawlability, and trust proof.
+Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consistency, citation cleanup support, high-intent service-area landing pages, and conversion tracking into Jobber.
 
 ## Open
 - `index.html` — homepage
@@ -17,7 +17,7 @@ Final optimization build focused on local SEO, Google/AI entity clarity, NAP con
 - `privacy.html` — privacy policy
 - `review-notes.html` — summary of changes
 
-## V3.45 priorities implemented
+## V3.48 priorities implemented
 - Official NAP/entity block for citation tools and directory cleanup
 - Stronger LocalBusiness, LandscapingBusiness, HomeAndConstructionBusiness, service, FAQ, breadcrumb, and offer catalog schema
 - Canonical URLs, Open Graph, Twitter cards, and absolute social preview images across generated pages
@@ -31,7 +31,7 @@ Final optimization build focused on local SEO, Google/AI entity clarity, NAP con
 - Connected quote requests to the embedded secure request form
 - Added city/service pages for Toledo, Perrysburg, and Maumee core services
 
-## V3.45 local growth/ad expansion
+## V3.48 local growth/ad expansion
 - Added 28 more city/service pages for Sylvania, Bowling Green, Holland, Waterville, Whitehouse, Oregon, and Rossford.
 - Added 10 local planning example pages for common Northwest Ohio project scenarios.
 - Added a review request page to support Google Business Profile review generation.

@@ -213,7 +213,10 @@ def page(title, desc, body, schema=''):
             page_name = url.replace(BASE_URL + '/', '') or 'index.html'
     except Exception:
         page_name = ''
-    return head(title, desc, schema, page_name) + body + '</main>' + quote_popup() + FOOT + '</body></html>'
+    footer = FOOT
+    if page_name in {'thank-you.html', 'privacy.html', 'review-notes.html'}:
+        footer = FOOT.replace('href="#quote"', 'href="contact.html#quote"')
+    return head(title, desc, schema, page_name) + body + '</main>' + quote_popup() + footer + '</body></html>'
 
 def quick_lead_form(service, offer):
     return f"""
