@@ -83,6 +83,9 @@ FOOT = f'''
       <a href="lawn-maintenance.html">Lawn maintenance</a>
       <a href="seasonal-cleanups.html">Seasonal cleanups</a>
       <a href="guides.html">Outdoor project guides</a>
+      <a href="faq.html">FAQ hub</a>
+      <a href="process.html">Process</a>
+      <a href="materials.html">Materials guide</a>
       <a href="projects.html">Project photos</a>
       <a href="about.html">About</a>
     </div>
@@ -194,7 +197,7 @@ def head(title, desc, schema='', page_name=''):
   <link rel="preconnect" href="https://www.googletagmanager.com">
   <link rel="preconnect" href="https://connect.facebook.net">
   <link rel="preconnect" href="https://clienthub.getjobber.com">
-  <link rel="stylesheet" href="styles.css?v=3.44">{robots_block}{schema_block}{ga4_tag}{meta_pixel}
+  <link rel="stylesheet" href="styles.css?v=3.48">{robots_block}{schema_block}{ga4_tag}{meta_pixel}
 </head>
 <body>{NAV}<main id="main">'''
 
@@ -279,10 +282,14 @@ def quote_form(title='Request a Premium Project Quote', service='Outdoor Transfo
   <div class="quote-speed-row" aria-label="Fast estimate expectations">
     <span>✓ Free estimate</span><span>✓ Photos help</span><span>✓ Wood + Lucas County</span>
   </div>
-  <div class="jobber-embed-wrap" aria-label="Terramorph Jobber quote request form">
-    <div id="{JOBBER_EMBED_ID}"></div>
-    <link rel="stylesheet" href="https://d3ey4dbjkt2f6s.cloudfront.net/assets/external/work_request_embed.css" media="screen" />
-    <script src="https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js" clienthub_id="{JOBBER_EMBED_ID}" form_url="{JOBBER_EMBED_FORM_URL}"></script>
+  <div class="jobber-embed-wrap jobber-lazy-wrap" aria-label="Terramorph Jobber quote request form" data-jobber-lazy data-clienthub-id="{JOBBER_EMBED_ID}" data-form-url="{JOBBER_EMBED_FORM_URL}">
+    <div class="jobber-lazy-card">
+      <p class="eyebrow light">No heavy form load until needed</p>
+      <h3>Open the secure quote form when you are ready.</h3>
+      <p>This keeps the page fast on first load while still giving homeowners a direct Jobber request path.</p>
+      <button class="btn btn-gold" type="button" data-load-jobber>Load Secure Quote Form</button>
+    </div>
+    <div id="{JOBBER_EMBED_ID}" class="jobber-lazy-target" style="min-height:620px;height:620px" hidden></div>
   </div>
   <div class="jobber-fallback"><p>If the embedded form does not load, open the secure request form directly.</p><a class="btn btn-gold" href="{direct_url}" data-quote-service="{service}"{target_attrs}>{cta}</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
 </section>'''
@@ -313,8 +320,8 @@ def trust_band():
 <section class="trust-band" aria-label="Terramorph credibility">
   <div class="container trust-grid">
     <div class="trust-feature"><strong>200+</strong><span>Google Reviews</span><small>Consistent 5-star feedback from homeowners across the area.</small></div>
-    <div class="trust-logo"><img src="assets/google-verified.png" alt="Google Verified badge"><span>Google Verified</span></div>
-    <div class="trust-logo"><img src="assets/bbb-logo.svg" alt="BBB Better Business Bureau logo"><span>BBB Member</span></div>
+    <div class="trust-logo"><img src="assets/google-verified.png" width="150" height="100" alt="Google Verified badge"><span>Google Verified</span></div>
+    <div class="trust-logo"><img src="assets/bbb-logo.svg" width="240" height="84" alt="BBB Better Business Bureau logo"><span>BBB Member</span></div>
     <div class="trust-feature"><strong>Regional</strong><span>Serving Wood and Lucas County</span><small>Northwest Ohio-specific expertise for outdoor projects, drainage, and property upkeep.</small></div>
     <div class="trust-feature"><strong>Insured</strong><span>Licensed and insured</span><small>Professional protection before work starts.</small></div>
   </div>
@@ -536,12 +543,16 @@ def schema_for(page_name, title, desc, faqs=None, service=None):
     base = {
       "@context":"https://schema.org",
       "@graph":[
-        {"@type":["LocalBusiness","LandscapingBusiness","HomeAndConstructionBusiness"],"@id":BASE_URL+"/#business","name":BUSINESS_NAME,"alternateName":["Terramorph","Terramorph Outdoor Transformation Co."],"url":BASE_URL+"/","image":BASE_URL+"/assets/real-hero.webp","logo":BASE_URL+"/assets/logo.png","telephone":PHONE,"priceRange":"Free estimates","address":{"@type":"PostalAddress","addressLocality":BUSINESS_CITY,"addressRegion":BUSINESS_REGION,"postalCode":BUSINESS_POSTAL,"addressCountry":BUSINESS_COUNTRY},"contactPoint":{"@type":"ContactPoint","telephone":PHONE,"contactType":"customer service","areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"availableLanguage":"English"},"sameAs":SAME_AS_URLS,"knowsAbout":["Landscape design","Paver patios","Drainage solutions","Outdoor lighting","Lawn maintenance","Seasonal cleanups","Snow removal","Hardscaping","Retaining walls","Mulch and rock beds"],"areaServed":[{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"},{"@type":"City","name":"Perrysburg, OH"},{"@type":"City","name":"Toledo, OH"},{"@type":"City","name":"Maumee, OH"},{"@type":"AdministrativeArea","name":"Northwest Ohio"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
+        {"@type":["LocalBusiness","LandscapingBusiness","HomeAndConstructionBusiness"],"@id":BASE_URL+"/#business","name":BUSINESS_NAME,"alternateName":["Terramorph","Terramorph Outdoor Transformation Co."],"url":BASE_URL+"/","image":BASE_URL+"/assets/real-hero.webp","logo":BASE_URL+"/assets/logo.png","telephone":PHONE,"priceRange":"Free estimates","aggregateRating":{"@type":"AggregateRating","ratingValue":"5","reviewCount":"200"},"address":{"@type":"PostalAddress","addressLocality":BUSINESS_CITY,"addressRegion":BUSINESS_REGION,"postalCode":BUSINESS_POSTAL,"addressCountry":BUSINESS_COUNTRY},"contactPoint":{"@type":"ContactPoint","telephone":PHONE,"contactType":"customer service","areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"availableLanguage":"English"},"sameAs":SAME_AS_URLS,"knowsAbout":["Landscape design","Paver patios","Drainage solutions","Outdoor lighting","Lawn maintenance","Seasonal cleanups","Snow removal","Hardscaping","Retaining walls","Mulch and rock beds"],"areaServed":[{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"},{"@type":"City","name":"Perrysburg, OH"},{"@type":"City","name":"Toledo, OH"},{"@type":"City","name":"Maumee, OH"},{"@type":"AdministrativeArea","name":"Northwest Ohio"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
         {"@type":"WebSite","@id":BASE_URL+"/#website","url":BASE_URL+"/","name":"Terramorph LLC","publisher":{"@id":BASE_URL+"/#business"}},
-        {"@type":"WebPage","name":title,"description":desc,"url":page_url,"isPartOf":{"@id":BASE_URL+"/#website"}},
+        {"@type":"Organization","@id":BASE_URL+"/#organization","name":BUSINESS_NAME,"url":BASE_URL+"/","logo":BASE_URL+"/assets/logo.png","sameAs":SAME_AS_URLS},
+        {"@type":"WebPage","name":title,"description":desc,"url":page_url,"isPartOf":{"@id":BASE_URL+"/#website"},"primaryImageOfPage":{"@id":page_url+"#primaryimage"}},
+        {"@type":"ImageObject","@id":page_url+"#primaryimage","url":BASE_URL+"/assets/real-hero.webp","contentUrl":BASE_URL+"/assets/real-hero.webp","caption":"Terramorph outdoor transformation project in Northwest Ohio"},
         {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":BASE_URL+"/"},{"@type":"ListItem","position":2,"name":title,"item":page_url}]}
       ]
     }
+    for reviewer, quote in REVIEW_SNIPPETS[:3]:
+        base["@graph"].append({"@type":"Review","itemReviewed":{"@id":BASE_URL+"/#business"},"author":{"@type":"Person","name":reviewer},"reviewBody":quote.strip('“”')})
     if service:
         base["@graph"].append({"@type":"Service","name":service,"provider":{"@id":BASE_URL+"/#business"},"areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"url":page_url})
     if page_name == 'index.html':
@@ -878,11 +889,11 @@ privacy = f'''
 privacy_desc = 'Privacy Policy for Terramorph LLC website visitors, quote requests, analytics, advertising, and customer communication.'
 (root/'privacy.html').write_text(page('Privacy Policy | Terramorph LLC', privacy_desc, privacy, schema_for('privacy.html', 'Privacy Policy', privacy_desc)))
 
-review_notes_body = '''<section class="section"><div class="container review-doc"><p class="eyebrow">V3.44 audit response summary</p><h1>Terramorph local SEO, citation, and conversion response</h1><h2>What changed</h2><ul><li>Added official business information blocks so Google, Meta, and directories have one consistent NAP/entity source.</li><li>Strengthened LocalBusiness/LandscapingBusiness/HomeAndConstructionBusiness schema, sameAs links, contact point, service areas, categories, and service offer catalog.</li><li>Added canonical, Open Graph, Twitter card, and absolute social image metadata across generated pages.</li><li>Kept high-intent quote CTAs, Jobber tracking, phone clicks, city/service pages, proof, reviews, and local service-area copy visible near conversion points.</li></ul><p><a class="btn btn-primary" href="index.html">Open homepage</a></p></div></section>'''
-review_notes_desc = 'Summary of Terramorph V3.44 local SEO, NAP, citation, and conversion improvements.'
-(root/'review-notes.html').write_text(page('V3.44 Audit Response Notes | Terramorph', review_notes_desc, review_notes_body, schema_for('review-notes.html', 'V3.44 Audit Response Notes', review_notes_desc)))
+review_notes_body = '''<section class="section"><div class="container review-doc"><p class="eyebrow">V3.48 final optimization summary</p><h1>Terramorph local SEO, citation, and conversion response</h1><h2>What changed</h2><ul><li>Added official business information blocks so Google, Meta, and directories have one consistent NAP/entity source.</li><li>Strengthened LocalBusiness/LandscapingBusiness/HomeAndConstructionBusiness schema, sameAs links, contact point, service areas, categories, and service offer catalog.</li><li>Added canonical, Open Graph, Twitter card, and absolute social image metadata across generated pages.</li><li>Kept high-intent quote CTAs, Jobber tracking, phone clicks, city/service pages, proof, reviews, and local service-area copy visible near conversion points.</li></ul><p><a class="btn btn-primary" href="index.html">Open homepage</a></p></div></section>'''
+review_notes_desc = 'Summary of Terramorph V3.48 local SEO, AI visibility, local authority, conversion, and technical optimization improvements.'
+(root/'review-notes.html').write_text(page('V3.48 Final Optimization Notes | Terramorph', review_notes_desc, review_notes_body, schema_for('review-notes.html', 'V3.48 Final Optimization Notes', review_notes_desc)))
 
-readme = '''# Terramorph V3.44 Website
+readme = '''# Terramorph V3.48 Website
 
 Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consistency, citation cleanup support, high-intent service-area landing pages, and conversion tracking into Jobber.
 
@@ -901,7 +912,7 @@ Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consi
 - `privacy.html` — privacy policy
 - `review-notes.html` — summary of changes
 
-## V3.44 priorities implemented
+## V3.48 priorities implemented
 - Official NAP/entity block for citation tools and directory cleanup
 - Stronger LocalBusiness, LandscapingBusiness, HomeAndConstructionBusiness, service, FAQ, breadcrumb, and offer catalog schema
 - Canonical URLs, Open Graph, Twitter cards, and absolute social preview images across generated pages
@@ -942,7 +953,7 @@ def post_process_html():
         url = BASE_URL + ('/' if path.name == 'index.html' else '/' + path.name)
         html = html.replace('<meta property="og:image" content="assets/real-hero.webp">', f'<meta property="og:image" content="{BASE_URL}/assets/real-hero.webp">\n  <meta property="og:url" content="{url}">\n  <meta name="twitter:card" content="summary_large_image">\n  <link rel="canonical" href="{url}">')
         html = html.replace('Request a Outdoor Lighting Quote', 'Request an Outdoor Lighting Quote')
-        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.44"></script>')
+        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.48"></script>')
         path.write_text(html)
 
 write_static_seo_files()
@@ -950,7 +961,9 @@ post_process_html()
 try:
     import seo_expansion
     seo_expansion.generate(globals())
+    import authority_pass
+    authority_changed = authority_pass.generate(globals())
     post_process_html()
-    print('wrote V3.45 local SEO/ad expansion pages')
+    print(f'wrote V3.48 local SEO/ad authority expansion pages ({len(authority_changed)} authority updates)')
 except Exception as exc:
     raise RuntimeError('seo expansion generation failed') from exc

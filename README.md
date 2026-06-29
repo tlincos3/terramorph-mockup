@@ -1,6 +1,6 @@
 # Terramorph V3.45 Website
 
-Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consistency, citation cleanup support, high-intent service-area landing pages, and conversion tracking into Jobber.
+Final optimization build focused on local SEO, Google/AI entity clarity, NAP consistency, citation support, unique service-area pages, high-intent guides, conversion tracking into Jobber, crawlability, and trust proof.
 
 ## Open
 - `index.html` — homepage

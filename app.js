@@ -18,6 +18,61 @@ const SOCIAL_SOURCES = new Set(['facebook', 'instagram', 'google']);
 const TRACKING_PARAM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'msclkid'];
 const THANK_YOU_LEAD_KEY = 'terramorphThankYouLeadTracked';
 
+
+function initLazyJobberForms(){
+  const loadExternal = (tag, attrs) => new Promise((resolve, reject) => {
+    const existing = document.querySelector(attrs.href ? `${tag}[href="${attrs.href}"]` : `${tag}[src="${attrs.src}"]`);
+    if(existing) return resolve(existing);
+    const el = document.createElement(tag);
+    Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+    el.onload = () => resolve(el);
+    el.onerror = reject;
+    document.head.appendChild(el);
+  });
+
+  const loadWrap = async (wrap) => {
+    if(!wrap || wrap.dataset.jobberLoaded === 'true') return;
+    wrap.dataset.jobberLoaded = 'true';
+    wrap.classList.add('jobber-loading');
+    const target = wrap.querySelector('.jobber-lazy-target');
+    const card = wrap.querySelector('.jobber-lazy-card');
+    if(target) target.hidden = false;
+    if(card) card.hidden = true;
+    try {
+      await loadExternal('link', { rel: 'stylesheet', href: 'https://d3ey4dbjkt2f6s.cloudfront.net/assets/external/work_request_embed.css', media: 'screen' });
+      await loadExternal('script', { src: 'https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js', clienthub_id: wrap.dataset.clienthubId, form_url: wrap.dataset.formUrl, async: 'true' });
+      wrap.classList.remove('jobber-loading');
+      wrap.classList.add('jobber-loaded');
+    } catch(error) {
+      console.warn('Jobber form lazy load failed', error);
+      wrap.classList.add('jobber-embed-unavailable');
+      if(card) { card.hidden = false; card.querySelector('[data-load-jobber]')?.setAttribute('hidden','hidden'); }
+      if(target) target.hidden = true;
+    }
+  };
+
+  document.querySelectorAll('[data-jobber-lazy]').forEach(wrap => {
+    wrap.querySelector('[data-load-jobber]')?.addEventListener('click', () => loadWrap(wrap));
+    const panel = wrap.closest('#quote');
+    document.querySelectorAll('a[href="#quote"]').forEach(link => {
+      link.addEventListener('click', () => {
+        if(panel && panel.contains(wrap)) window.setTimeout(() => loadWrap(wrap), 250);
+      });
+    });
+    if('IntersectionObserver' in window){
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting){
+            window.setTimeout(() => loadWrap(wrap), 900);
+            io.disconnect();
+          }
+        });
+      }, { rootMargin: '240px 0px' });
+      io.observe(wrap);
+    }
+  });
+}
+
 function getJobberSource(){
   const params = new URLSearchParams(window.location.search);
   const directSource = (params.get('utm_source') || params.get('source') || '').toLowerCase();
@@ -380,6 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
   persistTrackingContext();
   pushAnalyticsEvent('terramorph_page_view', getTrackingContext());
   applyJobberAttribution();
+  initLazyJobberForms();
   if(document.querySelector('[data-funnel-service]')){
     metaTrack('ViewContent', {content_name: 'Terramorph service landing page', content_category: getTrackingContext().service_category, ...getTrackingContext()});
   }
@@ -411,6 +467,24 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.querySelectorAll('[data-close-popup]').forEach(el => el.addEventListener('click', closeQuotePopup));
   document.addEventListener('keydown', event => { if(event.key === 'Escape') closeQuotePopup(); });
+
+  const labelJobberIframes = () => {
+    document.querySelectorAll('.jobber-embed-wrap iframe').forEach(frame => {
+      if(!frame.getAttribute('title')){
+        frame.setAttribute('title', 'Terramorph secure quote request form');
+      }
+    });
+  };
+
+  labelJobberIframes();
+  window.setTimeout(labelJobberIframes, 750);
+  window.setTimeout(labelJobberIframes, 2500);
+  if('MutationObserver' in window){
+    const jobberObserver = new MutationObserver(labelJobberIframes);
+    document.querySelectorAll('.jobber-embed-wrap').forEach(wrap => {
+      jobberObserver.observe(wrap, { childList: true, subtree: true });
+    });
+  }
 
   window.setTimeout(() => {
     document.querySelectorAll('.jobber-quote-panel').forEach(panel => {
