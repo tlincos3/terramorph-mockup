@@ -288,7 +288,7 @@ def generate(ctx):
     text = text.replace('# Terramorph V3.45 Website', '# Terramorph V3.48 Website')
     text = text.replace('## V3.45 priorities implemented', '## V3.48 priorities implemented')
     if 'V3.45 SEO/ad expansion' not in text:
-        text += '''\n## V3.48 local growth/ad expansion\n- Added 28 more city/service pages for Sylvania, Bowling Green, Holland, Waterville, Whitehouse, Oregon, and Rossford.\n- Added 10 local planning example pages for common Northwest Ohio project scenarios.\n- Added a review request page to support Google Business Profile review generation.\n- Added 4 dedicated Meta ad landing pages for backyard patios, standing water, curb appeal, and spring cleanup.\n- Updated sitemap with all new indexable service, guide, planning, and ad landing pages while keeping thank-you/review notes excluded.\n'''
+        text += '''\n## V3.49 local growth/ad expansion\n- Added 28 more city/service pages for Sylvania, Bowling Green, Holland, Waterville, Whitehouse, Oregon, and Rossford.\n- Added 10 local planning example pages for common Northwest Ohio project scenarios.\n- Added a review request page to support Google Business Profile review generation.\n- Added 4 dedicated Meta ad landing pages for backyard patios, standing water, curb appeal, and spring cleanup.\n- Updated sitemap with all new indexable service, guide, planning, and ad landing pages while keeping thank-you/review notes excluded.\n- Added Google Business Profile, BBB, Facebook, and Instagram entity/proof links sitewide.\n- Added a website terms page and footer contact/proof links.\n'''
     readme.write_text(text)
 
     checklist = root / 'SEO_META_TRACKING_CHECKLIST.md'
@@ -339,7 +339,7 @@ def generate(ctx):
             html_text = re.sub(r'<meta name="description" content="[^"]*">', f'<meta name="description" content="{escaped_desc}">', html_text)
             html_text = re.sub(r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{escaped_desc}">', html_text)
             html_text = re.sub(r'<meta name="twitter:description" content="[^"]*">', f'<meta name="twitter:description" content="{escaped_desc}">', html_text)
-        html_text = html_text.replace('v=3.44', 'v=3.48').replace('v=3.48', 'v=3.48')
+        html_text = html_text.replace('v=3.44', 'v=3.49').replace('v=3.48', 'v=3.49')
         path.write_text(html_text)
 
     return extra_pages

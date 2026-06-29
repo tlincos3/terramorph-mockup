@@ -1,9 +1,15 @@
 from pathlib import Path
+import re
 
 root = Path(__file__).resolve().parent
 PHONE = '419-637-4030'
 TEL = '4196374030'
 BASE_URL = 'https://terramorphllc.com'
+PUBLIC_EMAIL = 'contact.terramorph@terra419.com'
+GOOGLE_PROFILE_URL = 'https://maps.app.goo.gl/GTv5RfxQ2AV8GHug7'
+BBB_PROFILE_URL = 'https://www.bbb.org/us/oh/perrysburg/profile/landscape-contractors/terramorph-llc-0422-211013048'
+FACEBOOK_URL = 'https://facebook.com/p/Terramorph-100089790245208/'
+INSTAGRAM_URL = 'https://instagram.com/terramorphllc/'
 BUSINESS_NAME = 'Terramorph LLC'
 BUSINESS_CITY = 'Perrysburg'
 BUSINESS_REGION = 'OH'
@@ -12,7 +18,10 @@ BUSINESS_COUNTRY = 'US'
 BUSINESS_CATEGORY = 'Landscaping, hardscaping, drainage, lawn care, and outdoor property services'
 OFFICIAL_NAP_NOTE = 'Official citation info: Terramorph LLC, Perrysburg, OH 43551, 419-637-4030, https://terramorphllc.com/'
 SAME_AS_URLS = [
-    'https://www.bbb.org/us/oh/perrysburg/profile/landscape-contractors/terramorph-llc-0422-211013048',
+    GOOGLE_PROFILE_URL,
+    BBB_PROFILE_URL,
+    FACEBOOK_URL,
+    INSTAGRAM_URL,
     'https://www.yelp.com/biz/terramorph-perrysburg-2',
     'https://nextdoor.com/pages/terramorph-llc-perrysburg-oh/'
 ]
@@ -28,8 +37,8 @@ NAV = f'''
 <div class="topbar" aria-label="Trust and contact bar">
   <div class="container topbar-inner">
     <div class="topbar-proof">
-      <span>★★★★★ 200+ Google Reviews</span>
-      <span>BBB Member</span>
+      <a href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener">★★★★★ 200+ Google Reviews</a>
+      <a href="{BBB_PROFILE_URL}" target="_blank" rel="noopener">BBB Member</a>
       <span>Licensed and insured</span>
       <span>Wood and Lucas County</span>
     </div>
@@ -97,11 +106,18 @@ FOOT = f'''
       <a href="service-areas.html">Local service approach</a>
     </div>
     <div>
-      <h2>Start</h2>
+      <h2>Contact and proof</h2>
       <a href="tel:{TEL}">Call {PHONE}</a>
+      <a href="mailto:{PUBLIC_EMAIL}">{PUBLIC_EMAIL}</a>
+      <a href="{BASE_URL}/">terramorphllc.com</a>
       <a href="contact.html">Request a quote</a>
       <a href="service-areas.html#official-business-info">Official business info</a>
+      <a href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener">Google Business Profile</a>
+      <a href="{BBB_PROFILE_URL}" target="_blank" rel="noopener">BBB profile</a>
+      <a href="{FACEBOOK_URL}" target="_blank" rel="noopener">Facebook</a>
+      <a href="{INSTAGRAM_URL}" target="_blank" rel="noopener">Instagram</a>
       <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms</a>
       <p>Free estimates, clear communication, dependable scheduling, and professional follow-through for Northwest Ohio homeowners.</p>
     </div>
   </div>
@@ -197,9 +213,68 @@ def head(title, desc, schema='', page_name=''):
   <link rel="preconnect" href="https://www.googletagmanager.com">
   <link rel="preconnect" href="https://connect.facebook.net">
   <link rel="preconnect" href="https://clienthub.getjobber.com">
-  <link rel="stylesheet" href="styles.css?v=3.48">{robots_block}{schema_block}{ga4_tag}{meta_pixel}
+  <link rel="stylesheet" href="styles.css?v=3.49">{robots_block}{schema_block}{ga4_tag}{meta_pixel}
 </head>
 <body>{NAV}<main id="main">'''
+
+def optimize_markup(html):
+    """Small performance/accessibility pass for generated static pages."""
+    image_size_cache = {}
+    def get_image_size(src):
+        clean_src = src.split('?', 1)[0].split('#', 1)[0]
+        if not clean_src.startswith('assets/'):
+            return None
+        if clean_src in image_size_cache:
+            return image_size_cache[clean_src]
+        path = root / clean_src
+        size = None
+        if path.exists() and path.suffix.lower() != '.svg':
+            data = path.read_bytes()[:64]
+            if data.startswith(b'RIFF') and data[8:12] == b'WEBP' and len(data) >= 30:
+                if data[12:16] == b'VP8X' and len(data) >= 30:
+                    width = 1 + int.from_bytes(data[24:27], 'little')
+                    height = 1 + int.from_bytes(data[27:30], 'little')
+                    size = (width, height)
+                elif data[12:16] == b'VP8 ' and len(data) >= 30:
+                    width = int.from_bytes(data[26:28], 'little') & 0x3fff
+                    height = int.from_bytes(data[28:30], 'little') & 0x3fff
+                    size = (width, height)
+            elif data.startswith(b'\x89PNG\r\n\x1a\n') and len(data) >= 24:
+                size = (int.from_bytes(data[16:20], 'big'), int.from_bytes(data[20:24], 'big'))
+            elif data.startswith(b'\xff\xd8'):
+                raw = path.read_bytes()
+                idx = 2
+                while idx < len(raw) - 9:
+                    if raw[idx] != 0xff:
+                        idx += 1
+                        continue
+                    marker = raw[idx + 1]
+                    length = int.from_bytes(raw[idx + 2:idx + 4], 'big') if idx + 4 <= len(raw) else 0
+                    if marker in {0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf}:
+                        size = (int.from_bytes(raw[idx + 7:idx + 9], 'big'), int.from_bytes(raw[idx + 5:idx + 7], 'big'))
+                        break
+                    idx += 2 + max(length, 1)
+        image_size_cache[clean_src] = size
+        return size
+
+    def img_attrs(match):
+        tag = match.group(0)
+        src_match = re.search(r'\ssrc="([^"]+)"', tag)
+        size = get_image_size(src_match.group(1)) if src_match else None
+
+        def add_attr(current_tag, attr):
+            if current_tag.endswith('/>'):
+                return current_tag[:-2].rstrip() + f' {attr} />'
+            return current_tag[:-1].rstrip() + f' {attr}>'
+
+        if size and ' width=' not in tag.lower() and ' height=' not in tag.lower():
+            tag = add_attr(tag, f'width="{size[0]}" height="{size[1]}"')
+        if ' loading=' not in tag.lower() and ' fetchpriority=' not in tag.lower():
+            tag = add_attr(tag, 'loading="lazy"')
+        if ' decoding=' not in tag.lower():
+            tag = add_attr(tag, 'decoding="async"')
+        return tag
+    return re.sub(r'<img\b[^>]*>', img_attrs, html)
 
 def page(title, desc, body, schema=''):
     # Infer page name from schema where possible, otherwise callers can rely on index default.
@@ -214,9 +289,9 @@ def page(title, desc, body, schema=''):
     except Exception:
         page_name = ''
     footer = FOOT
-    if page_name in {'thank-you.html', 'privacy.html', 'review-notes.html'}:
+    if page_name in {'thank-you.html', 'privacy.html', 'terms.html', 'review-notes.html'}:
         footer = FOOT.replace('href="#quote"', 'href="contact.html#quote"')
-    return head(title, desc, schema, page_name) + body + '</main>' + quote_popup() + footer + '</body></html>'
+    return optimize_markup(head(title, desc, schema, page_name) + body + '</main>' + quote_popup() + footer + '</body></html>')
 
 def quick_lead_form(service, offer):
     return f"""
@@ -307,7 +382,7 @@ def quote_popup():
       <p class="eyebrow">Free estimate</p>
       <h2 id="quote-popup-title">Send your request straight to Terramorph.</h2>
       <p id="quote-popup-desc">Send property details, service needs, photos, and timeline in one secure request so Terramorph can follow up with the right next step.</p>
-      <div class="popup-trust"><span>★★★★★ 200+ Google Reviews</span><span>Licensed and insured</span><span>Serving Wood and Lucas County</span></div>
+      <div class="popup-trust"><a href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener">★★★★★ 200+ Google Reviews</a><span>Licensed and insured</span><span>Serving Wood and Lucas County</span></div>
     </div>
     <div class="popup-direct-actions">
       <h3>Ready for an estimate?</h3>
@@ -319,12 +394,12 @@ def quote_popup():
 </div>'''
 
 def trust_band():
-    return '''
+    return f'''
 <section class="trust-band" aria-label="Terramorph credibility">
   <div class="container trust-grid">
-    <div class="trust-feature"><strong>200+</strong><span>Google Reviews</span><small>Consistent 5-star feedback from homeowners across the area.</small></div>
-    <div class="trust-logo"><img src="assets/google-verified.png" width="150" height="100" alt="Google Verified badge"><span>Google Verified</span></div>
-    <div class="trust-logo"><img src="assets/bbb-logo.svg" width="240" height="84" alt="BBB Better Business Bureau logo"><span>BBB Member</span></div>
+    <a class="trust-feature trust-link" href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener"><strong>200+</strong><span>Google Reviews</span><small>Consistent 5-star feedback from homeowners across the area.</small></a>
+    <a class="trust-logo trust-link" href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener"><img src="assets/google-verified.png" width="150" height="100" alt="Google Verified badge"><span>Google Verified</span></a>
+    <a class="trust-logo trust-link" href="{BBB_PROFILE_URL}" target="_blank" rel="noopener"><img src="assets/bbb-logo.svg" width="240" height="84" alt="BBB Better Business Bureau logo"><span>BBB Member</span></a>
     <div class="trust-feature"><strong>Regional</strong><span>Serving Wood and Lucas County</span><small>Northwest Ohio-specific expertise for outdoor projects, drainage, and property upkeep.</small></div>
     <div class="trust-feature"><strong>Insured</strong><span>Licensed and insured</span><small>Professional protection before work starts.</small></div>
   </div>
@@ -892,11 +967,44 @@ privacy = f'''
 privacy_desc = 'Privacy Policy for Terramorph LLC website visitors, quote requests, analytics, advertising, and customer communication.'
 (root/'privacy.html').write_text(page('Privacy Policy | Terramorph LLC', privacy_desc, privacy, schema_for('privacy.html', 'Privacy Policy', privacy_desc)))
 
-review_notes_body = '''<section class="section"><div class="container review-doc"><p class="eyebrow">V3.48 final optimization summary</p><h1>Terramorph local SEO, citation, and conversion response</h1><h2>What changed</h2><ul><li>Added official business information blocks so Google, Meta, and directories have one consistent NAP/entity source.</li><li>Strengthened LocalBusiness/LandscapingBusiness/HomeAndConstructionBusiness schema, sameAs links, contact point, service areas, categories, and service offer catalog.</li><li>Added canonical, Open Graph, Twitter card, and absolute social image metadata across generated pages.</li><li>Kept high-intent quote CTAs, Jobber tracking, phone clicks, city/service pages, proof, reviews, and local service-area copy visible near conversion points.</li></ul><p><a class="btn btn-primary" href="index.html">Open homepage</a></p></div></section>'''
-review_notes_desc = 'Summary of Terramorph V3.48 local SEO, AI visibility, local authority, conversion, and technical optimization improvements.'
-(root/'review-notes.html').write_text(page('V3.48 Final Optimization Notes | Terramorph', review_notes_desc, review_notes_body, schema_for('review-notes.html', 'V3.48 Final Optimization Notes', review_notes_desc)))
 
-readme = '''# Terramorph V3.48 Website
+
+terms = f'''
+<section class="page-hero premium-page-hero compact-hero">
+  <div class="hero-overlay"></div>
+  <div class="container page-hero-content">
+    <p class="crumb"><a href="index.html">Home</a> / Terms</p>
+    <p class="eyebrow light">Website terms</p>
+    <h1>Terramorph website terms</h1>
+    <p>Plain-language terms for using this website, requesting estimates, and following links to third-party tools.</p>
+  </div>
+</section>
+<section class="section legal-page">
+  <div class="container narrow-copy">
+    <p><strong>Last updated:</strong> June 29, 2026</p>
+    <h2>Website use</h2>
+    <p>This website is provided by Terramorph LLC to help property owners learn about services, view project information, and request estimates.</p>
+    <h2>Estimates and service requests</h2>
+    <p>Submitting a quote request does not create a service agreement. Project scope, timing, pricing, access, materials, and availability are confirmed directly by Terramorph before work begins.</p>
+    <h2>Project information</h2>
+    <p>Service descriptions, photos, guides, and project examples are general information. Outdoor work depends on site conditions including grade, drainage, soil, access, weather, existing materials, and customer goals.</p>
+    <h2>Third-party tools and links</h2>
+    <p>The website may link to Jobber, Google, BBB, Facebook, Instagram, Yelp, Nextdoor, and other third-party platforms. Those platforms operate under their own terms and privacy practices.</p>
+    <h2>No guarantee from website content alone</h2>
+    <p>Terramorph aims to keep the website accurate, but final recommendations require property-specific review and direct communication with the team.</p>
+    <h2>Contact</h2>
+    <p>Questions about these terms can be sent to <a href="mailto:{PUBLIC_EMAIL}">{PUBLIC_EMAIL}</a> or handled by phone at <a href="tel:{TEL}">{PHONE}</a>.</p>
+  </div>
+</section>
+'''
+terms_desc = 'Website terms for Terramorph LLC visitors, quote requests, third-party links, and service information.'
+(root/'terms.html').write_text(page('Terms | Terramorph LLC', terms_desc, terms, schema_for('terms.html', 'Terms', terms_desc)))
+
+review_notes_body = '''<section class="section"><div class="container review-doc"><p class="eyebrow">V3.49 final optimization summary</p><h1>Terramorph local SEO, citation, and conversion response</h1><h2>What changed</h2><ul><li>Added official business information blocks so Google, Meta, and directories have one consistent NAP/entity source.</li><li>Strengthened LocalBusiness/LandscapingBusiness/HomeAndConstructionBusiness schema, sameAs links, contact point, service areas, categories, and service offer catalog.</li><li>Added canonical, Open Graph, Twitter card, and absolute social image metadata across generated pages.</li><li>Kept high-intent quote CTAs, Jobber tracking, phone clicks, city/service pages, proof, reviews, and local service-area copy visible near conversion points.</li></ul><p><a class="btn btn-primary" href="index.html">Open homepage</a></p></div></section>'''
+review_notes_desc = 'Summary of Terramorph V3.49 local SEO, AI visibility, local authority, conversion, and technical optimization improvements.'
+(root/'review-notes.html').write_text(page('V3.49 Final Optimization Notes | Terramorph', review_notes_desc, review_notes_body, schema_for('review-notes.html', 'V3.49 Final Optimization Notes', review_notes_desc)))
+
+readme = '''# Terramorph V3.49 Website
 
 Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consistency, citation cleanup support, high-intent service-area landing pages, and conversion tracking into Jobber.
 
@@ -915,7 +1023,7 @@ Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consi
 - `privacy.html` — privacy policy
 - `review-notes.html` — summary of changes
 
-## V3.48 priorities implemented
+## V3.49 priorities implemented
 - Official NAP/entity block for citation tools and directory cleanup
 - Stronger LocalBusiness, LandscapingBusiness, HomeAndConstructionBusiness, service, FAQ, breadcrumb, and offer catalog schema
 - Canonical URLs, Open Graph, Twitter cards, and absolute social preview images across generated pages
@@ -940,7 +1048,7 @@ thank_you = f"""
 (root/'thank-you.html').write_text(page('Quote Request Received | Terramorph', 'Thank-you page for Terramorph quote requests in Wood and Lucas County.', thank_you, schema_for('thank-you.html', 'Quote Request Received', 'Thank-you page for Terramorph quote requests.')))
 
 def write_static_seo_files():
-    pages = ['index.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','lp-patios.html','lp-drainage.html','lp-landscape-design.html','lp-outdoor-lighting.html']
+    pages = ['index.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','terms.html','lp-patios.html','lp-drainage.html','lp-landscape-design.html','lp-outdoor-lighting.html']
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     priorities = {'index.html':'1.0','contact.html':'0.9','drainage-solutions.html':'0.9','paver-patios-hardscapes.html':'0.9','landscape-design.html':'0.9'}
     for page_name in pages:
@@ -956,7 +1064,7 @@ def post_process_html():
         url = BASE_URL + ('/' if path.name == 'index.html' else '/' + path.name)
         html = html.replace('<meta property="og:image" content="assets/real-hero.webp">', f'<meta property="og:image" content="{BASE_URL}/assets/real-hero.webp">\n  <meta property="og:url" content="{url}">\n  <meta name="twitter:card" content="summary_large_image">\n  <link rel="canonical" href="{url}">')
         html = html.replace('Request a Outdoor Lighting Quote', 'Request an Outdoor Lighting Quote')
-        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.48"></script>')
+        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.49"></script>')
         path.write_text(html)
 
 write_static_seo_files()
@@ -967,6 +1075,6 @@ try:
     import authority_pass
     authority_changed = authority_pass.generate(globals())
     post_process_html()
-    print(f'wrote V3.48 local SEO/ad authority expansion pages ({len(authority_changed)} authority updates)')
+    print(f'wrote V3.49 local SEO/ad authority expansion pages ({len(authority_changed)} authority updates)')
 except Exception as exc:
     raise RuntimeError('seo expansion generation failed') from exc
