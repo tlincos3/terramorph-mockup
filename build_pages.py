@@ -160,6 +160,9 @@ PROJECT_PHOTOS = [
 
 def head(title, desc, schema='', page_name=''):
     canonical_url = BASE_URL + ('/' if page_name in ('', 'index.html') else '/' + page_name)
+    body_class = 'quote-page' if page_name == 'quote.html' else ''
+    body_attr = f' class="{body_class}"' if body_class else ''
+    stylesheet_version = '3.54' if page_name == 'quote.html' else ('3.53' if page_name == 'index.html' else '3.49')
     schema_block = f'\n  <script type="application/ld+json">{schema}</script>' if schema else ''
     robots_block = '\n  <meta name="robots" content="noindex, nofollow">' if page_name in ('thank-you.html', 'review-notes.html') else ''
     ga4_tag = '''
@@ -170,6 +173,7 @@ def head(title, desc, schema='', page_name=''):
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-QRTSH6WXYK');
+    gtag('config', 'AW-17691366114');
   </script>'''
     meta_pixel = '''
   <!-- Meta Pixel Code -->
@@ -207,9 +211,9 @@ def head(title, desc, schema='', page_name=''):
   <meta name="facebook-domain-verification" content="2s5mtnhpfztxtlwe85t8eflj8ubajd">
   <link rel="preconnect" href="https://www.googletagmanager.com">
   <link rel="preconnect" href="https://connect.facebook.net">
-  <link rel="stylesheet" href="styles.css?v=3.49">{robots_block}{schema_block}{ga4_tag}{meta_pixel}
+  <link rel="stylesheet" href="styles.css?v={stylesheet_version}">{robots_block}{schema_block}{ga4_tag}{meta_pixel}
 </head>
-<body>{NAV}<main id="main">'''
+<body{body_attr}>{NAV}<main id="main">'''
 
 def optimize_markup(html):
     """Small performance/accessibility pass for generated static pages."""
