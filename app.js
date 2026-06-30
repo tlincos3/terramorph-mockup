@@ -7,24 +7,17 @@ function toggleMenu(button){
 
 const TERRAMORPH_PHONE_HREF = 'tel:4198736801';
 const TERRAMORPH_PHONE_DISPLAY = '419-873-6801';
-const JOBBER_REQUEST_PATH = 'terramorph-disabled-jobber-request-path';
-const JOBBER_SOURCE_URLS = {};
 const TRACKING_STORAGE_KEY = 'terramorphAttributionContext';
-const PENDING_JOBBER_KEY = 'terramorphPendingJobberLead';
 const QUICK_LEAD_KEY = 'terramorphQuickLeadContext';
+const PHONE_LEAD_KEY = 'terramorphPendingPhoneLead';
+const THANK_YOU_LEAD_KEY = 'terramorphThankYouLeadTracked';
 const SOCIAL_SOURCES = new Set(['facebook', 'instagram', 'google']);
 const TRACKING_PARAM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'msclkid'];
-const THANK_YOU_LEAD_KEY = 'terramorphThankYouLeadTracked';
 
-
-function initLazyJobberForms(){
-  // Quote and request actions are phone-first now.
-}
-
-function getJobberSource(){
+function getDetectedTrafficSource(){
   const params = new URLSearchParams(window.location.search);
   const directSource = (params.get('utm_source') || params.get('source') || '').toLowerCase();
-  if(JOBBER_SOURCE_URLS[directSource]) return directSource;
+  if(directSource) return directSource;
   const ref = document.referrer.toLowerCase();
   if(ref.includes('facebook.com') || ref.includes('fb.com')) return 'facebook';
   if(ref.includes('instagram.com')) return 'instagram';
@@ -69,7 +62,7 @@ function getCurrentTrackingParams(){
     if(value) context[key] = value;
   });
   if(!context.utm_source){
-    const detectedSource = getJobberSource();
+    const detectedSource = getDetectedTrafficSource();
     if(detectedSource) context.utm_source = detectedSource;
   }
   if(!context.utm_medium && document.querySelector('[data-funnel-service]') && context.utm_source){
@@ -109,30 +102,6 @@ function getMergedTrackingContext(){
     ...getStoredTrackingContext(),
     ...Object.fromEntries(Object.entries(getCurrentTrackingParams()).filter(([, value]) => value))
   };
-}
-
-function applyJobberContextToUrl(inputUrl){
-  const url = new URL(inputUrl, window.location.origin);
-  const context = getMergedTrackingContext();
-  TRACKING_PARAM_KEYS.forEach(key => {
-    if(context[key]) url.searchParams.set(key, context[key]);
-  });
-  if(!url.searchParams.get('utm_source') && context.utm_source) url.searchParams.set('utm_source', context.utm_source);
-  if(!url.searchParams.get('utm_medium')){
-    url.searchParams.set('utm_medium', context.utm_medium || 'website');
-  }
-  if(context.utm_source && SOCIAL_SOURCES.has(String(context.utm_source).toLowerCase()) && !url.searchParams.get('source')){
-    url.searchParams.set('source', 'social_media');
-  }
-  return url;
-}
-
-function applyJobberAttribution(){
-  document.querySelectorAll(`a[href*="${JOBBER_REQUEST_PATH}"]`).forEach(link => {
-    const url = applyJobberContextToUrl(link.href);
-    link.href = url.toString();
-    link.dataset.jobberSource = url.searchParams.get('utm_source') || getJobberSource() || 'direct';
-  });
 }
 
 function metaTrack(eventName, parameters = {}, options = {}){
@@ -180,7 +149,7 @@ function getTrackingContext(){
     page_path: window.location.pathname,
     page_url: window.location.href,
     service_category: service || 'general',
-    jobber_source: stored.utm_source || getJobberSource() || 'direct',
+    traffic_source: stored.utm_source || getDetectedTrafficSource() || 'direct',
     utm_source: stored.utm_source || '',
     utm_medium: stored.utm_medium || '',
     utm_campaign: stored.utm_campaign || '',
@@ -199,7 +168,7 @@ function getTrackingContext(){
 
 function trackQuoteIntent(source, link){
   const context = {
-    source: source || 'jobber',
+    source: source || 'quote',
     destination_url: link?.href || '',
     ...getTrackingContext()
   };
@@ -213,43 +182,6 @@ function trackPhoneClick(link){
   pushAnalyticsEvent('phone_click', context);
   metaTrack('Lead', {content_name: 'Terramorph phone lead', content_category: 'phone_call', lead_type: 'phone_call', ...context});
   metaTrack('Contact', {content_name: 'Terramorph phone click', content_category: 'phone_call', ...context});
-}
-
-function storePendingJobberLead(link){
-  if(!link?.href || !link.href.includes(JOBBER_REQUEST_PATH)) return;
-  const jobberUrl = applyJobberContextToUrl(link.href);
-  const id = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-  writeStoredJson(PENDING_JOBBER_KEY, {
-    id,
-    created_at: new Date().toISOString(),
-    destination_url: jobberUrl.toString(),
-    ...getMergedTrackingContext()
-  });
-}
-
-function trackCompletedQuoteLead(){
-  const pending = readStoredJson(PENDING_JOBBER_KEY);
-  if(!pending?.id) return;
-  const createdAtMs = Date.parse(pending.created_at || '');
-  if(!Number.isFinite(createdAtMs) || (Date.now() - createdAtMs) > (1000 * 60 * 60 * 6)){
-    window.localStorage?.removeItem(PENDING_JOBBER_KEY);
-    return;
-  }
-  const context = {
-    source: 'jobber_thank_you',
-    ...getTrackingContext(),
-    utm_source: pending.utm_source || '',
-    utm_medium: pending.utm_medium || '',
-    utm_campaign: pending.utm_campaign || '',
-    utm_content: pending.utm_content || '',
-    fbclid: pending.fbclid || '',
-    jobber_destination: pending.destination_url || ''
-  };
-  pushAnalyticsEvent('quote_submit', context);
-  metaTrack('Lead', {content_name: 'Terramorph quote request submitted', content_category: 'jobber_submission', lead_stage: 'submitted', ...context}, {eventId: `jobber-submission-${pending.id}`});
-  metaTrackCustom('QuoteSubmitted', context);
-  window.localStorage?.removeItem(PENDING_JOBBER_KEY);
-  window.sessionStorage?.setItem(THANK_YOU_LEAD_KEY, pending.id);
 }
 
 function trackThankYouFallbackLead(){
@@ -292,24 +224,6 @@ function collectQuickLeadFields(form){
   };
 }
 
-function getQuickLeadJobberUrl(form, quickLead){
-  const base = form.dataset.jobberUrl || JOBBER_SOURCE_URLS.facebook || `https://${JOBBER_REQUEST_PATH}`;
-  const url = applyJobberContextToUrl(base);
-  const params = {
-    tm_lead_source: 'quick_form',
-    tm_name: quickLead.name,
-    tm_phone: quickLead.phone,
-    tm_city: quickLead.city,
-    tm_service: quickLead.service,
-    tm_timeline: quickLead.timeline,
-    tm_problem: quickLead.problem
-  };
-  Object.entries(params).forEach(([key, value]) => {
-    if(value) url.searchParams.set(key, value);
-  });
-  return url;
-}
-
 function handleQuickLeadSubmit(form, event){
   event.preventDefault();
   const button = form.querySelector('[type="submit"]');
@@ -336,20 +250,16 @@ function handleQuickLeadSubmit(form, event){
     lead_timeline: quickLead.timeline,
     lead_problem_length: quickLead.problem.length
   };
-  writeStoredJson(QUICK_LEAD_KEY, {
+  const storedLead = {
     ...quickLead,
     event_id: eventId,
     created_at: new Date().toISOString(),
-    ...getMergedTrackingContext()
-  });
-  writeStoredJson(PENDING_JOBBER_KEY, {
-    id: eventId,
-    created_at: new Date().toISOString(),
     destination_url: TERRAMORPH_PHONE_HREF,
-    quick_lead: true,
     phone_call: true,
     ...getMergedTrackingContext()
-  });
+  };
+  writeStoredJson(QUICK_LEAD_KEY, storedLead);
+  writeStoredJson(PHONE_LEAD_KEY, storedLead);
   pushAnalyticsEvent('quick_lead_continue', context);
   metaTrack('Lead', {content_name: 'Terramorph quick quote lead', content_category: quickLead.service || 'paid_landing', ...context}, {eventId});
   metaTrackCustom('QuickLeadContinue', context);
@@ -383,66 +293,26 @@ function closeQuotePopup(){
 document.addEventListener('DOMContentLoaded', () => {
   persistTrackingContext();
   pushAnalyticsEvent('terramorph_page_view', getTrackingContext());
-  applyJobberAttribution();
-  initLazyJobberForms();
   if(document.querySelector('[data-funnel-service]')){
     metaTrack('ViewContent', {content_name: 'Terramorph service landing page', content_category: getTrackingContext().service_category, ...getTrackingContext()});
   }
-  if(window.location.pathname.endsWith('/thank-you.html') || window.location.pathname.endsWith('/thank-you')){
-    trackCompletedQuoteLead();
-    trackThankYouFallbackLead();
-  }
+  trackThankYouFallbackLead();
   document.querySelectorAll('.links a').forEach(link => link.addEventListener('click', () => {
     const menu = document.querySelector('.links');
     const button = document.querySelector('.mobile-menu');
     menu?.classList.remove('open');
     button?.setAttribute('aria-expanded', 'false');
   }));
-  document.querySelectorAll(`a[href*="${JOBBER_REQUEST_PATH}"], a[href="#quote"]`).forEach(link => {
-    link.addEventListener('click', () => {
-      if(link.href.includes(JOBBER_REQUEST_PATH)){
-        storePendingJobberLead(link);
-        trackQuoteIntent('jobber_direct', link);
-      } else {
-        trackQuoteIntent('onsite_quote', link);
-      }
-    });
-  });
   document.querySelectorAll('a[href^="tel:"]').forEach(link => {
     link.addEventListener('click', () => trackPhoneClick(link));
+  });
+  document.querySelectorAll('[data-quote-service]').forEach(link => {
+    link.addEventListener('click', () => trackQuoteIntent('phone_quote', link));
   });
   document.querySelectorAll('[data-quick-lead-form]').forEach(form => {
     form.addEventListener('submit', event => handleQuickLeadSubmit(form, event));
   });
   document.querySelectorAll('[data-close-popup]').forEach(el => el.addEventListener('click', closeQuotePopup));
   document.addEventListener('keydown', event => { if(event.key === 'Escape') closeQuotePopup(); });
-
-  const labelJobberIframes = () => {
-    document.querySelectorAll('.jobber-embed-wrap iframe').forEach(frame => {
-      if(!frame.getAttribute('title')){
-        frame.setAttribute('title', 'Terramorph secure quote request form');
-      }
-    });
-  };
-
-  labelJobberIframes();
-  window.setTimeout(labelJobberIframes, 750);
-  window.setTimeout(labelJobberIframes, 2500);
-  if('MutationObserver' in window){
-    const jobberObserver = new MutationObserver(labelJobberIframes);
-    document.querySelectorAll('.jobber-embed-wrap').forEach(wrap => {
-      jobberObserver.observe(wrap, { childList: true, subtree: true });
-    });
-  }
-
-  window.setTimeout(() => {
-    document.querySelectorAll('.jobber-quote-panel').forEach(panel => {
-      const wrap = panel.querySelector('.jobber-embed-wrap');
-      if(wrap && /Form is currently unavailable|Something went wrong/i.test(wrap.textContent || '')){
-        panel.classList.add('jobber-embed-unavailable');
-      }
-    });
-  }, 2500);
-
   window.setTimeout(openQuotePopup, 12000);
 });

@@ -324,7 +324,7 @@ def quote_form(title='Request a Premium Project Quote', service='Outdoor Transfo
   <div class="quote-speed-row" aria-label="Fast estimate expectations">
     <span>✓ Free estimate</span><span>✓ Phone-first scheduling</span><span>✓ Wood + Lucas County</span>
   </div>
-  <div class="jobber-direct-card phone-direct-card">
+  <div class="phone-direct-card">
     <p class="eyebrow">Direct phone path</p>
     <h3>Talk with Terramorph at {PHONE}.</h3>
     <p>Use the call button for quote requests, service questions, scheduling, and urgent property issues.</p>
@@ -333,7 +333,7 @@ def quote_form(title='Request a Premium Project Quote', service='Outdoor Transfo
       <li>Ask what photos or measurements would help before a visit.</li>
       <li>Get the next step without waiting on an external form.</li>
     </ul>
-    <div class="jobber-direct-actions"><a class="btn btn-gold" href="tel:{TEL}" data-quote-service="{service}">Call {PHONE}</a><a class="btn btn-outline-light" href="tel:{TEL}">Request by Phone</a></div>
+    <div class="phone-direct-actions"><a class="btn btn-gold" href="tel:{TEL}" data-quote-service="{service}">Call {PHONE}</a><a class="btn btn-outline-light" href="tel:{TEL}">Request by Phone</a></div>
   </div>
 </section>'''
 

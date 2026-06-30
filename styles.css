@@ -188,21 +188,16 @@ body.quote-popup-open{overflow:hidden}
 @media(max-width:1050px){.guide-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.guide-layout{grid-template-columns:1fr}.guide-sidebar{position:static}.guide-cta-card .btn{width:auto}}
 @media(max-width:680px){.guide-grid{grid-template-columns:1fr}.guide-card{min-height:auto;padding:22px}.guide-content-block p{font-size:1rem}.guide-cta-card .btn{width:100%}}
 
-/* V3.22 Jobber CRM quote embed + city/service SEO pages */
-.jobber-quote-panel{background:linear-gradient(145deg,#1a2119,#0f1611)!important;border:1px solid rgba(241,211,132,.28)}
-.jobber-embed-wrap{background:#fff;border:1px solid rgba(255,255,255,.18);margin-top:22px;min-height:620px;padding:10px;box-shadow:0 22px 60px rgba(0,0,0,.24)}.jobber-inline-work-request{min-height:600px!important}
-.jobber-fallback{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px}.jobber-fallback p{margin:0;color:#e8efe3!important;flex:1 1 260px}
-.jobber-direct-card{margin-top:22px;padding:26px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);box-shadow:0 22px 60px rgba(0,0,0,.18)}
-.jobber-direct-card h3{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.7rem);line-height:1;margin:8px 0 14px;color:#fff}
-.jobber-direct-card p{color:#e8efe3}
-.jobber-direct-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
-.jobber-direct-actions .btn{min-width:220px}
+/* V3.22 phone-first quote panels + city/service SEO pages */
+.phone-quote-panel{background:linear-gradient(145deg,#1a2119,#0f1611)!important;border:1px solid rgba(241,211,132,.28)}
+.phone-direct-card{margin-top:22px;padding:26px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);box-shadow:0 22px 60px rgba(0,0,0,.18)}
+.phone-direct-card h3{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.7rem);line-height:1;margin:8px 0 14px;color:#fff}
+.phone-direct-card p{color:#e8efe3}
+.phone-direct-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.phone-direct-actions .btn{min-width:220px}
 .quote-popup-simple{grid-template-columns:.95fr 1.05fr}.popup-direct-actions{padding:34px;display:flex;flex-direction:column;justify-content:center;gap:14px;background:#fffdf8}.popup-direct-actions h3{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.8rem);line-height:1;margin:0;color:var(--ink)}.popup-direct-actions p{color:#4f5a50;line-height:1.55}.popup-direct-actions .btn{width:max-content}
 .city-service-card h3{font-size:1.35rem!important;line-height:1.1!important}.city-service-hero .page-hero-content{max-width:980px}
-@media(max-width:760px){.jobber-embed-wrap{min-height:620px;padding:4px}.jobber-direct-card{padding:20px}.jobber-direct-actions .btn{width:100%;justify-content:center}.quote-popup-simple{grid-template-columns:1fr}.popup-direct-actions .btn{width:100%;justify-content:center}}
-
-/* Hide Jobber embed security/error fallback and show direct CRM link instead when needed */
-.jobber-embed-unavailable .jobber-embed-wrap{display:none}.jobber-embed-wrap .jobber-flash--error{display:none!important}
+@media(max-width:760px){.phone-direct-card{padding:20px}.phone-direct-actions .btn{width:100%;justify-content:center}.quote-popup-simple{grid-template-columns:1fr}.popup-direct-actions .btn{width:100%;justify-content:center}}
 
 
 /* V3.24 privacy/legal page */
@@ -258,11 +253,6 @@ html,body{max-width:100%;overflow-x:hidden}.conversion-hero,.meta-landing-hero,.
   .conversion-trust-grid span{min-width:0!important;width:auto!important;text-align:center!important;font-size:.72rem!important;line-height:1.2!important;padding:9px 6px!important;}
   .conversion-trust-grid span:last-child{grid-column:1 / -1;font-size:.7rem!important;}
 }
-/* V3.41 conversion fix: reserve Jobber iframe space to prevent load-time layout shift */
-.jobber-embed-wrap .jobber-inline-work-request,
-.jobber-embed-wrap iframe.jobber-work-request{min-height:520px!important;width:100%!important;}
-@media(max-width:760px){.jobber-embed-wrap .jobber-inline-work-request,.jobber-embed-wrap iframe.jobber-work-request{min-height:620px!important;}}
-
 /* V3.43 audit response: local entity / NAP authority block */
 .official-business-section{background:#fffdf8;border-block:1px solid var(--line)}
 .official-business-card{display:grid;grid-template-columns:.9fr 1.1fr;gap:28px;align-items:start;background:#fff;border:1px solid var(--line);box-shadow:0 22px 70px rgba(7,10,8,.08);padding:34px}
@@ -290,12 +280,8 @@ html,body{max-width:100%;overflow-x:hidden}.conversion-hero,.meta-landing-hero,.
 @media (max-width:860px){.quick-lead-card{grid-template-columns:1fr;padding:22px;border-radius:22px}.quick-lead-form{grid-template-columns:1fr}.quick-lead-section{padding-top:24px;padding-bottom:24px}}
 
 /* V3.48: first-load performance + AI/conversion clarity */
-.jobber-lazy-wrap{min-height:620px;display:grid;align-items:center;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.18);padding:18px}
-.jobber-lazy-card{background:rgba(255,253,248,.08);border:1px solid rgba(255,255,255,.2);padding:26px;max-width:620px}
-.jobber-lazy-card h3{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.7rem);line-height:1;margin:8px 0 12px;color:#fff}
-.jobber-lazy-card p{color:#e8efe3!important}.jobber-lazy-target[hidden]{display:none!important}.jobber-loading:after{content:'Loading secure quote form…';display:block;color:#e8efe3;font-weight:900;margin-top:10px}
 .ai-answer-section{background:#fffdf8;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:30px 0}.ai-answer-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.ai-answer-card{background:#fff;border:1px solid var(--line);padding:20px}.ai-answer-card b{display:block;color:var(--forest);font-size:1.03rem;margin-bottom:6px}.ai-answer-card span{color:var(--muted);line-height:1.5}.local-specifics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.local-specifics-grid div{background:#fff;border:1px solid var(--line);padding:20px}.cluster-map{background:#f7f2e8}.cluster-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.cluster-card{background:#fff;border:1px solid var(--line);padding:22px}.cluster-card h3{font-family:var(--font-display);font-size:1.35rem;line-height:1.1;margin:0 0 10px}.decision-table{display:grid;gap:10px}.decision-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;background:#fff;border:1px solid var(--line);padding:16px}.decision-row b{color:var(--forest)}
-@media(max-width:900px){.ai-answer-grid,.local-specifics-grid,.cluster-grid,.decision-row{grid-template-columns:1fr}.jobber-lazy-wrap{min-height:520px}}
+@media(max-width:900px){.ai-answer-grid,.local-specifics-grid,.cluster-grid,.decision-row{grid-template-columns:1fr}}
 
 /* V3.49 authority-lock polish: linked proof should look like proof, not clutter. */
 .topbar-proof a{display:inline-flex;align-items:center;gap:6px;color:#edf2e8;font-weight:900;text-decoration:none}.topbar-proof a:hover,.trust-link:hover,.popup-trust a:hover{color:var(--gold-2)}.trust-link{text-decoration:none;color:inherit}.popup-trust a{color:inherit;text-decoration:none}.footer a[href="privacy.html"],.footer a[href="terms.html"]{color:var(--gold-2);font-weight:900}
