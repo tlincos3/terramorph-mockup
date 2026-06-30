@@ -5,12 +5,10 @@ function toggleMenu(button){
   if(button) button.setAttribute('aria-expanded', String(open));
 }
 
-const JOBBER_REQUEST_PATH = 'clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new';
-const JOBBER_SOURCE_URLS = {
-  facebook: 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new?utm_source=facebook&source=social_media',
-  google: 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new?utm_source=google&source=social_media',
-  instagram: 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new?utm_source=instagram&source=social_media'
-};
+const TERRAMORPH_PHONE_HREF = 'tel:4198736801';
+const TERRAMORPH_PHONE_DISPLAY = '419-873-6801';
+const JOBBER_REQUEST_PATH = 'terramorph-disabled-jobber-request-path';
+const JOBBER_SOURCE_URLS = {};
 const TRACKING_STORAGE_KEY = 'terramorphAttributionContext';
 const PENDING_JOBBER_KEY = 'terramorphPendingJobberLead';
 const QUICK_LEAD_KEY = 'terramorphQuickLeadContext';
@@ -20,57 +18,7 @@ const THANK_YOU_LEAD_KEY = 'terramorphThankYouLeadTracked';
 
 
 function initLazyJobberForms(){
-  const loadExternal = (tag, attrs) => new Promise((resolve, reject) => {
-    const existing = document.querySelector(attrs.href ? `${tag}[href="${attrs.href}"]` : `${tag}[src="${attrs.src}"]`);
-    if(existing) return resolve(existing);
-    const el = document.createElement(tag);
-    Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
-    el.onload = () => resolve(el);
-    el.onerror = reject;
-    document.head.appendChild(el);
-  });
-
-  const loadWrap = async (wrap) => {
-    if(!wrap || wrap.dataset.jobberLoaded === 'true') return;
-    wrap.dataset.jobberLoaded = 'true';
-    wrap.classList.add('jobber-loading');
-    const target = wrap.querySelector('.jobber-lazy-target');
-    const card = wrap.querySelector('.jobber-lazy-card');
-    if(target) target.hidden = false;
-    if(card) card.hidden = true;
-    try {
-      await loadExternal('link', { rel: 'stylesheet', href: 'https://d3ey4dbjkt2f6s.cloudfront.net/assets/external/work_request_embed.css', media: 'screen' });
-      await loadExternal('script', { src: 'https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js', clienthub_id: wrap.dataset.clienthubId, form_url: wrap.dataset.formUrl, async: 'true' });
-      wrap.classList.remove('jobber-loading');
-      wrap.classList.add('jobber-loaded');
-    } catch(error) {
-      console.warn('Jobber form lazy load failed', error);
-      wrap.classList.add('jobber-embed-unavailable');
-      if(card) { card.hidden = false; card.querySelector('[data-load-jobber]')?.setAttribute('hidden','hidden'); }
-      if(target) target.hidden = true;
-    }
-  };
-
-  document.querySelectorAll('[data-jobber-lazy]').forEach(wrap => {
-    wrap.querySelector('[data-load-jobber]')?.addEventListener('click', () => loadWrap(wrap));
-    const panel = wrap.closest('#quote');
-    document.querySelectorAll('a[href="#quote"]').forEach(link => {
-      link.addEventListener('click', () => {
-        if(panel && panel.contains(wrap)) window.setTimeout(() => loadWrap(wrap), 250);
-      });
-    });
-    if('IntersectionObserver' in window){
-      const io = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if(entry.isIntersecting){
-            window.setTimeout(() => loadWrap(wrap), 900);
-            io.disconnect();
-          }
-        });
-      }, { rootMargin: '240px 0px' });
-      io.observe(wrap);
-    }
-  });
+  // Quote and request actions are phone-first now.
 }
 
 function getJobberSource(){
@@ -381,7 +329,7 @@ function handleQuickLeadSubmit(form, event){
   const eventId = buildQuickLeadEventId();
   const context = {
     source: 'paid_landing_quick_form',
-    lead_stage: 'quick_form_continue_to_jobber',
+    lead_stage: 'quick_form_call_prompt',
     ...getTrackingContext(),
     lead_service: quickLead.service,
     lead_city: quickLead.city,
@@ -397,8 +345,9 @@ function handleQuickLeadSubmit(form, event){
   writeStoredJson(PENDING_JOBBER_KEY, {
     id: eventId,
     created_at: new Date().toISOString(),
-    destination_url: getQuickLeadJobberUrl(form, quickLead).toString(),
+    destination_url: TERRAMORPH_PHONE_HREF,
     quick_lead: true,
+    phone_call: true,
     ...getMergedTrackingContext()
   });
   pushAnalyticsEvent('quick_lead_continue', context);
@@ -406,10 +355,10 @@ function handleQuickLeadSubmit(form, event){
   metaTrackCustom('QuickLeadContinue', context);
   if(button){
     button.disabled = true;
-    button.textContent = 'Opening secure quote form…';
+    button.textContent = `Calling ${TERRAMORPH_PHONE_DISPLAY}...`;
   }
-  if(status) status.textContent = 'Good — opening the secure Terramorph quote form so the request reaches the team.';
-  window.location.href = getQuickLeadJobberUrl(form, quickLead).toString();
+  if(status) status.textContent = `Good - opening your phone so you can call Terramorph at ${TERRAMORPH_PHONE_DISPLAY}.`;
+  window.location.href = TERRAMORPH_PHONE_HREF;
 }
 
 function openQuotePopup(){

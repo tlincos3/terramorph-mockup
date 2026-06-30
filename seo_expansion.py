@@ -43,11 +43,11 @@ def generate(ctx):
         for service, service_slug, keyword_service, service_copy, image in service_defs:
             filename = f'{service_slug}-{city_slug}-ohio.html'
             headline = f'{service} in {city}, Ohio for properties that need a clearer outdoor plan.'
-            lead = f'Terramorph helps {city} homeowners and property owners with {service_copy.lower()} backed by free estimates and Jobber follow-up.'
+            lead = f'Terramorph helps {city} homeowners and property owners with {service_copy.lower()} backed by free estimates and phone-first follow-up.'
             angle = f'{city} projects often involve {notes[city]}. Terramorph reviews grade, access, water movement, materials, photos, and timeline before recommending a scope.'
             faqs = [
                 (f'Does Terramorph offer {keyword_service} in {city}?', f'Yes. Terramorph serves {city} and nearby Northwest Ohio areas with {keyword_service} and related outdoor property work.'),
-                ('Can I request a free estimate online?', 'Yes. Use the secure quote form to send the service need, property details, photos, and timeline directly to Terramorph.'),
+                ('Can I request a free estimate by phone?', f'Yes. Call Terramorph at {PHONE} with the service need, property details, photos if available, and timeline.'),
                 ('Can photos be included with the request?', 'Yes. Photos are helpful because they show access, grade, existing conditions, water movement, beds, lawn areas, or hardscape details before follow-up.'),
             ]
             desc = f'Terramorph provides {keyword_service} in {city}, Ohio with free estimates for homeowners, businesses, and property owners.'
@@ -59,7 +59,7 @@ def generate(ctx):
 {trust_band()}
 <section class="section"><div class="container local-grid"><div><p class="eyebrow">Local fit</p><h2>{city} outdoor work needs local judgment.</h2><p>{angle}</p><p>These local pages help homeowners understand the Terramorph services available in their city before requesting an estimate.</p></div><div class="authority-list"><div><b>Property review</b><span>Service need, city, address, photos, timeline, and visible site conditions.</span></div><div><b>Connected services</b><span>Drainage, patios, beds, lighting, cleanups, and maintenance can be scoped together when it makes sense.</span></div><div><b>Northwest Ohio conditions</b><span>Clay soil, flat lots, freeze-thaw, and heavy rain are considered before recommendations.</span></div><div><b>Fast follow-up</b><span>Quote requests include the details the team needs to respond with the right next step.</span></div></div></div></section>
 {faq_section(faqs)}
-<section class="section quote-section"><div class="container quote-grid">{quote_form('Request a ' + city + ' ' + service + ' Estimate')}<div class="cta-proof"><p class="eyebrow">Fast estimate path</p><h2>Send photos, timeline, and service details in one secure request.</h2>{review_stack(2)}</div></div></section>
+<section class="section quote-section"><div class="container quote-grid">{quote_form('Request a ' + city + ' ' + service + ' Estimate')}<div class="cta-proof"><p class="eyebrow">Fast estimate path</p><h2>Call with photos, timeline, and service details ready.</h2>{review_stack(2)}</div></div></section>
 '''
             short_title = f'{service.replace(" and Hardscapes", "")} in {city}, OH | Terramorph'
             (root / filename).write_text(page(short_title, desc, body, schema_for(filename, headline, desc, faqs, service)))
@@ -85,7 +85,7 @@ def generate(ctx):
 <section class="page-hero premium-page-hero planning-example-hero"><div class="page-hero-image"><img src="assets/{image}" alt="{title}"></div><div class="hero-overlay"></div><div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / <a href="projects.html">Projects</a> / {city}</p><p class="eyebrow light">Local planning example</p><h1>{title}</h1><p>{desc}</p><div class="cta-row"><a class="btn btn-gold" href="#quote">Request Similar Work</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div></section>
 {trust_band()}
 <section class="section"><div class="container problem-grid"><div class="problem-card dark"><p class="eyebrow light">Problem</p><h2>{problem}</h2></div><div class="problem-card light-card"><p class="eyebrow">Terramorph approach</p><h2>{solution}</h2></div></div></section>
-<section class="section clay-section"><div class="container local-grid"><div><p class="eyebrow">Expected outcome</p><h2>{outcome}</h2><p>This planning example shows the kind of details homeowners can send before a quote: city, service need, photos, timeline, and the result they want.</p></div><div class="authority-list"><div><b>City</b><span>{city}, Ohio and nearby communities.</span></div><div><b>Service</b><span>{service}</span></div><div><b>Estimate path</b><span>Request details through Jobber with city, photos, timeline, and project notes.</span></div></div></div></section>
+<section class="section clay-section"><div class="container local-grid"><div><p class="eyebrow">Expected outcome</p><h2>{outcome}</h2><p>This planning example shows the kind of details homeowners can have ready before a quote call: city, service need, photos, timeline, and the result they want.</p></div><div class="authority-list"><div><b>City</b><span>{city}, Ohio and nearby communities.</span></div><div><b>Service</b><span>{service}</span></div><div><b>Estimate path</b><span>Call {PHONE} with city, photos, timeline, and project notes.</span></div></div></div></section>
 {faq_section(faqs)}
 <section class="section quote-section"><div class="container quote-grid">{quote_form('Request Similar Terramorph Work')}<div class="cta-proof"><p class="eyebrow">Local proof</p><h2>Use this as a starting point for your own property.</h2>{review_stack(2)}</div></div></section>
 '''

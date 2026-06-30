@@ -24,12 +24,6 @@ SAME_AS_URLS = [
     'https://www.yelp.com/biz/terramorph-perrysburg-2',
     'https://nextdoor.com/pages/terramorph-llc-perrysburg-oh/'
 ]
-JOBBER_QUOTE_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new'
-JOBBER_FACEBOOK_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new?utm_source=facebook&source=social_media'
-JOBBER_GOOGLE_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new?utm_source=google&source=social_media'
-JOBBER_INSTAGRAM_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new?utm_source=instagram&source=social_media'
-JOBBER_EMBED_ID = 'e644a784-b214-4a2b-93df-ace28dbb2a70-1578803'
-JOBBER_EMBED_FORM_URL = 'https://clienthub.getjobber.com/client_hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/work_request/embedded_work_request_form?form_id=1578803'
 
 NAV = f'''
 <a class="skip-link" href="#main">Skip to content</a>
@@ -58,11 +52,11 @@ NAV = f'''
       <a href="service-areas.html">Areas</a>
       <a href="projects.html">Projects</a>
       <a href="about.html">About</a>
-      <a href="contact.html">Quote</a>
+      <a href="tel:{TEL}">Quote</a>
     </nav>
     <div class="nav-actions">
       <a class="btn btn-quiet" href="tel:{TEL}">Call Now</a>
-      <a class="btn btn-primary" href="contact.html">Request Quote</a>
+      <a class="btn btn-primary" href="tel:{TEL}">Request Quote</a>
     </div>
     <button class="mobile-menu" type="button" aria-expanded="false" aria-controls="primary-links" onclick="toggleMenu(this)">Menu</button>
   </div>
@@ -72,7 +66,7 @@ NAV = f'''
 FOOT = f'''
 <div class="sticky-mobile" aria-label="Mobile lead actions">
   <a class="btn btn-quiet" href="tel:{TEL}">Call</a>
-  <a class="btn btn-primary" href="#quote">Quote</a>
+  <a class="btn btn-primary" href="tel:{TEL}">Quote</a>
 </div>
 <footer class="footer">
   <div class="container footer-grid">
@@ -108,7 +102,7 @@ FOOT = f'''
       <h2>Contact and proof</h2>
       <a href="tel:{TEL}">Call {PHONE}</a>
       <a href="{BASE_URL}/">terramorphllc.com</a>
-      <a href="contact.html">Request a quote</a>
+      <a href="tel:{TEL}">Request a quote</a>
       <a href="service-areas.html#official-business-info">Official business info</a>
       <a href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener">Google Business Profile</a>
       <a href="{BBB_PROFILE_URL}" target="_blank" rel="noopener">BBB profile</a>
@@ -210,7 +204,6 @@ def head(title, desc, schema='', page_name=''):
   <meta name="facebook-domain-verification" content="2s5mtnhpfztxtlwe85t8eflj8ubajd">
   <link rel="preconnect" href="https://www.googletagmanager.com">
   <link rel="preconnect" href="https://connect.facebook.net">
-  <link rel="preconnect" href="https://clienthub.getjobber.com">
   <link rel="stylesheet" href="styles.css?v=3.49">{robots_block}{schema_block}{ga4_tag}{meta_pixel}
 </head>
 <body>{NAV}<main id="main">'''
@@ -296,11 +289,11 @@ def quick_lead_form(service, offer):
 <section class="quick-lead-card" aria-labelledby="quick-lead-title" data-service="{service}">
   <div class="quick-lead-copy">
     <p class="eyebrow light">Fast first step</p>
-    <h2 id="quick-lead-title">Start the free assessment before the full quote form.</h2>
-    <p>{offer}. Send the basics first, then continue into Terramorph's secure Jobber form so the team gets the full request.</p>
+    <h2 id="quick-lead-title">Start the free assessment with a direct call.</h2>
+    <p>{offer}. Send the basics first, then call Terramorph so the team can confirm the best next step.</p>
     <div class="quick-lead-proof"><span>★★★★★ 200+ Google Reviews</span><span>Licensed + insured</span><span>Wood + Lucas County</span></div>
   </div>
-  <form class="quick-lead-form" data-quick-lead-form data-service="{service}" data-jobber-url="{JOBBER_QUOTE_URL}" novalidate>
+  <form class="quick-lead-form" data-quick-lead-form data-service="{service}" novalidate>
     <label>Name <input name="name" autocomplete="name" required></label>
     <label>Phone <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required></label>
     <label>City <input name="city" autocomplete="address-level2" required></label>
@@ -317,57 +310,31 @@ def quick_lead_form(service, offer):
       <textarea name="problem" rows="3" placeholder="Example: standing water near patio after rain, soggy backyard, downspout issue..." required></textarea>
     </label>
     <input type="hidden" name="service" value="{service}">
-    <button class="btn btn-gold" type="submit">Continue to Secure Quote Form</button>
-    <p class="quick-lead-status" data-quick-lead-status>Step 1 captures the lead signal; Step 2 sends the full request into Jobber.</p>
+    <button class="btn btn-gold" type="submit">Call {PHONE}</button>
+    <p class="quick-lead-status" data-quick-lead-status>Complete the basics, then call Terramorph at {PHONE}.</p>
   </form>
 </section>"""
 
-def quote_form(title='Request a Premium Project Quote', service='Outdoor Transformation', source='website', cta='Open Secure Quote Form', direct_only=False, same_tab=False):
-    service_slug = service.lower().replace(' and ', '-').replace('&', 'and').replace(' ', '-').replace('/', '-')
-    if source and source != 'website':
-        direct_url = f"{JOBBER_QUOTE_URL}?utm_source={source}&utm_medium=website&utm_campaign={service_slug}-quote&source=social_media"
-    else:
-        direct_url = f"{JOBBER_QUOTE_URL}?utm_campaign={service_slug}-quote"
-    target_attrs = '' if same_tab else ' target="_blank" rel="noopener"'
-    if direct_only:
-        return f'''
-<section class="quote-panel jobber-quote-panel jobber-direct-panel" id="quote" aria-labelledby="quote-title" data-service="{service}">
-  <p class="eyebrow light">Fast free estimate</p>
-  <h2 id="quote-title">{title}</h2>
-  <p>Open the secure Terramorph request form and send the property details, photos, timeline, and service need in one place.</p>
-  <div class="quote-speed-row" aria-label="Fast estimate expectations">
-    <span>✓ Free estimate</span><span>✓ Secure request form</span><span>✓ Wood + Lucas County</span>
-  </div>
-  <div class="jobber-direct-card">
-    <p class="eyebrow">Secure request path</p>
-    <h3>Send the request straight to Terramorph.</h3>
-    <p>Complete the secure Terramorph form so the team has the details needed to follow up with the right next step.</p>
-    <ul class="check-list">
-      <li>Send service need, city, timeline, and photos.</li>
-      <li>Help the team understand the property before follow-up.</li>
-      <li>Get a clear next step without a long back-and-forth.</li>
-    </ul>
-    <div class="jobber-direct-actions"><a class="btn btn-gold" href="{direct_url}" data-quote-service="{service}"{target_attrs}>{cta}</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
-  </div>
-</section>'''
+def quote_form(title='Request a Premium Project Quote', service='Outdoor Transformation', source='website', cta='Call for Estimate', direct_only=False, same_tab=False):
     return f'''
-<section class="quote-panel jobber-quote-panel" id="quote" aria-labelledby="quote-title" data-service="{service}">
+<section class="quote-panel phone-quote-panel" id="quote" aria-labelledby="quote-title" data-service="{service}">
   <p class="eyebrow light">Fast free estimate</p>
   <h2 id="quote-title">{title}</h2>
-  <p>Tell Terramorph what is happening, where the property is, and when you want it handled. The request goes into Jobber so the team can follow up with the right service, city, photos, and timeline.</p>
+  <p>Call Terramorph directly so the team can confirm the service need, city, photos, timeline, and best next step.</p>
   <div class="quote-speed-row" aria-label="Fast estimate expectations">
-    <span>✓ Free estimate</span><span>✓ Photos help</span><span>✓ Wood + Lucas County</span>
+    <span>✓ Free estimate</span><span>✓ Phone-first scheduling</span><span>✓ Wood + Lucas County</span>
   </div>
-  <div class="jobber-embed-wrap jobber-lazy-wrap" aria-label="Terramorph Jobber quote request form" data-jobber-lazy data-clienthub-id="{JOBBER_EMBED_ID}" data-form-url="{JOBBER_EMBED_FORM_URL}">
-    <div class="jobber-lazy-card">
-      <p class="eyebrow light">No heavy form load until needed</p>
-      <h3>Open the secure quote form when you are ready.</h3>
-      <p>This keeps the page fast on first load while still giving homeowners a direct Jobber request path.</p>
-      <button class="btn btn-gold" type="button" data-load-jobber>Load Secure Quote Form</button>
-    </div>
-    <div id="{JOBBER_EMBED_ID}" class="jobber-lazy-target" style="min-height:620px;height:620px" hidden></div>
+  <div class="jobber-direct-card phone-direct-card">
+    <p class="eyebrow">Direct phone path</p>
+    <h3>Talk with Terramorph at {PHONE}.</h3>
+    <p>Use the call button for quote requests, service questions, scheduling, and urgent property issues.</p>
+    <ul class="check-list">
+      <li>Share the service need, city, timeline, and property details.</li>
+      <li>Ask what photos or measurements would help before a visit.</li>
+      <li>Get the next step without waiting on an external form.</li>
+    </ul>
+    <div class="jobber-direct-actions"><a class="btn btn-gold" href="tel:{TEL}" data-quote-service="{service}">Call {PHONE}</a><a class="btn btn-outline-light" href="tel:{TEL}">Request by Phone</a></div>
   </div>
-  <div class="jobber-fallback"><p>If the embedded form does not load, open the secure request form directly.</p><a class="btn btn-gold" href="{direct_url}" data-quote-service="{service}"{target_attrs}>{cta}</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
 </section>'''
 
 def quote_popup():
@@ -378,14 +345,14 @@ def quote_popup():
     <button class="quote-popup-close" type="button" aria-label="Close free quote popup" data-close-popup>×</button>
     <div class="quote-popup-copy">
       <p class="eyebrow">Free estimate</p>
-      <h2 id="quote-popup-title">Send your request straight to Terramorph.</h2>
-      <p id="quote-popup-desc">Send property details, service needs, photos, and timeline in one secure request so Terramorph can follow up with the right next step.</p>
+      <h2 id="quote-popup-title">Call Terramorph directly.</h2>
+      <p id="quote-popup-desc">Use the phone number for quote requests, service questions, urgent projects, and scheduling.</p>
       <div class="popup-trust"><a href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener">★★★★★ 200+ Google Reviews</a><span>Licensed and insured</span><span>Serving Wood and Lucas County</span></div>
     </div>
     <div class="popup-direct-actions">
       <h3>Ready for an estimate?</h3>
-      <p>Open the secure Jobber quote form or call now if the project is urgent.</p>
-      <a class="btn btn-gold" href="{JOBBER_QUOTE_URL}">Open Quote Form</a>
+      <p>Call now and Terramorph can confirm the right next step.</p>
+      <a class="btn btn-gold" href="tel:{TEL}">Call {PHONE}</a>
       <a class="btn btn-primary" href="tel:{TEL}">Call {PHONE}</a>
     </div>
   </section>
@@ -707,7 +674,7 @@ def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, 
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>See the kind of work this estimate can start.</h2></div><div class="container">{photo_gallery()}</div></section>
 {review_section()}
 {faq_section(faqs)}
-<section class="section quote-section"><div class="container quote-grid">{quote_form(form_title, service=service, source='website', cta='Open Secure Quote Form', direct_only=True, same_tab=True)}<div class="cta-proof"><p class="eyebrow">Built for fast homeowner decisions</p><h2>One clear offer, visible proof, a call button, and a short quote path.</h2>{review_stack(3)}<ul class="check-list"><li>See real project proof before requesting an estimate.</li><li>Open the secure quote form and send the project details.</li><li>Help Terramorph respond with the right next step faster.</li></ul></div></div></section>
+<section class="section quote-section"><div class="container quote-grid">{quote_form(form_title, service=service, source='website', cta='Call for Estimate', direct_only=True, same_tab=True)}<div class="cta-proof"><p class="eyebrow">Built for fast homeowner decisions</p><h2>One clear offer, visible proof, a call button, and a short quote path.</h2>{review_stack(3)}<ul class="check-list"><li>See real project proof before requesting an estimate.</li><li>Call Terramorph and share the project details.</li><li>Help Terramorph respond with the right next step faster.</li></ul></div></div></section>
 '''
     desc = f'{title} from Terramorph for Wood and Lucas County homeowners. Real photos, reviews, phone call, and free estimate request.'
     schema = schema_for(filename, title, desc, faqs, service)
@@ -875,14 +842,14 @@ def city_service_card(item):
     return f'''<a class="guide-card city-service-card" href="{item['file']}"><span>{item['city']} &middot; {item['service']}</span><h3>{item['headline']}</h3><p>{item['lead']}</p><b>Open local page &rarr;</b></a>'''
 
 def city_service_schema(item):
-    faqs = [(f'Does Terramorph offer {item["service"].lower()} in {item["city"]}?', f'Yes. Terramorph serves {item["city"]} and nearby Wood and Lucas County areas with {item["service"].lower()} and related outdoor property work.'),('Can I request a free estimate online?', 'Yes. Use the secure quote form on this page to send the service need, property details, photos, and timeline directly to Terramorph.'),('What other services can be included?', 'Terramorph can review related needs such as drainage, patios, beds, lighting, cleanups, maintenance, mulch, rock, trimming, and property improvements.')]
-    desc = f"Terramorph provides {item['keyword']} for homeowners and property owners, with free estimates through Jobber."
+    faqs = [(f'Does Terramorph offer {item["service"].lower()} in {item["city"]}?', f'Yes. Terramorph serves {item["city"]} and nearby Wood and Lucas County areas with {item["service"].lower()} and related outdoor property work.'),('Can I request a free estimate by phone?', f'Yes. Call Terramorph at {PHONE} with the service need, property details, photos if available, and timeline.'),('What other services can be included?', 'Terramorph can review related needs such as drainage, patios, beds, lighting, cleanups, maintenance, mulch, rock, trimming, and property improvements.')]
+    desc = f"Terramorph provides {item['keyword']} for homeowners and property owners, with phone-first free estimates."
     return schema_for(item['file'], item['headline'] + ' | Terramorph', desc, faqs, item['service'])
 
 def city_service_page(item):
     related = ''.join(city_service_card(x) for x in CITY_SERVICE_PAGES if x['city'] == item['city'] and x['file'] != item['file'])
     service_related = ''.join(city_service_card(x) for x in CITY_SERVICE_PAGES if x['service'] == item['service'] and x['file'] != item['file'])
-    faqs = [(f'Does Terramorph serve {item["city"]}?', f'Yes. Terramorph serves {item["city"]}, Wood County, Lucas County, and surrounding Northwest Ohio communities.'),(f'Can I get a free {item["service"].lower()} estimate in {item["city"]}?', 'Yes. Use the Jobber quote form to send the request directly to Terramorph for follow-up.'),('Can photos be included with the request?', 'Yes. Photos are helpful for drainage, patios, beds, cleanups, and landscape projects because they help the team understand the property before follow-up.')]
+    faqs = [(f'Does Terramorph serve {item["city"]}?', f'Yes. Terramorph serves {item["city"]}, Wood County, Lucas County, and surrounding Northwest Ohio communities.'),(f'Can I get a free {item["service"].lower()} estimate in {item["city"]}?', f'Yes. Call Terramorph at {PHONE} to request a free estimate and confirm the best next step.'),('Can photos be included with the request?', 'Yes. Photos are helpful for drainage, patios, beds, cleanups, and landscape projects because they help the team understand the property before follow-up.')]
     body = f'''
 <section class="page-hero premium-page-hero city-service-hero">
   <div class="page-hero-image"><img src="assets/{item['image']}" alt="Terramorph {item['service']} in {item['city']}, Ohio"></div><div class="hero-overlay"></div>
@@ -895,7 +862,7 @@ def city_service_page(item):
 <section class="section quote-section"><div class="container quote-grid">{quote_form(item['cta'])}<div class="cta-proof"><p class="eyebrow">Fast estimate path</p><h2>Send photos, timeline, and service details in one secure request.</h2>{review_stack(2)}</div></div></section>
 <section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">More local pages</p><h2>Compare by service area and project type.</h2></div><div class="container guide-grid related-guides">{service_related}</div></section>
 '''
-    desc = f"{item['headline']} Free estimates from Terramorph through Jobber for {item['city']} and Northwest Ohio properties."
+    desc = f"{item['headline']} Phone-first free estimates from Terramorph for {item['city']} and Northwest Ohio properties."
     (root/item['file']).write_text(page(item['headline'] + ' | Terramorph', desc, body, city_service_schema(item)))
 
 def write_city_service_pages():
@@ -912,7 +879,7 @@ areas = f'''
 {trust_band()}
 {local_authority()}
 {official_business_info()}
-<section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">Local service pages</p><h2>Estimate information by city and project type.</h2><p>Use these pages to review the most relevant Terramorph services for your city, then request a free estimate through Jobber.</p></div><div class="container guide-grid">{''.join(city_service_card(x) for x in CITY_SERVICE_PAGES)}</div></section>
+<section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">Local service pages</p><h2>Estimate information by city and project type.</h2><p>Use these pages to review the most relevant Terramorph services for your city, then call Terramorph for a free estimate.</p></div><div class="container guide-grid">{''.join(city_service_card(x) for x in CITY_SERVICE_PAGES)}</div></section>
 <section class="section"><div class="container section-heading compact"><p class="eyebrow">Priority service areas</p><h2>Focused on Northwest Ohio.</h2></div><div class="container areas">{''.join(f'<a class="area" href="{CITY_LINKS.get(x, "contact.html")}">{x}<span>Design • patios • drainage • lighting</span></a>' for x in ['Perrysburg','Toledo','Maumee','Sylvania','Rossford','Oregon','Waterville','Whitehouse','Monclova','Ottawa Hills','Bowling Green','Wood County','Lucas County','Northwest Ohio'])}</div></section>
 <section class="section quote-section"><div class="container quote-grid">{quote_form('Get a Local Property Estimate')}<div class="cta-proof"><p class="eyebrow">Local estimates</p><h2>Tell us where you are and what you need done.</h2><p>Whether it is drainage, design, a patio, cleanup, mowing, mulch, trimming, or bed maintenance, Terramorph can point you toward the right next step.</p></div></div></section>
 '''
@@ -922,7 +889,7 @@ areas_desc = 'Terramorph serves Wood and Lucas County with Northwest Ohio-specif
 contact = f'''
 <section class="page-hero premium-page-hero contact-hero">
   <div class="page-hero-image"><img src="assets/real-hero.webp" alt="Terramorph outdoor project for quote request"></div><div class="hero-overlay"></div>
-  <div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / Quote</p><p class="eyebrow light">Fast project quote</p><h1>Tell Terramorph what you want built, fixed, or transformed.</h1><p>Use the form for lawn care, landscape maintenance, seasonal cleanup, pruning, mulch, plant installation, patios, retaining walls, drainage, lighting, concrete, power washing, hauling, snow removal, or other property work.</p><div class="cta-row"><a class="btn btn-gold" href="#quote">Start Quote</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div>
+  <div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / Quote</p><p class="eyebrow light">Fast project quote</p><h1>Tell Terramorph what you want built, fixed, or transformed.</h1><p>Call for lawn care, landscape maintenance, seasonal cleanup, pruning, mulch, plant installation, patios, retaining walls, drainage, lighting, concrete, power washing, hauling, snow removal, or other property work.</p><div class="cta-row"><a class="btn btn-gold" href="#quote">Start Quote</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div>
 </section>
 <section class="section quote-section"><div class="container quote-grid">{quote_form('Request My Terramorph Quote')}<div class="cta-proof"><p class="eyebrow">What happens next</p><h2>Simple free estimates for projects and maintenance.</h2><div class="process-timeline"><div><b>1. Request</b><span>Submit the short form or call directly.</span></div><div><b>2. Review</b><span>Terramorph reviews service, city, photos, and timeline.</span></div><div><b>3. Estimate</b><span>Book the site visit and prepare a clear scope.</span></div></div>{review_stack()}</div></div></section>
 {trust_band()}
@@ -948,7 +915,7 @@ privacy = f'''
     <h2>How we use information</h2>
     <p>We use submitted information to respond to quote requests, schedule site visits, prepare estimates, communicate about projects, improve our services, and keep accurate customer and project records.</p>
     <h2>Quote forms and third-party tools</h2>
-    <p>Terramorph uses Jobber and related business tools to manage quote requests, scheduling, customer communication, and project follow-up. When you open or submit a quote request, your information may be processed by those service providers so Terramorph can respond and manage the request.</p>
+    <p>Terramorph may use business tools to manage scheduling, customer communication, and project follow-up. Information you provide by phone or through future website features may be processed by service providers so Terramorph can respond and manage the request.</p>
     <h2>Website analytics and advertising</h2>
     <p>This website may use standard analytics, advertising, pixels, cookies, or tracking links to understand website traffic, measure marketing performance, and improve future advertising. These tools may collect browser, device, page visit, referral, and interaction information.</p>
     <h2>Information sharing</h2>
@@ -958,7 +925,7 @@ privacy = f'''
     <h2>Your choices</h2>
     <p>You can request updates, corrections, or removal of your contact information from active marketing lists by contacting Terramorph. Some records may be retained when needed for business, legal, accounting, or project-history purposes.</p>
     <h2>Contact</h2>
-    <p>For privacy questions, call <a href="tel:{TEL}">{PHONE}</a> or submit a request through the website contact page.</p>
+    <p>For privacy questions, call <a href="tel:{TEL}">{PHONE}</a>.</p>
   </div>
 </section>
 '''
@@ -987,7 +954,7 @@ terms = f'''
     <h2>Project information</h2>
     <p>Service descriptions, photos, guides, and project examples are general information. Outdoor work depends on site conditions including grade, drainage, soil, access, weather, existing materials, and customer goals.</p>
     <h2>Third-party tools and links</h2>
-    <p>The website may link to Jobber, Google, BBB, Facebook, Instagram, Yelp, Nextdoor, and other third-party platforms. Those platforms operate under their own terms and privacy practices.</p>
+    <p>The website may link to Google, BBB, Facebook, Instagram, Yelp, Nextdoor, and other third-party platforms. Those platforms operate under their own terms and privacy practices.</p>
     <h2>No guarantee from website content alone</h2>
     <p>Terramorph aims to keep the website accurate, but final recommendations require property-specific review and direct communication with the team.</p>
     <h2>Contact</h2>
@@ -998,13 +965,13 @@ terms = f'''
 terms_desc = 'Website terms for Terramorph LLC visitors, quote requests, third-party links, and service information.'
 (root/'terms.html').write_text(page('Terms | Terramorph LLC', terms_desc, terms, schema_for('terms.html', 'Terms', terms_desc)))
 
-review_notes_body = '''<section class="section"><div class="container review-doc"><p class="eyebrow">V3.49 final optimization summary</p><h1>Terramorph local SEO, citation, and conversion response</h1><h2>What changed</h2><ul><li>Added official business information blocks so Google, Meta, and directories have one consistent NAP/entity source.</li><li>Strengthened LocalBusiness/LandscapingBusiness/HomeAndConstructionBusiness schema, sameAs links, contact point, service areas, categories, and service offer catalog.</li><li>Added canonical, Open Graph, Twitter card, and absolute social image metadata across generated pages.</li><li>Kept high-intent quote CTAs, Jobber tracking, phone clicks, city/service pages, proof, reviews, and local service-area copy visible near conversion points.</li></ul><p><a class="btn btn-primary" href="index.html">Open homepage</a></p></div></section>'''
+review_notes_body = '''<section class="section"><div class="container review-doc"><p class="eyebrow">V3.49 final optimization summary</p><h1>Terramorph local SEO, citation, and conversion response</h1><h2>What changed</h2><ul><li>Added official business information blocks so Google, Meta, and directories have one consistent NAP/entity source.</li><li>Strengthened LocalBusiness/LandscapingBusiness/HomeAndConstructionBusiness schema, sameAs links, contact point, service areas, categories, and service offer catalog.</li><li>Added canonical, Open Graph, Twitter card, and absolute social image metadata across generated pages.</li><li>Kept high-intent quote CTAs, phone-click tracking, city/service pages, proof, reviews, and local service-area copy visible near conversion points.</li></ul><p><a class="btn btn-primary" href="index.html">Open homepage</a></p></div></section>'''
 review_notes_desc = 'Summary of Terramorph V3.49 local SEO, AI visibility, local authority, conversion, and technical optimization improvements.'
 (root/'review-notes.html').write_text(page('V3.49 Final Optimization Notes | Terramorph', review_notes_desc, review_notes_body, schema_for('review-notes.html', 'V3.49 Final Optimization Notes', review_notes_desc)))
 
 readme = '''# Terramorph V3.49 Website
 
-Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consistency, citation cleanup support, high-intent service-area landing pages, and conversion tracking into Jobber.
+Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consistency, citation cleanup support, high-intent service-area landing pages, and phone-first conversion tracking.
 
 ## Open
 - `index.html` — homepage
@@ -1017,7 +984,7 @@ Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consi
 - `about.html` — About page
 - `service-areas.html` — local service area hub
 - nine city/service pages for Toledo, Perrysburg, and Maumee landscaping, drainage, and patios
-- `contact.html` — secure quote form
+- `contact.html` — phone-first quote request page
 - `privacy.html` — privacy policy
 - `review-notes.html` — summary of changes
 
@@ -1032,7 +999,7 @@ Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consi
 - Accessibility improvements
 - Added an About page explaining the local, diagnosis-first approach
 - Added Outdoor Project Guides hub and eight SEO guide pages with FAQ/article schema and quote CTAs
-- Connected quote requests to the embedded secure request form
+- Connected quote requests to phone-first call CTAs
 - Added city/service pages for Toledo, Perrysburg, and Maumee core services
 '''
 (root/'README.md').write_text(readme)
@@ -1062,6 +1029,9 @@ def post_process_html():
         url = BASE_URL + ('/' if path.name == 'index.html' else '/' + path.name)
         html = html.replace('<meta property="og:image" content="assets/real-hero.webp">', f'<meta property="og:image" content="{BASE_URL}/assets/real-hero.webp">\n  <meta property="og:url" content="{url}">\n  <meta name="twitter:card" content="summary_large_image">\n  <link rel="canonical" href="{url}">')
         html = html.replace('Request a Outdoor Lighting Quote', 'Request an Outdoor Lighting Quote')
+        html = html.replace('href="contact.html#quote"', f'href="tel:{TEL}"')
+        html = html.replace('href="contact.html"', f'href="tel:{TEL}"')
+        html = html.replace('href="#quote"', f'href="tel:{TEL}"')
         html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.49"></script>')
         path.write_text(html)
 

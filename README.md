@@ -1,6 +1,6 @@
 # Terramorph V3.49 Website
 
-Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consistency, citation cleanup support, high-intent service-area landing pages, and conversion tracking into Jobber.
+Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consistency, citation cleanup support, high-intent service-area landing pages, and phone-first conversion tracking.
 
 ## Open
 - `index.html` — homepage
@@ -13,7 +13,7 @@ Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consi
 - `about.html` — About page
 - `service-areas.html` — local service area hub
 - nine city/service pages for Toledo, Perrysburg, and Maumee landscaping, drainage, and patios
-- `contact.html` — secure quote form
+- `contact.html` — phone-first quote request page
 - `privacy.html` — privacy policy
 - `review-notes.html` — summary of changes
 
@@ -28,7 +28,7 @@ Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consi
 - Accessibility improvements
 - Added an About page explaining the local, diagnosis-first approach
 - Added Outdoor Project Guides hub and eight SEO guide pages with FAQ/article schema and quote CTAs
-- Connected quote requests to the embedded secure request form
+- Connected quote requests to phone-first call CTAs
 - Added city/service pages for Toledo, Perrysburg, and Maumee core services
 
 ## V3.49 local growth/ad expansion
