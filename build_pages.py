@@ -285,7 +285,13 @@ def page(title, desc, body, schema=''):
     footer = FOOT
     if page_name in {'thank-you.html', 'privacy.html', 'terms.html', 'review-notes.html'}:
         footer = FOOT.replace('href="#quote"', 'href="contact.html#quote"')
-    return optimize_markup(head(title, desc, schema, page_name) + body + '</main>' + quote_popup() + footer + '</body></html>')
+    html = head(title, desc, schema, page_name) + body + '</main>' + quote_popup() + footer + '</body></html>'
+    if page_name == 'index.html':
+        html = html.replace('<a href="quote.html">Quote</a>', '<a href="#request-form">Quote</a>')
+        html = html.replace('<a class="btn btn-primary" href="quote.html">Request Quote</a>', '<a class="btn btn-primary" href="#request-form">Request Quote</a>')
+        html = html.replace('<a class="btn btn-primary" href="quote.html">Quote</a>', '<a class="btn btn-primary" href="#request-form">Quote</a>')
+        html = html.replace('<a href="quote.html">Request a quote</a>', '<a href="#request-form">Request a quote</a>')
+    return optimize_markup(html)
 
 def quick_lead_form(service, offer):
     return f"""
@@ -337,6 +343,31 @@ def quote_form(title='Request a Premium Project Quote', service='Outdoor Transfo
       <li>Call {PHONE} anytime for urgent property issues or scheduling questions.</li>
     </ul>
     <div class="phone-direct-actions"><a class="btn btn-gold" href="quote.html">Open Quote Form</a><a class="btn btn-outline-light" href="tel:{TEL}" data-quote-service="{service}">Call {PHONE}</a></div>
+  </div>
+</section>'''
+
+def inline_jobber_quote_form(title='Request My Outdoor Transformation Quote'):
+    return f'''
+<section class="quote-panel jobber-quote-panel quote-request-section" id="request-form" aria-labelledby="home-request-title" data-service="Outdoor Transformation">
+  <div class="quick-lead-card quote-request-card">
+    <div class="quick-lead-copy">
+      <p class="eyebrow light">Fast free estimate</p>
+      <h2 id="home-request-title">{title}</h2>
+      <p>Fill out the secure Terramorph Jobber form right here on the site. New requests go directly into the CRM so the team gets the service, city, photos, timeline, and project notes without sending visitors to another page first.</p>
+      <div class="quick-lead-proof"><span>★★★★★ 200+ Google Reviews</span><span>Licensed + insured</span><span>Wood + Lucas County</span></div>
+    </div>
+    <div>
+      <div class="jobber-embed-wrap" aria-label="Terramorph Jobber quote request form">
+        <div id="{JOBBER_CLIENTHUB_ID}">
+          <script src="https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js" clienthub_id="{JOBBER_CLIENTHUB_ID}" form_url="{JOBBER_FORM_URL}"></script>
+        </div>
+      </div>
+      <div class="jobber-fallback">
+        <p>If the embedded form does not load, open the secure Jobber request form directly.</p>
+        <a class="btn btn-gold" href="{JOBBER_DIRECT_URL}" target="_blank" rel="noopener">Open Jobber Quote Form</a>
+        <a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a>
+      </div>
+    </div>
   </div>
 </section>'''
 
@@ -531,7 +562,7 @@ home = f'''
       <p class="eyebrow light">Northwest Ohio outdoor transformation</p>
       <h1>Fix the yard. Finish the property. Make it worth coming home to.</h1>
       <p class="hero-lead">Landscape design, paver patios, drainage, lighting, cleanups, maintenance, and snow service for homeowners and properties that need outdoor work handled with real follow-through.</p>
-      <div class="cta-row"><a class="btn btn-gold" href="contact.html">Get A Free Estimate</a><a class="btn btn-outline-light" href="#start-here">Choose My Project</a><a class="btn btn-outline-light" href="projects.html">See Work</a><a class="btn btn-call" href="tel:{TEL}">Call {PHONE}</a></div>
+      <div class="cta-row"><a class="btn btn-gold" href="#request-form">Get A Free Estimate</a><a class="btn btn-outline-light" href="#start-here">Choose My Project</a><a class="btn btn-outline-light" href="projects.html">See Work</a><a class="btn btn-call" href="tel:{TEL}">Call {PHONE}</a></div>
       <div class="above-fold-trust">
         <span>★★★★★ 200+ Google Reviews</span><span>Named Customer Reviews</span><span>BBB Member</span><span>Licensed and insured</span><span>Serving Wood and Lucas County with Northwest Ohio-specific expertise</span>
       </div>
@@ -563,7 +594,7 @@ home = f'''
 {process_home()}
 <section class="section quote-section">
   <div class="container quote-grid">
-    {quote_form('Request My Outdoor Transformation Quote')}
+    {inline_jobber_quote_form('Request My Outdoor Transformation Quote')}
     <div class="cta-proof">
       <p class="eyebrow">Named Google Review Proof</p>
       <h2>Real words from homeowners who already trusted Terramorph.</h2>
@@ -922,7 +953,9 @@ quote_page = f'''
         <div class="quick-lead-proof"><span>★★★★★ 200+ Google Reviews</span><span>Licensed + insured</span><span>Wood + Lucas County</span></div>
       </div>
       <div class="jobber-embed-wrap" aria-label="Terramorph Jobber quote request form">
-        <script src="https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js" clienthub_id="{JOBBER_CLIENTHUB_ID}" form_url="{JOBBER_FORM_URL}"></script>
+        <div id="{JOBBER_CLIENTHUB_ID}">
+          <script src="https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js" clienthub_id="{JOBBER_CLIENTHUB_ID}" form_url="{JOBBER_FORM_URL}"></script>
+        </div>
       </div>
       <div class="jobber-fallback">
         <p>If the embedded form does not load, open the secure Jobber request form directly.</p>
