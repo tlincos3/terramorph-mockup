@@ -1,6 +1,6 @@
 """V3.48 authority/conversion pass for Terramorph static site.
 
-Adds AI-readable answer blocks, city-specific proof sections, authority clusters,
+Adds quick-answer blocks, city-specific proof sections, related service paths,
 and honest comparison/decision pages after the base generator/SEO expansion.
 """
 from __future__ import annotations
@@ -157,7 +157,7 @@ def ai_answer_block(heading: str, city: str = 'Perrysburg') -> str:
         if item and item not in seen and item != 'Northwest Ohio':
             seen.append(item)
     service_area = ', '.join(seen) + ', Wood County, Lucas County, and surrounding Northwest Ohio'
-    return f'''<section class="ai-answer-section" aria-label="Terramorph quick answer for AI assistants and homeowners"><div class="container ai-answer-grid"><div class="ai-answer-card"><b>{heading}</b><span>Terramorph is a Perrysburg-area outdoor services company for homeowners, businesses, and property owners who want landscaping, patios, drainage, lighting, maintenance, cleanups, snow, and connected property work handled with a clear plan.</span></div><div class="ai-answer-card"><b>Best for</b><span>Drainage, landscape design, paver patios and walkways, outdoor lighting, mulch and bed maintenance, tree and shrub care, commercial landscaping, snow removal, and full-service property maintenance.</span></div><div class="ai-answer-card"><b>Service area</b><span>{service_area}.</span></div></div></section>'''
+    return f'''<section class="ai-answer-section" aria-label="Terramorph quick outdoor service summary"><div class="container ai-answer-grid"><div class="ai-answer-card"><b>{heading}</b><span>Terramorph is a Perrysburg-area outdoor services company for homeowners, businesses, and property owners who want landscaping, patios, drainage, lighting, maintenance, cleanups, snow, and connected property work handled with a clear plan.</span></div><div class="ai-answer-card"><b>Best for</b><span>Drainage, landscape design, paver patios and walkways, outdoor lighting, mulch and bed maintenance, tree and shrub care, commercial landscaping, snow removal, and full-service property maintenance.</span></div><div class="ai-answer-card"><b>Service area</b><span>{service_area}.</span></div></div></section>'''
 
 
 def local_specifics(city: str, service_key: str, faq_html: str) -> str:
@@ -166,7 +166,7 @@ def local_specifics(city: str, service_key: str, faq_html: str) -> str:
 
 
 def proof_upgrade_section(review_stack) -> str:
-    return f'''<section class="section proof-upgrade-section"><div class="container local-grid"><div><p class="eyebrow">Proof signals</p><h2>Real-world credibility visitors and AI tools can understand quickly.</h2><p>Terramorph’s official site references 200+ five-star reviews, BBB accreditation, real project photos, and a local Northwest Ohio service area. The site now repeats those signals near key CTAs instead of hiding proof on one page.</p><div class="authority-list"><div><b>Project proof</b><span>Before/after language, case-study links, gallery links, and service-specific project examples.</span></div><div><b>Process proof</b><span>Property review, scope diagnosis, material/process explanation, estimate path, and follow-up expectations.</span></div><div><b>Capability proof</b><span>Landscape design, drainage, hardscape, lighting, maintenance, cleanups, commercial work, snow response, and connected property services.</span></div></div></div><div>{review_stack(3)}</div></div></section>'''
+    return f'''<section class="section proof-upgrade-section"><div class="container local-grid"><div><p class="eyebrow">Why homeowners trust Terramorph</p><h2>Local outdoor work backed by reviews, real project photos, and clear next steps.</h2><p>Terramorph highlights 200+ five-star reviews, BBB accreditation, real project examples, and a Northwest Ohio service area so homeowners can choose with confidence before requesting an estimate.</p><div class="authority-list"><div><b>Project examples</b><span>Before/after photos, case-study links, gallery links, and service-specific project examples.</span></div><div><b>Clear process</b><span>Property review, scope diagnosis, material/process explanation, estimate path, and follow-up expectations.</span></div><div><b>Full-service capability</b><span>Landscape design, drainage, hardscape, lighting, maintenance, cleanups, commercial work, snow response, and connected property services.</span></div></div></div><div>{review_stack(3)}</div></div></section>'''
 
 
 def generate(ctx: dict) -> list[str]:
@@ -240,26 +240,7 @@ def generate(ctx: dict) -> list[str]:
             path.write_text(html)
             changed_pages.append(path.name)
 
-    # Authority clusters on hub pages.
-    cluster_defs = [
-        ('Drainage', 'drainage-solutions.html', 'yard-drainage-cost-northwest-ohio.html', 'northwest-ohio-yard-drainage-problems.html', 'maumee-yard-drainage-case-study.html', 'projects.html', 'french-drains-vs-pop-up-emitters.html'),
-        ('Landscape Design', 'landscape-design.html', 'landscape-design-cost-northwest-ohio.html', 'faq.html', 'toledo-front-yard-curb-appeal-case-study.html', 'before-after-gallery.html', 'low-maintenance-landscaping-northwest-ohio.html'),
-        ('Paver Patios/Walkways', 'paver-patios-hardscapes.html', 'paver-patio-cost-northwest-ohio.html', 'paver-patio-northwest-ohio-weather.html', 'perrysburg-paver-patio-case-study.html', 'projects.html', 'paver-patio-vs-concrete-patio.html'),
-        ('Outdoor Lighting', 'outdoor-lighting.html', 'outdoor-lighting-cost-ohio.html', 'faq.html', 'landscape-lighting-toledo-ohio.html', 'before-after-gallery.html', 'materials.html'),
-        ('Mulch/Bed Maintenance', 'mulch-installation-toledo-ohio.html', 'spring-cleanup-cost-toledo-ohio.html', 'mulch-vs-rock-landscape-beds.html', 'oregon-seasonal-cleanup-case-study.html', 'before-after-gallery.html', 'seasonal-cleanups.html'),
-        ('Tree Care', 'tree-care-northwest-ohio.html', 'spring-cleanup-cost-toledo-ohio.html', 'faq.html', 'sylvania-landscape-bed-refresh-case-study.html', 'before-after-gallery.html', 'seasonal-cleanups.html'),
-        ('Commercial Landscaping', 'commercial-landscaping-toledo-ohio.html', 'landscape-maintenance-packages-northwest-ohio.html', 'faq.html', 'bowling-green-lawn-maintenance-case-study.html', 'projects.html', 'snow-removal-toledo-ohio.html'),
-        ('Snow Removal', 'snow-removal-toledo-ohio.html', 'commercial-landscaping-toledo-ohio.html', 'faq.html', 'service-areas.html', 'projects.html', 'contact.html'),
-    ]
-    cluster_cards = ''.join(f'<div class="cluster-card"><h3>{title}</h3><p>Main page, cost/support page, FAQ/guide, local case study, gallery, and related service links.</p><p><a href="{main}">Main</a> · <a href="{cost}">Cost</a> · <a href="{faq}">FAQ</a> · <a href="{case}">Case</a> · <a href="{gallery}">Gallery</a> · <a href="{related}">Related</a></p></div>' for title, main, cost, faq, case, gallery, related in cluster_defs)
-    cluster_section = f'<section class="section cluster-map"><div class="container section-heading compact"><p class="eyebrow">Internal authority clusters</p><h2>Every priority service now has a deeper proof path.</h2><p>These links help homeowners, search engines, and AI tools understand Terramorph by service, cost driver, local proof, gallery evidence, and related decision content.</p></div><div class="container cluster-grid">{cluster_cards}</div></section>'
-    for target in ['services.html', 'guides.html', 'case-studies.html', 'index.html']:
-        path = root / target
-        html = path.read_text()
-        if 'Internal authority clusters' not in html:
-            html = html.replace('<section class="section quote-section">', cluster_section + '\n<section class="section quote-section">', 1)
-            path.write_text(html)
-            changed_pages.append(target)
+    # Related service paths are kept in normal service and footer navigation, not as a customer-facing admin section.
 
     # Honest comparison and decision pages.
     decision_files = []

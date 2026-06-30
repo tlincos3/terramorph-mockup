@@ -436,7 +436,7 @@ def official_business_info():
     <div>
       <p class="eyebrow">Official business information</p>
       <h2 id="official-business-title">The citation data Google, Meta, and directories should match.</h2>
-      <p>Local platforms should use one clean version of Terramorph's name, phone, website, service area, and category. This gives citation tools, directory editors, and search engines a consistent source to reconcile against.</p>
+      <p>Local platforms should use one clean version of Terramorph's name, phone, website, service area, and category. This keeps Terramorph's name, phone, website, service area, and category consistent everywhere homeowners may find the business.</p>
     </div>
     <dl class="nap-grid">
       <div><dt>Business name</dt><dd>{BUSINESS_NAME}</dd></div>

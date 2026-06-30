@@ -1,0 +1,19 @@
+Asset type,Campaign,Text,Final URL,Notes
+Call asset,All Search Campaigns,419-873-6801,,Enable call reporting and count calls longer than 60 seconds as conversions.
+Sitelink,All Search Campaigns,Drainage Estimate,https://terramorphllc.com/lp-drainage.html,Use for drainage and standing-water searches.
+Sitelink,All Search Campaigns,Patio Estimate,https://terramorphllc.com/lp-patios.html,Use for patios and hardscape searches.
+Sitelink,All Search Campaigns,Landscape Design,https://terramorphllc.com/lp-landscape-design.html,Use for design and installation searches.
+Sitelink,All Search Campaigns,Project Photos,https://terramorphllc.com/projects.html,Proof asset for skeptical homeowners.
+Sitelink,All Search Campaigns,Service Areas,https://terramorphllc.com/service-areas.html,Supports Northwest Ohio local relevance.
+Sitelink,All Search Campaigns,Reviews,https://terramorphllc.com/reviews.html,Use if approved in account and policy review.
+Callout,All Search Campaigns,Free Estimates,,Keep claim consistent with site.
+Callout,All Search Campaigns,Licensed And Insured,,Trust signal.
+Callout,All Search Campaigns,200+ Google Reviews,,Trust signal.
+Callout,All Search Campaigns,BBB Member,,Trust signal.
+Callout,All Search Campaigns,Wood And Lucas County,,Local proof.
+Callout,All Search Campaigns,Local Northwest Ohio Crew,,Local proof.
+Callout,All Search Campaigns,Real Project Photos,,Proof signal.
+Callout,All Search Campaigns,Phone-First Scheduling,,Matches current site flow.
+Structured snippet,All Search Campaigns,"Services: Drainage, Paver Patios, Landscape Design, Lawn Maintenance, Seasonal Cleanups",,Use as service snippet.
+Structured snippet,All Search Campaigns,"Areas: Perrysburg, Toledo, Maumee, Sylvania, Bowling Green, Rossford, Oregon, Waterville, Whitehouse",,Use as area-supporting snippet if policy allows.
+Location asset,All Search Campaigns,Google Business Profile,,Connect Terramorph GBP before launch.
