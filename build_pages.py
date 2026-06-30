@@ -1105,7 +1105,8 @@ def post_process_html():
         if path.name != 'contact.html':
             html = html.replace('href="contact.html"', 'href="quote.html"')
         html = html.replace('href="#quote"', 'href="quote.html"')
-        html = html.replace('<script src="app.js?v=3.50"></script>', '<script src="app.js?v=3.50"></script>')
+        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.51"></script>')
+        html = html.replace('<script src="app.js?v=3.50"></script>', '<script src="app.js?v=3.51"></script>')
         path.write_text(html)
 
 write_static_seo_files()
