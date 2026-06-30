@@ -380,6 +380,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('[data-quote-service]').forEach(link => {
     link.addEventListener('click', () => trackQuoteIntent('phone_quote', link));
   });
+  document.querySelectorAll('a[href*="clienthub.getjobber.com"]').forEach(link => {
+    link.addEventListener('click', () => trackQuoteIntent('jobber_direct', link));
+  });
   document.querySelectorAll('[data-quick-lead-form]').forEach(form => {
     form.addEventListener('submit', event => handleQuickLeadSubmit(form, event));
   });

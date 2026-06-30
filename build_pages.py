@@ -16,6 +16,9 @@ BUSINESS_POSTAL = '43551'
 BUSINESS_COUNTRY = 'US'
 BUSINESS_CATEGORY = 'Landscaping, hardscaping, drainage, lawn care, and outdoor property services'
 OFFICIAL_NAP_NOTE = 'Official citation info: Terramorph LLC, Perrysburg, OH 43551, 419-873-6801, https://terramorphllc.com/'
+JOBBER_CLIENTHUB_ID = 'e644a784-b214-4a2b-93df-ace28dbb2a70-1578803'
+JOBBER_FORM_URL = 'https://clienthub.getjobber.com/client_hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/work_request/embedded_work_request_form?form_id=1578803'
+JOBBER_DIRECT_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new'
 SAME_AS_URLS = [
     GOOGLE_PROFILE_URL,
     BBB_PROFILE_URL,
@@ -905,53 +908,27 @@ quote_page = f'''
     <p class="crumb"><a href="index.html">Home</a> / Request Quote</p>
     <p class="eyebrow light">Free estimate request</p>
     <h1>Tell Terramorph what needs built, fixed, or cleaned up.</h1>
-    <p>Send the project basics first so Terramorph can review the service need, location, timeline, and best next step before following up.</p>
+    <p>Submit the secure Jobber request form so the project details go straight into Terramorph's CRM for follow-up.</p>
     <div class="cta-row"><a class="btn btn-gold" href="#request-form">Start Request</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
   </div>
 </section>
-<section class="section quick-lead-section quote-request-section" id="request-form">
+<section class="section quote-panel jobber-quote-panel quote-request-section" id="request-form" aria-labelledby="quote-title">
   <div class="container quote-request-layout">
     <div class="quick-lead-card quote-request-card">
       <div class="quick-lead-copy">
         <p class="eyebrow light">Project details</p>
-        <h2>Request a free outdoor project estimate.</h2>
-        <p>Fill this out on mobile and it will open a pre-filled text to Terramorph. On desktop, the details are saved in the browser and the page shows the exact message to copy.</p>
+        <h2 id="quote-title">Request a free outdoor project estimate.</h2>
+        <p>Use the secure Terramorph Jobber request form below. New requests go directly into the CRM so the team can follow up with the right service, city, photos, and timeline.</p>
         <div class="quick-lead-proof"><span>★★★★★ 200+ Google Reviews</span><span>Licensed + insured</span><span>Wood + Lucas County</span></div>
       </div>
-      <form class="quick-lead-form quote-request-form" data-request-form data-service="Outdoor Transformation" novalidate>
-        <label>Name <input name="name" autocomplete="name" required></label>
-        <label>Phone <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required></label>
-        <label>City <input name="city" autocomplete="address-level2" required></label>
-        <label>Address <input name="address" autocomplete="street-address" placeholder="Project address or nearest cross street"></label>
-        <label>Service
-          <select name="service" required>
-            <option value="">Choose one</option>
-            <option>Landscape design / install</option>
-            <option>Paver patio / hardscape</option>
-            <option>Drainage / grading</option>
-            <option>Outdoor lighting</option>
-            <option>Lawn maintenance</option>
-            <option>Seasonal cleanup</option>
-            <option>Snow removal</option>
-            <option>Other outdoor project</option>
-          </select>
-        </label>
-        <label>Timeline
-          <select name="timeline">
-            <option value="">Choose one</option>
-            <option>ASAP</option>
-            <option>This month</option>
-            <option>1-3 months</option>
-            <option>Planning ahead</option>
-          </select>
-        </label>
-        <label class="quick-lead-wide">What needs done?
-          <textarea name="problem" rows="5" placeholder="Example: standing water near the patio after rain, backyard patio quote, front bed refresh, weekly mowing, etc." required></textarea>
-        </label>
-        <button class="btn btn-gold" type="submit">Send Quote Request</button>
-        <p class="quick-lead-status" data-request-status>Required: name, phone, city, service, and project details.</p>
-        <p class="fine-print">Prefer to talk now? <a href="tel:{TEL}">Call {PHONE}</a>.</p>
-      </form>
+      <div class="jobber-embed-wrap" aria-label="Terramorph Jobber quote request form">
+        <script src="https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js" clienthub_id="{JOBBER_CLIENTHUB_ID}" form_url="{JOBBER_FORM_URL}"></script>
+      </div>
+      <div class="jobber-fallback">
+        <p>If the embedded form does not load, open the secure Jobber request form directly.</p>
+        <a class="btn btn-gold" href="{JOBBER_DIRECT_URL}" target="_blank" rel="noopener">Open Jobber Quote Form</a>
+        <a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a>
+      </div>
     </div>
     <div class="quote-request-copy">
       <p class="eyebrow">Before Terramorph follows up</p>
@@ -960,7 +937,7 @@ quote_page = f'''
         <div><b>1. Describe the problem</b><span>What you want fixed, built, cleaned, maintained, or priced.</span></div>
         <div><b>2. Share location</b><span>City, address, or nearest cross street for service-area planning.</span></div>
         <div><b>3. Add timeline</b><span>ASAP, this month, 1-3 months, or planning ahead.</span></div>
-        <div><b>4. Keep photos ready</b><span>Terramorph may ask for photos before scheduling a visit.</span></div>
+        <div><b>4. Add photos in Jobber</b><span>The CRM request keeps photos and project notes organized for follow-up.</span></div>
       </div>
     </div>
   </div>
