@@ -2,10 +2,9 @@ from pathlib import Path
 import re
 
 root = Path(__file__).resolve().parent
-PHONE = '419-637-4030'
-TEL = '4196374030'
+PHONE = '419-873-6801'
+TEL = '4198736801'
 BASE_URL = 'https://terramorphllc.com'
-PUBLIC_EMAIL = 'contact.terramorph@terra419.com'
 GOOGLE_PROFILE_URL = 'https://maps.app.goo.gl/GTv5RfxQ2AV8GHug7'
 BBB_PROFILE_URL = 'https://www.bbb.org/us/oh/perrysburg/profile/landscape-contractors/terramorph-llc-0422-211013048'
 FACEBOOK_URL = 'https://facebook.com/p/Terramorph-100089790245208/'
@@ -16,7 +15,7 @@ BUSINESS_REGION = 'OH'
 BUSINESS_POSTAL = '43551'
 BUSINESS_COUNTRY = 'US'
 BUSINESS_CATEGORY = 'Landscaping, hardscaping, drainage, lawn care, and outdoor property services'
-OFFICIAL_NAP_NOTE = 'Official citation info: Terramorph LLC, Perrysburg, OH 43551, 419-637-4030, https://terramorphllc.com/'
+OFFICIAL_NAP_NOTE = 'Official citation info: Terramorph LLC, Perrysburg, OH 43551, 419-873-6801, https://terramorphllc.com/'
 SAME_AS_URLS = [
     GOOGLE_PROFILE_URL,
     BBB_PROFILE_URL,
@@ -108,7 +107,6 @@ FOOT = f'''
     <div>
       <h2>Contact and proof</h2>
       <a href="tel:{TEL}">Call {PHONE}</a>
-      <a href="mailto:{PUBLIC_EMAIL}">{PUBLIC_EMAIL}</a>
       <a href="{BASE_URL}/">terramorphllc.com</a>
       <a href="contact.html">Request a quote</a>
       <a href="service-areas.html#official-business-info">Official business info</a>
@@ -993,7 +991,7 @@ terms = f'''
     <h2>No guarantee from website content alone</h2>
     <p>Terramorph aims to keep the website accurate, but final recommendations require property-specific review and direct communication with the team.</p>
     <h2>Contact</h2>
-    <p>Questions about these terms can be sent to <a href="mailto:{PUBLIC_EMAIL}">{PUBLIC_EMAIL}</a> or handled by phone at <a href="tel:{TEL}">{PHONE}</a>.</p>
+    <p>Questions about these terms can be handled by phone at <a href="tel:{TEL}">{PHONE}</a> or through the <a href="contact.html">Terramorph quote request page</a>.</p>
   </div>
 </section>
 '''
