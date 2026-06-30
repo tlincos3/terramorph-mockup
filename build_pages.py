@@ -52,11 +52,11 @@ NAV = f'''
       <a href="service-areas.html">Areas</a>
       <a href="projects.html">Projects</a>
       <a href="about.html">About</a>
-      <a href="tel:{TEL}">Quote</a>
+      <a href="quote.html">Quote</a>
     </nav>
     <div class="nav-actions">
       <a class="btn btn-quiet" href="tel:{TEL}">Call Now</a>
-      <a class="btn btn-primary" href="tel:{TEL}">Request Quote</a>
+      <a class="btn btn-primary" href="quote.html">Request Quote</a>
     </div>
     <button class="mobile-menu" type="button" aria-expanded="false" aria-controls="primary-links" onclick="toggleMenu(this)">Menu</button>
   </div>
@@ -66,7 +66,7 @@ NAV = f'''
 FOOT = f'''
 <div class="sticky-mobile" aria-label="Mobile lead actions">
   <a class="btn btn-quiet" href="tel:{TEL}">Call</a>
-  <a class="btn btn-primary" href="tel:{TEL}">Quote</a>
+  <a class="btn btn-primary" href="quote.html">Quote</a>
 </div>
 <footer class="footer">
   <div class="container footer-grid">
@@ -102,7 +102,7 @@ FOOT = f'''
       <h2>Contact and proof</h2>
       <a href="tel:{TEL}">Call {PHONE}</a>
       <a href="{BASE_URL}/">terramorphllc.com</a>
-      <a href="tel:{TEL}">Request a quote</a>
+      <a href="quote.html">Request a quote</a>
       <a href="service-areas.html#official-business-info">Official business info</a>
       <a href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener">Google Business Profile</a>
       <a href="{BBB_PROFILE_URL}" target="_blank" rel="noopener">BBB profile</a>
@@ -315,25 +315,25 @@ def quick_lead_form(service, offer):
   </form>
 </section>"""
 
-def quote_form(title='Request a Premium Project Quote', service='Outdoor Transformation', source='website', cta='Call for Estimate', direct_only=False, same_tab=False):
+def quote_form(title='Request a Premium Project Quote', service='Outdoor Transformation', source='website', cta='Start Request', direct_only=False, same_tab=False):
     return f'''
 <section class="quote-panel phone-quote-panel" id="quote" aria-labelledby="quote-title" data-service="{service}">
   <p class="eyebrow light">Fast free estimate</p>
   <h2 id="quote-title">{title}</h2>
-  <p>Call Terramorph directly so the team can confirm the service need, city, photos, timeline, and best next step.</p>
+  <p>Use the request form to send Terramorph the basics first, or call directly if the project is urgent.</p>
   <div class="quote-speed-row" aria-label="Fast estimate expectations">
-    <span>✓ Free estimate</span><span>✓ Phone-first scheduling</span><span>✓ Wood + Lucas County</span>
+    <span>✓ Free estimate</span><span>✓ Simple request form</span><span>✓ Wood + Lucas County</span>
   </div>
   <div class="phone-direct-card">
-    <p class="eyebrow">Direct phone path</p>
-    <h3>Talk with Terramorph at {PHONE}.</h3>
-    <p>Use the call button for quote requests, service questions, scheduling, and urgent property issues.</p>
+    <p class="eyebrow">Best next step</p>
+    <h3>Send the project details, then Terramorph can follow up.</h3>
+    <p>The quote page asks for name, phone, city, address, service type, timeline, and project notes so the crew has enough context before the first call.</p>
     <ul class="check-list">
-      <li>Share the service need, city, timeline, and property details.</li>
-      <li>Ask what photos or measurements would help before a visit.</li>
-      <li>Get the next step without waiting on an external form.</li>
+      <li>Good for landscaping, patios, drainage, lighting, cleanups, maintenance, and snow service.</li>
+      <li>Works on mobile so homeowners can text the request details directly.</li>
+      <li>Call {PHONE} anytime for urgent property issues or scheduling questions.</li>
     </ul>
-    <div class="phone-direct-actions"><a class="btn btn-gold" href="tel:{TEL}" data-quote-service="{service}">Call {PHONE}</a><a class="btn btn-outline-light" href="tel:{TEL}">Request by Phone</a></div>
+    <div class="phone-direct-actions"><a class="btn btn-gold" href="quote.html">Open Quote Form</a><a class="btn btn-outline-light" href="tel:{TEL}" data-quote-service="{service}">Call {PHONE}</a></div>
   </div>
 </section>'''
 
@@ -345,8 +345,8 @@ def quote_popup():
     <button class="quote-popup-close" type="button" aria-label="Close free quote popup" data-close-popup>×</button>
     <div class="quote-popup-copy">
       <p class="eyebrow">Free estimate</p>
-      <h2 id="quote-popup-title">Call Terramorph directly.</h2>
-      <p id="quote-popup-desc">Use the phone number for quote requests, service questions, urgent projects, and scheduling.</p>
+      <h2 id="quote-popup-title">Request a free Terramorph quote.</h2>
+      <p id="quote-popup-desc">Send project details through the quote form, or call directly for urgent service questions and scheduling.</p>
       <div class="popup-trust"><a href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener">★★★★★ 200+ Google Reviews</a><span>Licensed and insured</span><span>Serving Wood and Lucas County</span></div>
     </div>
     <div class="popup-direct-actions">
@@ -897,6 +897,78 @@ contact = f'''
 contact_desc = 'Request a free estimate from Terramorph for landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, and property work.'
 (root/'contact.html').write_text(page('Request a Free Outdoor Project Estimate | Terramorph', contact_desc, contact, schema_for('contact.html', 'Request a Free Estimate', contact_desc)))
 
+quote_desc = 'Request a free Terramorph quote online for landscaping, patios, drainage, outdoor lighting, cleanups, lawn maintenance, snow removal, and outdoor property work in Northwest Ohio.'
+quote_page = f'''
+<section class="page-hero premium-page-hero compact-hero quote-request-hero">
+  <div class="hero-overlay"></div>
+  <div class="container page-hero-content">
+    <p class="crumb"><a href="index.html">Home</a> / Request Quote</p>
+    <p class="eyebrow light">Free estimate request</p>
+    <h1>Tell Terramorph what needs built, fixed, or cleaned up.</h1>
+    <p>Send the project basics first so Terramorph can review the service need, location, timeline, and best next step before following up.</p>
+    <div class="cta-row"><a class="btn btn-gold" href="#request-form">Start Request</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
+  </div>
+</section>
+<section class="section quick-lead-section quote-request-section" id="request-form">
+  <div class="container quote-request-layout">
+    <div class="quick-lead-card quote-request-card">
+      <div class="quick-lead-copy">
+        <p class="eyebrow light">Project details</p>
+        <h2>Request a free outdoor project estimate.</h2>
+        <p>Fill this out on mobile and it will open a pre-filled text to Terramorph. On desktop, the details are saved in the browser and the page shows the exact message to copy.</p>
+        <div class="quick-lead-proof"><span>★★★★★ 200+ Google Reviews</span><span>Licensed + insured</span><span>Wood + Lucas County</span></div>
+      </div>
+      <form class="quick-lead-form quote-request-form" data-request-form data-service="Outdoor Transformation" novalidate>
+        <label>Name <input name="name" autocomplete="name" required></label>
+        <label>Phone <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required></label>
+        <label>City <input name="city" autocomplete="address-level2" required></label>
+        <label>Address <input name="address" autocomplete="street-address" placeholder="Project address or nearest cross street"></label>
+        <label>Service
+          <select name="service" required>
+            <option value="">Choose one</option>
+            <option>Landscape design / install</option>
+            <option>Paver patio / hardscape</option>
+            <option>Drainage / grading</option>
+            <option>Outdoor lighting</option>
+            <option>Lawn maintenance</option>
+            <option>Seasonal cleanup</option>
+            <option>Snow removal</option>
+            <option>Other outdoor project</option>
+          </select>
+        </label>
+        <label>Timeline
+          <select name="timeline">
+            <option value="">Choose one</option>
+            <option>ASAP</option>
+            <option>This month</option>
+            <option>1-3 months</option>
+            <option>Planning ahead</option>
+          </select>
+        </label>
+        <label class="quick-lead-wide">What needs done?
+          <textarea name="problem" rows="5" placeholder="Example: standing water near the patio after rain, backyard patio quote, front bed refresh, weekly mowing, etc." required></textarea>
+        </label>
+        <button class="btn btn-gold" type="submit">Send Quote Request</button>
+        <p class="quick-lead-status" data-request-status>Required: name, phone, city, service, and project details.</p>
+        <p class="fine-print">Prefer to talk now? <a href="tel:{TEL}">Call {PHONE}</a>.</p>
+      </form>
+    </div>
+    <div class="quote-request-copy">
+      <p class="eyebrow">Before Terramorph follows up</p>
+      <h2>Photos, measurements, and access notes help speed up the estimate.</h2>
+      <div class="authority-list">
+        <div><b>1. Describe the problem</b><span>What you want fixed, built, cleaned, maintained, or priced.</span></div>
+        <div><b>2. Share location</b><span>City, address, or nearest cross street for service-area planning.</span></div>
+        <div><b>3. Add timeline</b><span>ASAP, this month, 1-3 months, or planning ahead.</span></div>
+        <div><b>4. Keep photos ready</b><span>Terramorph may ask for photos before scheduling a visit.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+{trust_band()}
+'''
+(root/'quote.html').write_text(page('Request a Free Quote | Terramorph LLC', quote_desc, quote_page, schema_for('quote.html', 'Request a Free Quote', quote_desc)))
+
 privacy = f'''
 <section class="page-hero premium-page-hero compact-hero">
   <div class="hero-overlay"></div>
@@ -1013,9 +1085,9 @@ thank_you = f"""
 (root/'thank-you.html').write_text(page('Quote Request Received | Terramorph', 'Thank-you page for Terramorph quote requests in Wood and Lucas County.', thank_you, schema_for('thank-you.html', 'Quote Request Received', 'Thank-you page for Terramorph quote requests.')))
 
 def write_static_seo_files():
-    pages = ['index.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','terms.html','lp-patios.html','lp-drainage.html','lp-landscape-design.html','lp-outdoor-lighting.html']
+    pages = ['index.html','quote.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','terms.html','lp-patios.html','lp-drainage.html','lp-landscape-design.html','lp-outdoor-lighting.html']
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-    priorities = {'index.html':'1.0','contact.html':'0.9','drainage-solutions.html':'0.9','paver-patios-hardscapes.html':'0.9','landscape-design.html':'0.9'}
+    priorities = {'index.html':'1.0','quote.html':'0.95','contact.html':'0.9','drainage-solutions.html':'0.9','paver-patios-hardscapes.html':'0.9','landscape-design.html':'0.9'}
     for page_name in pages:
         loc = BASE_URL + ('/' if page_name == 'index.html' else '/' + page_name)
         sitemap += f'  <url><loc>{loc}</loc><changefreq>monthly</changefreq><priority>{priorities.get(page_name, "0.7")}</priority></url>\n'
@@ -1029,10 +1101,11 @@ def post_process_html():
         url = BASE_URL + ('/' if path.name == 'index.html' else '/' + path.name)
         html = html.replace('<meta property="og:image" content="assets/real-hero.webp">', f'<meta property="og:image" content="{BASE_URL}/assets/real-hero.webp">\n  <meta property="og:url" content="{url}">\n  <meta name="twitter:card" content="summary_large_image">\n  <link rel="canonical" href="{url}">')
         html = html.replace('Request a Outdoor Lighting Quote', 'Request an Outdoor Lighting Quote')
-        html = html.replace('href="contact.html#quote"', f'href="tel:{TEL}"')
-        html = html.replace('href="contact.html"', f'href="tel:{TEL}"')
-        html = html.replace('href="#quote"', f'href="tel:{TEL}"')
-        html = html.replace('<script src="app.js"></script>', '<script src="app.js?v=3.49"></script>')
+        html = html.replace('href="contact.html#quote"', 'href="quote.html"')
+        if path.name != 'contact.html':
+            html = html.replace('href="contact.html"', 'href="quote.html"')
+        html = html.replace('href="#quote"', 'href="quote.html"')
+        html = html.replace('<script src="app.js?v=3.50"></script>', '<script src="app.js?v=3.50"></script>')
         path.write_text(html)
 
 write_static_seo_files()

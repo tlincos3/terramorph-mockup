@@ -285,3 +285,13 @@ html,body{max-width:100%;overflow-x:hidden}.conversion-hero,.meta-landing-hero,.
 
 /* V3.49 authority-lock polish: linked proof should look like proof, not clutter. */
 .topbar-proof a{display:inline-flex;align-items:center;gap:6px;color:#edf2e8;font-weight:900;text-decoration:none}.topbar-proof a:hover,.trust-link:hover,.popup-trust a:hover{color:var(--gold-2)}.trust-link{text-decoration:none;color:inherit}.popup-trust a{color:inherit;text-decoration:none}.footer a[href="privacy.html"],.footer a[href="terms.html"]{color:var(--gold-2);font-weight:900}
+
+/* V3.50 dedicated quote request page */
+.quote-request-section{background:linear-gradient(180deg,#122014 0%,#0f1c12 100%)}
+.quote-request-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:32px;align-items:start}
+.quote-request-card{grid-template-columns:minmax(0,.82fr) minmax(340px,1.18fr);width:100%}
+.quote-request-copy{background:#fffdf8;border:1px solid var(--line);padding:30px;box-shadow:0 20px 58px rgba(7,10,8,.10)}
+.quote-request-copy h2{font-family:'Fraunces',Georgia,serif;font-size:clamp(2rem,4vw,3.25rem);line-height:.98;letter-spacing:-.04em;margin:8px 0 18px;color:var(--ink)}
+.request-copy-box{width:100%;min-height:150px;margin-top:10px;border:1px solid rgba(36,52,36,.24);border-radius:14px;padding:12px;font:inherit;background:#fff;color:#172015;white-space:pre-wrap}
+.quote-request-form .fine-print{grid-column:1/-1;color:#5a654f!important;margin:0}.quote-request-form .fine-print a{text-decoration:underline;color:var(--forest);font-weight:900}
+@media (max-width:980px){.quote-request-layout,.quote-request-card{grid-template-columns:1fr}.quote-request-copy{order:2}.quote-request-form{grid-template-columns:1fr}}

@@ -224,6 +224,76 @@ function collectQuickLeadFields(form){
   };
 }
 
+
+function collectRequestFields(form){
+  const data = new FormData(form);
+  return {
+    name: String(data.get('name') || '').trim(),
+    phone: String(data.get('phone') || '').trim(),
+    city: String(data.get('city') || '').trim(),
+    address: String(data.get('address') || '').trim(),
+    service: String(data.get('service') || '').trim(),
+    timeline: String(data.get('timeline') || '').trim(),
+    problem: String(data.get('problem') || '').trim()
+  };
+}
+
+function buildRequestMessage(lead){
+  return [
+    'Terramorph quote request',
+    `Name: ${lead.name}`,
+    `Phone: ${lead.phone}`,
+    `City: ${lead.city}`,
+    lead.address ? `Address: ${lead.address}` : '',
+    `Service: ${lead.service}`,
+    lead.timeline ? `Timeline: ${lead.timeline}` : '',
+    `Project details: ${lead.problem}`
+  ].filter(Boolean).join('\n');
+}
+
+function handleRequestFormSubmit(form, event){
+  event.preventDefault();
+  const status = form.querySelector('[data-request-status]');
+  const button = form.querySelector('[type="submit"]');
+  const lead = collectRequestFields(form);
+  const missing = [];
+  if(!lead.name) missing.push('name');
+  if(!lead.phone) missing.push('phone');
+  if(!lead.city) missing.push('city');
+  if(!lead.service) missing.push('service');
+  if(!lead.problem) missing.push('project details');
+  if(missing.length){
+    if(status) status.textContent = `Add ${missing.join(', ')} before sending the quote request.`;
+    form.classList.add('quick-lead-form-error');
+    return;
+  }
+
+  const eventId = buildQuickLeadEventId();
+  const message = buildRequestMessage(lead);
+  const storedLead = {
+    ...lead,
+    message,
+    event_id: eventId,
+    created_at: new Date().toISOString(),
+    source: 'quote_request_form',
+    ...getMergedTrackingContext()
+  };
+  writeStoredJson(QUICK_LEAD_KEY, storedLead);
+  writeStoredJson(PHONE_LEAD_KEY, storedLead);
+  pushAnalyticsEvent('quote_request_form_submit', {lead_service: lead.service, lead_city: lead.city, lead_timeline: lead.timeline, lead_problem_length: lead.problem.length, ...getTrackingContext()});
+  metaTrack('Lead', {content_name: 'Terramorph quote request form', content_category: lead.service || 'quote_request', ...getTrackingContext()}, {eventId});
+  metaTrackCustom('QuoteRequestFormSubmit', {lead_service: lead.service, lead_city: lead.city, ...getTrackingContext()});
+
+  if(button){
+    button.disabled = true;
+    button.textContent = 'Opening text message...';
+  }
+  if(status){
+    status.innerHTML = `Opening a text to Terramorph. If it does not open, copy this message and send it to ${TERRAMORPH_PHONE_DISPLAY}:<br><textarea class="request-copy-box" readonly>${message.replace(/[&<>]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]))}</textarea>`;
+  }
+  window.location.href = `sms:${TERRAMORPH_PHONE_NUMBER}?&body=${encodeURIComponent(message)}`;
+}
+
 function handleQuickLeadSubmit(form, event){
   event.preventDefault();
   const button = form.querySelector('[type="submit"]');
@@ -311,6 +381,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.querySelectorAll('[data-quick-lead-form]').forEach(form => {
     form.addEventListener('submit', event => handleQuickLeadSubmit(form, event));
+  });
+  document.querySelectorAll('[data-request-form]').forEach(form => {
+    form.addEventListener('submit', event => handleRequestFormSubmit(form, event));
   });
   document.querySelectorAll('[data-close-popup]').forEach(el => el.addEventListener('click', closeQuotePopup));
   document.addEventListener('keydown', event => { if(event.key === 'Escape') closeQuotePopup(); });
