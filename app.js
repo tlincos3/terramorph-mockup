@@ -5,7 +5,8 @@ function toggleMenu(button){
   if(button) button.setAttribute('aria-expanded', String(open));
 }
 
-const TERRAMORPH_PHONE_HREF = 'tel:4198736801';
+const TERRAMORPH_PHONE_NUMBER = '4198736801';
+const TERRAMORPH_PHONE_HREF = `tel:${TERRAMORPH_PHONE_NUMBER}`;
 const TERRAMORPH_PHONE_DISPLAY = '419-873-6801';
 const TRACKING_STORAGE_KEY = 'terramorphAttributionContext';
 const QUICK_LEAD_KEY = 'terramorphQuickLeadContext';
