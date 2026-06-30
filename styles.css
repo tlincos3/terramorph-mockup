@@ -295,3 +295,17 @@ html,body{max-width:100%;overflow-x:hidden}.conversion-hero,.meta-landing-hero,.
 .request-copy-box{width:100%;min-height:150px;margin-top:10px;border:1px solid rgba(36,52,36,.24);border-radius:14px;padding:12px;font:inherit;background:#fff;color:#172015;white-space:pre-wrap}
 .quote-request-form .fine-print{grid-column:1/-1;color:#5a654f!important;margin:0}.quote-request-form .fine-print a{text-decoration:underline;color:var(--forest);font-weight:900}
 @media (max-width:980px){.quote-request-layout,.quote-request-card{grid-template-columns:1fr}.quote-request-copy{order:2}.quote-request-form{grid-template-columns:1fr}}
+
+/* V3.52 desktop quote embed fix: give Jobber form real width instead of squeezing it beside proof cards */
+.quote-section .quote-grid{grid-template-columns:1fr!important;gap:30px!important}
+.quote-section .quote-panel{padding:0!important;background:transparent!important;box-shadow:none!important}
+.quote-section .quote-request-card{grid-template-columns:minmax(280px,.78fr) minmax(520px,1.22fr)!important;align-items:start!important}
+.quote-section .quick-lead-copy{min-width:0!important}
+.jobber-embed-wrap{width:100%!important;max-width:100%!important;overflow:hidden;border-radius:22px;background:#f8f3e8;box-shadow:inset 0 0 0 1px rgba(23,32,21,.08)}
+.jobber-embed-wrap iframe{width:100%!important;max-width:100%!important;border:0!important;display:block!important}
+.quote-section .cta-proof{padding:0!important}
+.quote-section .cta-proof .review-stack{grid-template-columns:repeat(2,minmax(0,1fr));display:grid}
+@media(max-width:980px){
+  .quote-section .quote-request-card{grid-template-columns:1fr!important}
+  .quote-section .cta-proof .review-stack{grid-template-columns:1fr}
+}
