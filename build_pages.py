@@ -5,7 +5,7 @@ root = Path(__file__).resolve().parent
 PHONE = '419-873-6801'
 TEL = '4198736801'
 BASE_URL = 'https://terramorphllc.com'
-GOOGLE_PROFILE_URL = 'https://maps.app.goo.gl/GTv5RfxQ2AV8GHug7'
+GOOGLE_PROFILE_URL = 'https://www.google.com/maps/search/?api=1&query=Terramorph+LLC+Perrysburg+OH'
 BBB_PROFILE_URL = 'https://www.bbb.org/us/oh/perrysburg/profile/landscape-contractors/terramorph-llc-0422-211013048'
 FACEBOOK_URL = 'https://facebook.com/p/Terramorph-100089790245208/'
 INSTAGRAM_URL = 'https://instagram.com/terramorphllc/'
@@ -15,12 +15,11 @@ BUSINESS_REGION = 'OH'
 BUSINESS_POSTAL = '43551'
 BUSINESS_COUNTRY = 'US'
 BUSINESS_CATEGORY = 'Landscaping, hardscaping, drainage, lawn care, and outdoor property services'
-OFFICIAL_NAP_NOTE = 'Official citation info: Terramorph LLC, Perrysburg, OH 43551, 419-873-6801, https://terramorphllc.com/'
+OFFICIAL_NAP_NOTE = 'Terramorph LLC | Perrysburg, OH 43551 | 419-873-6801 | terramorphllc.com'
 JOBBER_CLIENTHUB_ID = 'e644a784-b214-4a2b-93df-ace28dbb2a70-1578803'
 JOBBER_FORM_URL = 'https://clienthub.getjobber.com/client_hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/work_request/embedded_work_request_form?form_id=1578803'
 JOBBER_DIRECT_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new'
 SAME_AS_URLS = [
-    GOOGLE_PROFILE_URL,
     BBB_PROFILE_URL,
     FACEBOOK_URL,
     INSTAGRAM_URL,
@@ -34,7 +33,7 @@ NAV = f'''
   <div class="container topbar-inner">
     <div class="topbar-proof">
       <a href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener">★★★★★ 200+ Google Reviews</a>
-      <a href="{BBB_PROFILE_URL}" target="_blank" rel="noopener">BBB Member</a>
+      <a href="{BBB_PROFILE_URL}" target="_blank" rel="noopener">BBB Accredited</a>
       <span>Licensed and insured</span>
       <span>Wood and Lucas County</span>
     </div>
@@ -106,7 +105,7 @@ FOOT = f'''
       <a href="tel:{TEL}">Call {PHONE}</a>
       <a href="{BASE_URL}/">terramorphllc.com</a>
       <a href="quote.html">Request a quote</a>
-      <a href="service-areas.html#official-business-info">Official business info</a>
+      <a href="service-areas.html#official-business-info">Business details</a>
       <a href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener">Google Business Profile</a>
       <a href="{BBB_PROFILE_URL}" target="_blank" rel="noopener">BBB profile</a>
       <a href="{FACEBOOK_URL}" target="_blank" rel="noopener">Facebook</a>
@@ -117,7 +116,7 @@ FOOT = f'''
     </div>
   </div>
 </footer>
-<script src="app.js"></script>
+<script src="app.js?v=3.55"></script>
 '''
 
 REVIEW_SNIPPETS = [
@@ -162,9 +161,14 @@ def head(title, desc, schema='', page_name=''):
     canonical_url = BASE_URL + ('/' if page_name in ('', 'index.html') else '/' + page_name)
     body_class = 'quote-page' if page_name == 'quote.html' else ''
     body_attr = f' class="{body_class}"' if body_class else ''
-    stylesheet_version = '3.54' if page_name == 'quote.html' else ('3.53' if page_name == 'index.html' else '3.49')
+    stylesheet_version = '3.55'
     schema_block = f'\n  <script type="application/ld+json">{schema}</script>' if schema else ''
-    robots_block = '\n  <meta name="robots" content="noindex, nofollow">' if page_name in ('thank-you.html', 'review-notes.html') else ''
+    if page_name in ('thank-you.html', 'review-notes.html'):
+        robots_block = '\n  <meta name="robots" content="noindex, nofollow">'
+    elif page_name.startswith('lp-') or page_name == 'case-studies.html' or page_name.endswith('-case-study.html'):
+        robots_block = '\n  <meta name="robots" content="noindex, follow">'
+    else:
+        robots_block = ''
     ga4_tag = '''
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-QRTSH6WXYK"></script>
@@ -350,14 +354,14 @@ def quote_form(title='Request a Premium Project Quote', service='Outdoor Transfo
   </div>
 </section>'''
 
-def inline_jobber_quote_form(title='Request My Outdoor Transformation Quote'):
+def inline_jobber_quote_form(title='Request My Outdoor Transformation Quote', service='Outdoor Transformation'):
     return f'''
-<section class="quote-panel jobber-quote-panel quote-request-section" id="request-form" aria-labelledby="home-request-title" data-service="Outdoor Transformation">
+<section class="quote-panel jobber-quote-panel quote-request-section" id="request-form" aria-labelledby="home-request-title" data-service="{service}">
   <div class="quick-lead-card quote-request-card">
     <div class="quick-lead-copy">
       <p class="eyebrow light">Fast free estimate</p>
       <h2 id="home-request-title">{title}</h2>
-      <p>Fill out the secure Terramorph Jobber form right here on the site. New requests go directly into the CRM so the team gets the service, city, photos, timeline, and project notes without sending visitors to another page first.</p>
+      <p>Share the service, property location, timeline, project notes, and photos in the secure form. The Terramorph team receives the request directly and can follow up with the right next step.</p>
       <div class="quick-lead-proof"><span>★★★★★ 200+ Google Reviews</span><span>Licensed + insured</span><span>Wood + Lucas County</span></div>
     </div>
     <div>
@@ -402,9 +406,9 @@ def trust_band():
     return f'''
 <section class="trust-band" aria-label="Terramorph credibility">
   <div class="container trust-grid">
-    <a class="trust-feature trust-link" href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener"><strong>200+</strong><span>Google Reviews</span><small>Consistent 5-star feedback from homeowners across the area.</small></a>
-    <a class="trust-logo trust-link" href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener"><img src="assets/google-verified.png" width="150" height="100" alt="Google Verified badge"><span>Google Verified</span></a>
-    <a class="trust-logo trust-link" href="{BBB_PROFILE_URL}" target="_blank" rel="noopener"><img src="assets/bbb-logo.svg" width="240" height="84" alt="BBB Better Business Bureau logo"><span>BBB Member</span></a>
+    <a class="trust-feature trust-link" href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener"><strong>200+</strong><span>Google Reviews</span><small>Customer feedback from homeowners across the area.</small></a>
+    <a class="trust-feature trust-link" href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener"><strong>Local</strong><span>Perrysburg-area team</span><small>Outdoor project experience across Wood and Lucas County.</small></a>
+    <a class="trust-logo trust-link" href="{BBB_PROFILE_URL}" target="_blank" rel="noopener"><img src="assets/bbb-logo.svg" width="240" height="84" alt="BBB Accredited Business logo"><span>BBB Accredited</span></a>
     <div class="trust-feature"><strong>Regional</strong><span>Serving Wood and Lucas County</span><small>Northwest Ohio-specific expertise for outdoor projects, drainage, and property upkeep.</small></div>
     <div class="trust-feature"><strong>Insured</strong><span>Licensed and insured</span><small>Professional protection before work starts.</small></div>
   </div>
@@ -448,7 +452,7 @@ def review_stack(limit=None):
     return '<div class="review-stack">' + ''.join(review_markup(name, quote, True) for name, quote in reviews) + '</div>'
 
 def review_section():
-    return '<section class="section reviews-section"><div class="container section-heading compact"><p class="eyebrow">5-Star Google Reviews</p><h2>Real names under real customer words.</h2><p>Strong review excerpts pulled from Terramorph’s current Google review presentation, now shown with reviewer names instead of anonymous quotes.</p></div><div class="container review-grid">' + ''.join(review_markup(name, quote) for name, quote in REVIEW_SNIPPETS[:6]) + '</div></section>'
+    return '<section class="section reviews-section"><div class="container section-heading compact"><p class="eyebrow">Customer Reviews</p><h2>Homeowners describe responsive service and dependable follow-through.</h2><p>Read what local customers say about Terramorph’s communication, scheduling, crew, and finished work.</p></div><div class="container review-grid">' + ''.join(review_markup(name, quote) for name, quote in REVIEW_SNIPPETS[:6]) + '</div></section>'
 
 def local_authority():
     return '''
@@ -474,19 +478,19 @@ def official_business_info():
 <section class="section official-business-section" id="official-business-info" aria-labelledby="official-business-title">
   <div class="container official-business-card">
     <div>
-      <p class="eyebrow">Official business information</p>
-      <h2 id="official-business-title">The citation data Google, Meta, and directories should match.</h2>
-      <p>Local platforms should use one clean version of Terramorph's name, phone, website, service area, and category. This keeps Terramorph's name, phone, website, service area, and category consistent everywhere homeowners may find the business.</p>
+      <p class="eyebrow">Local company</p>
+      <h2 id="official-business-title">One Northwest Ohio team for the work around your property.</h2>
+      <p>Terramorph is based in the Perrysburg area and serves homeowners, businesses, and property owners across Wood and Lucas County. Call or send the project details to confirm service fit and the next estimate step.</p>
     </div>
     <dl class="nap-grid">
-      <div><dt>Business name</dt><dd>{BUSINESS_NAME}</dd></div>
-      <div><dt>Phone</dt><dd><a href="tel:{TEL}">{PHONE}</a></dd></div>
-      <div><dt>Website</dt><dd><a href="{BASE_URL}/">terramorphllc.com</a></dd></div>
-      <div><dt>Primary area</dt><dd>{BUSINESS_CITY}, {BUSINESS_REGION} {BUSINESS_POSTAL}</dd></div>
+      <div><dt>Company</dt><dd>{BUSINESS_NAME}</dd></div>
+      <div><dt>Call</dt><dd><a href="tel:{TEL}">{PHONE}</a></dd></div>
+      <div><dt>Online</dt><dd><a href="{BASE_URL}/">terramorphllc.com</a></dd></div>
+      <div><dt>Home base</dt><dd>{BUSINESS_CITY}, {BUSINESS_REGION} {BUSINESS_POSTAL}</dd></div>
       <div><dt>Service area</dt><dd>Wood County, Lucas County, Perrysburg, Toledo, Maumee, and Northwest Ohio</dd></div>
-      <div><dt>Category</dt><dd>{BUSINESS_CATEGORY}</dd></div>
+      <div><dt>Specialties</dt><dd>{BUSINESS_CATEGORY}</dd></div>
     </dl>
-    <p class="fine-print">If a directory shows a different phone number, misspelled street variation, old business name, or incomplete category, it should be corrected to match this page.</p>
+    <p class="fine-print">Free estimates are available for landscaping, patios, drainage, lighting, maintenance, cleanups, snow service, and related outdoor property work.</p>
   </div>
 </section>'''
 
@@ -565,12 +569,12 @@ home = f'''
   <div class="hero-overlay"></div>
   <div class="container hero-content">
     <div class="hero-copy">
-      <p class="eyebrow light">Northwest Ohio outdoor transformation</p>
-      <h1>Fix the yard. Finish the property. Make it worth coming home to.</h1>
-      <p class="hero-lead">Landscape design, paver patios, drainage, lighting, cleanups, maintenance, and snow service for homeowners and properties that need outdoor work handled with real follow-through.</p>
-      <div class="cta-row"><a class="btn btn-gold" href="#request-form">Get A Free Estimate</a><a class="btn btn-outline-light" href="#start-here">Choose My Project</a><a class="btn btn-outline-light" href="projects.html">See Work</a><a class="btn btn-call" href="tel:{TEL}">Call {PHONE}</a></div>
+      <p class="eyebrow light">Terramorph LLC | Perrysburg, Ohio</p>
+      <h1>Landscape design, patios, and drainage built for Northwest Ohio.</h1>
+      <p class="hero-lead">From full-property transformations to wet-yard fixes and dependable upkeep, Terramorph plans the work around your property, priorities, and local conditions.</p>
+      <div class="cta-row"><a class="btn btn-gold" href="#request-form">Get A Free Estimate</a><a class="btn btn-call" href="tel:{TEL}">Call {PHONE}</a></div>
       <div class="above-fold-trust">
-        <span>★★★★★ 200+ Google Reviews</span><span>Named Customer Reviews</span><span>BBB Member</span><span>Licensed and insured</span><span>Serving Wood and Lucas County with Northwest Ohio-specific expertise</span>
+        <span>★★★★★ 200+ Google Reviews</span><span>BBB Accredited</span><span>Licensed and insured</span><span>Serving Wood and Lucas County</span>
       </div>
     </div>
   </div>
@@ -591,8 +595,8 @@ home = f'''
 <section class="section work-section homepage-proof">
   <div class="container section-heading compact">
     <p class="eyebrow">Proof Of Work</p>
-    <h2>Real Terramorph work, shown before the quote form.</h2>
-    <p>Photos come before reviews and forms so visitors see actual output before being asked to take action.</p>
+    <h2>See the patios, landscapes, drainage work, and property care behind the reviews.</h2>
+    <p>Browse recent work across the services Terramorph handles throughout Northwest Ohio.</p>
   </div>
   <div class="container">{photo_gallery()}</div>
 </section>
@@ -602,14 +606,14 @@ home = f'''
   <div class="container quote-grid">
     {inline_jobber_quote_form('Request My Outdoor Transformation Quote')}
     <div class="cta-proof">
-      <p class="eyebrow">Named Google Review Proof</p>
-      <h2>Real words from homeowners who already trusted Terramorph.</h2>
+      <p class="eyebrow">Why homeowners choose Terramorph</p>
+      <h2>Local proof and a straightforward path to an estimate.</h2>
       {review_stack(5)}
       <ul class="check-list">
         <li>Free estimates for projects, cleanups, and maintenance</li>
         <li>Fast phone call option on every device</li>
-        <li>Google reviews, BBB Membership, and license/insurance proof nearby</li>
-        <li>Project proof and named reviews before the request form</li>
+        <li>Google reviews, BBB accreditation, and license and insurance information</li>
+        <li>Project photos and customer reviews before you request an estimate</li>
       </ul>
     </div>
   </div>
@@ -626,7 +630,7 @@ def schema_for(page_name, title, desc, faqs=None, service=None):
     base = {
       "@context":"https://schema.org",
       "@graph":[
-        {"@type":["LocalBusiness","LandscapingBusiness","HomeAndConstructionBusiness"],"@id":BASE_URL+"/#business","name":BUSINESS_NAME,"alternateName":["Terramorph","Terramorph Outdoor Transformation Co."],"url":BASE_URL+"/","image":BASE_URL+"/assets/real-hero.webp","logo":BASE_URL+"/assets/logo.png","telephone":PHONE,"priceRange":"Free estimates","aggregateRating":{"@type":"AggregateRating","ratingValue":"5","reviewCount":"200"},"address":{"@type":"PostalAddress","addressLocality":BUSINESS_CITY,"addressRegion":BUSINESS_REGION,"postalCode":BUSINESS_POSTAL,"addressCountry":BUSINESS_COUNTRY},"contactPoint":{"@type":"ContactPoint","telephone":PHONE,"contactType":"customer service","areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"availableLanguage":"English"},"sameAs":SAME_AS_URLS,"knowsAbout":["Landscape design","Paver patios","Drainage solutions","Outdoor lighting","Lawn maintenance","Seasonal cleanups","Snow removal","Hardscaping","Retaining walls","Mulch and rock beds"],"areaServed":[{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"},{"@type":"City","name":"Perrysburg, OH"},{"@type":"City","name":"Toledo, OH"},{"@type":"City","name":"Maumee, OH"},{"@type":"AdministrativeArea","name":"Northwest Ohio"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
+        {"@type":["LocalBusiness","LandscapingBusiness","HomeAndConstructionBusiness"],"@id":BASE_URL+"/#business","name":BUSINESS_NAME,"alternateName":["Terramorph","Terramorph Outdoor Transformation Co."],"url":BASE_URL+"/","image":BASE_URL+"/assets/real-hero.webp","logo":BASE_URL+"/assets/logo.png","telephone":PHONE,"address":{"@type":"PostalAddress","addressLocality":BUSINESS_CITY,"addressRegion":BUSINESS_REGION,"postalCode":BUSINESS_POSTAL,"addressCountry":BUSINESS_COUNTRY},"contactPoint":{"@type":"ContactPoint","telephone":PHONE,"contactType":"customer service","areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"availableLanguage":"English"},"sameAs":SAME_AS_URLS,"knowsAbout":["Landscape design","Paver patios","Drainage solutions","Outdoor lighting","Lawn maintenance","Seasonal cleanups","Snow removal","Hardscaping","Retaining walls","Mulch and rock beds"],"areaServed":[{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"},{"@type":"City","name":"Perrysburg, OH"},{"@type":"City","name":"Toledo, OH"},{"@type":"City","name":"Maumee, OH"},{"@type":"AdministrativeArea","name":"Northwest Ohio"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
         {"@type":"WebSite","@id":BASE_URL+"/#website","url":BASE_URL+"/","name":"Terramorph LLC","publisher":{"@id":BASE_URL+"/#business"}},
         {"@type":"Organization","@id":BASE_URL+"/#organization","name":BUSINESS_NAME,"url":BASE_URL+"/","logo":BASE_URL+"/assets/logo.png","sameAs":SAME_AS_URLS},
         {"@type":"WebPage","name":title,"description":desc,"url":page_url,"isPartOf":{"@id":BASE_URL+"/#website"},"primaryImageOfPage":{"@id":page_url+"#primaryimage"}},
@@ -634,8 +638,6 @@ def schema_for(page_name, title, desc, faqs=None, service=None):
         {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":BASE_URL+"/"},{"@type":"ListItem","position":2,"name":title,"item":page_url}]}
       ]
     }
-    for reviewer, quote in REVIEW_SNIPPETS[:3]:
-        base["@graph"].append({"@type":"Review","itemReviewed":{"@id":BASE_URL+"/#business"},"author":{"@type":"Person","name":reviewer},"reviewBody":quote.strip('“”')})
     if service:
         base["@graph"].append({"@type":"Service","name":service,"provider":{"@id":BASE_URL+"/#business"},"areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"url":page_url})
     if page_name == 'index.html':
@@ -691,7 +693,7 @@ def service_page(filename, title, eyebrow, image, headline, lead, problem, outco
     </div>
   </div>
 </section>
-<section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>Real work examples without staged pairings.</h2></div><div class="container">{photo_gallery()}</div></section>
+<section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>See Terramorph work across Northwest Ohio properties.</h2></div><div class="container">{photo_gallery()}</div></section>
 {faq_section(SERVICE_FAQS.get(title, DEFAULT_FAQS))}
 <section class="section quote-section"><div class="container quote-grid">{quote_form(('Request an Outdoor Lighting Quote' if title == 'Outdoor Lighting' else 'Request a ' + title + ' Quote'))}<div class="cta-proof"><p class="eyebrow">Why homeowners reach out</p><h2>Reviews, proof, and a simple free estimate request.</h2>{review_stack(2)}</div></div></section>
 '''
@@ -705,16 +707,16 @@ def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, 
     body = f'''
 <section class="page-hero premium-page-hero meta-landing-hero conversion-hero" data-funnel-service="{service}">
   <div class="page-hero-image"><img src="assets/{image}" alt="{title} project photo"></div><div class="hero-overlay"></div>
-  <div class="container page-hero-content"><p class="eyebrow light">{eyebrow}</p><h1>{headline}</h1><p>{lead}</p><div class="offer-card"><b>{offer}</b><span>Send the problem, city, timeline, and photos if you have them. Terramorph follows up with the best next step.</span></div><div class="cta-row"><a class="btn btn-gold" href="#quote">Get My Free Assessment</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div><div class="above-fold-trust"><span>★★★★★ 200+ Google Reviews</span><span>BBB Member</span><span>Licensed + insured</span><span>Local crew</span></div></div>
+  <div class="container page-hero-content"><p class="eyebrow light">{eyebrow}</p><h1>{headline}</h1><p>{lead}</p><div class="offer-card"><b>{offer}</b><span>Send the problem, city, timeline, and photos if you have them. Terramorph follows up with the best next step.</span></div><div class="cta-row"><a class="btn btn-gold" href="#request-form">Get My Free Assessment</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div><div class="above-fold-trust"><span>★★★★★ 200+ Google Reviews</span><span>BBB Accredited</span><span>Licensed + insured</span><span>Local crew</span></div></div>
 </section>
-<section class="conversion-trust-strip" aria-label="Terramorph credibility"><div class="container conversion-trust-grid"><span>★★★★★ 200+ Google Reviews</span><span>Google Verified</span><span>BBB Member</span><span>Licensed + insured</span><span>Serving Toledo, Perrysburg, Maumee, Wood County, Lucas County</span></div></section>
-<section class="section quick-lead-section"><div class="container">{quick_lead_form(service, offer)}</div></section>
-<section class="section pain-proof-section"><div class="container pain-proof-grid"><div class="pain-card"><p class="eyebrow light">This is for you if</p><h2>{bullets[0]}</h2><ul>{''.join(f'<li>{item}</li>' for item in symptoms)}</ul><a class="btn btn-gold" href="#quote">See What This Would Cost</a></div><div class="proof-card"><p class="eyebrow">What Terramorph checks</p><h2>{bullets[1]}</h2><div class="proof-steps">{''.join(f'<div><b>{i+1}. {title}</b><span>{copy}</span></div>' for i,(title,copy) in enumerate(next_steps))}</div></div></div></section>
-<section class="section clay-section"><div class="container local-grid"><div><p class="eyebrow">Why request now</p><h2>{bullets[2]}</h2><p>{bullets[3]}</p><a class="btn btn-primary" href="#quote">Start My Free Assessment</a></div><div class="authority-list"><div><b>Fast next step</b><span>Submit the form or call and Terramorph can review the property, service need, timeline, and photos.</span></div><div><b>Real project proof</b><span>Project photos and named reviews stay close to the quote path so the page feels credible, not generic.</span></div><div><b>Local conditions</b><span>Wood and Lucas County soil, drainage, freeze-thaw, and weather are considered before recommending work.</span></div><div><b>Clear estimate</b><span>The goal is a practical scope, clean communication, and a path to getting the work handled.</span></div></div></div></section>
+<section class="conversion-trust-strip" aria-label="Terramorph credibility"><div class="container conversion-trust-grid"><span>★★★★★ 200+ Google Reviews</span><span>Perrysburg-area team</span><span>BBB Accredited</span><span>Licensed + insured</span><span>Serving Toledo, Perrysburg, Maumee, Wood County, Lucas County</span></div></section>
+{inline_jobber_quote_form(form_title, service)}
+<section class="section pain-proof-section"><div class="container pain-proof-grid"><div class="pain-card"><p class="eyebrow light">This is for you if</p><h2>{bullets[0]}</h2><ul>{''.join(f'<li>{item}</li>' for item in symptoms)}</ul><a class="btn btn-gold" href="#request-form">See What This Would Cost</a></div><div class="proof-card"><p class="eyebrow">What Terramorph checks</p><h2>{bullets[1]}</h2><div class="proof-steps">{''.join(f'<div><b>{i+1}. {title}</b><span>{copy}</span></div>' for i,(title,copy) in enumerate(next_steps))}</div></div></div></section>
+<section class="section clay-section"><div class="container local-grid"><div><p class="eyebrow">Why request now</p><h2>{bullets[2]}</h2><p>{bullets[3]}</p><a class="btn btn-primary" href="#request-form">Start My Free Assessment</a></div><div class="authority-list"><div><b>Fast next step</b><span>Submit the form or call and Terramorph can review the property, service need, timeline, and photos.</span></div><div><b>Project proof</b><span>Review photos and customer feedback before deciding whether Terramorph fits the project.</span></div><div><b>Local conditions</b><span>Wood and Lucas County soil, drainage, freeze-thaw, and weather are considered before recommending work.</span></div><div><b>Clear estimate</b><span>The goal is a practical scope, clean communication, and a path to getting the work handled.</span></div></div></div></section>
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>See the kind of work this estimate can start.</h2></div><div class="container">{photo_gallery()}</div></section>
 {review_section()}
 {faq_section(faqs)}
-<section class="section quote-section"><div class="container quote-grid">{quote_form(form_title, service=service, source='website', cta='Call for Estimate', direct_only=True, same_tab=True)}<div class="cta-proof"><p class="eyebrow">Built for fast homeowner decisions</p><h2>One clear offer, visible proof, a call button, and a short quote path.</h2>{review_stack(3)}<ul class="check-list"><li>See real project proof before requesting an estimate.</li><li>Call Terramorph and share the project details.</li><li>Help Terramorph respond with the right next step faster.</li></ul></div></div></section>
+<section class="section quote-section"><div class="container quote-grid"><div class="phone-direct-card"><p class="eyebrow">Ready for the next step?</p><h2>Send the property details or call Terramorph directly.</h2><p>The secure request form keeps your contact information, service need, location, timeline, and photos together for follow-up.</p><div class="phone-direct-actions"><a class="btn btn-gold" href="#request-form">Open Request Form</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div><div class="cta-proof"><p class="eyebrow">Local customer feedback</p><h2>See why homeowners call Terramorph for the next project.</h2>{review_stack(3)}</div></div></section>
 '''
     desc = f'{title} from Terramorph for Wood and Lucas County homeowners. Real photos, reviews, phone call, and free estimate request.'
     schema = schema_for(filename, title, desc, faqs, service)
@@ -838,9 +840,9 @@ about = f"""
     <div><b>Diagnosis before selling</b><span>Grade, water movement, soil, access, plant health, use case, and maintenance needs are considered before rushing into a quote.</span></div>
     <div><b>Local property knowledge</b><span>Clay soil, flat lots, freeze-thaw cycles, heavy rain, and Northwest Ohio seasons shape the recommendation.</span></div>
     <div><b>Full-property thinking</b><span>Patios, drainage, beds, lighting, cleanup, maintenance, and snow all connect to how the property actually works.</span></div>
-    <div><b>Clear communication</b><span>Free estimates, simple next steps, phone-first contact, and expectations that are easier for homeowners to understand.</span></div>
+    <div><b>Clear communication</b><span>Free estimates, simple next steps, direct contact, and expectations that are easier for homeowners to understand.</span></div>
     <div><b>Clean job sites</b><span>Professional presentation matters: the goal is work that looks finished, cleaned up, and ready to use.</span></div>
-    <div><b>Proof nearby</b><span>Real photos, 200+ Google reviews, BBB Membership, and licensed/insured credibility stay visible near the decision points.</span></div>
+    <div><b>Documented experience</b><span>Project photos, 200+ Google reviews, BBB accreditation, and licensed and insured service help homeowners evaluate the fit.</span></div>
   </div>
 </section>
 <section class="section process-section">
@@ -883,7 +885,7 @@ def city_service_card(item):
 
 def city_service_schema(item):
     faqs = [(f'Does Terramorph offer {item["service"].lower()} in {item["city"]}?', f'Yes. Terramorph serves {item["city"]} and nearby Wood and Lucas County areas with {item["service"].lower()} and related outdoor property work.'),('Can I request a free estimate by phone?', f'Yes. Call Terramorph at {PHONE} with the service need, property details, photos if available, and timeline.'),('What other services can be included?', 'Terramorph can review related needs such as drainage, patios, beds, lighting, cleanups, maintenance, mulch, rock, trimming, and property improvements.')]
-    desc = f"Terramorph provides {item['keyword']} for homeowners and property owners, with phone-first free estimates."
+    desc = f"Terramorph provides {item['keyword']} for homeowners and property owners, with free estimates and direct phone access."
     return schema_for(item['file'], item['headline'] + ' | Terramorph', desc, faqs, item['service'])
 
 def city_service_page(item):
@@ -945,7 +947,7 @@ quote_page = f'''
     <p class="crumb"><a href="index.html">Home</a> / Request Quote</p>
     <p class="eyebrow light">Free estimate request</p>
     <h1>Tell Terramorph what needs built, fixed, or cleaned up.</h1>
-    <p>Submit the secure Jobber request form so the project details go straight into Terramorph's CRM for follow-up.</p>
+    <p>Submit the secure request form so the Terramorph team receives your property details, photos, service need, and timeline for follow-up.</p>
     <div class="cta-row"><a class="btn btn-gold" href="#request-form">Start Request</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
   </div>
 </section>
@@ -955,7 +957,7 @@ quote_page = f'''
       <div class="quick-lead-copy">
         <p class="eyebrow light">Project details</p>
         <h2 id="quote-title">Request a free outdoor project estimate.</h2>
-        <p>Use the secure Terramorph Jobber request form below. New requests go directly into the CRM so the team can follow up with the right service, city, photos, and timeline.</p>
+        <p>Use the secure Terramorph request form below. The team receives the service, city, photos, timeline, and project notes needed to plan the right follow-up.</p>
         <div class="quick-lead-proof"><span>★★★★★ 200+ Google Reviews</span><span>Licensed + insured</span><span>Wood + Lucas County</span></div>
       </div>
       <div class="jobber-embed-wrap" aria-label="Terramorph Jobber quote request form">
@@ -976,7 +978,7 @@ quote_page = f'''
         <div><b>1. Describe the problem</b><span>What you want fixed, built, cleaned, maintained, or priced.</span></div>
         <div><b>2. Share location</b><span>City, address, or nearest cross street for service-area planning.</span></div>
         <div><b>3. Add timeline</b><span>ASAP, this month, 1-3 months, or planning ahead.</span></div>
-        <div><b>4. Add photos in Jobber</b><span>The CRM request keeps photos and project notes organized for follow-up.</span></div>
+        <div><b>4. Add photos</b><span>Photos and project notes help the team understand visible conditions before follow-up.</span></div>
       </div>
     </div>
   </div>
@@ -997,15 +999,15 @@ privacy = f'''
 </section>
 <section class="section legal-page">
   <div class="container narrow-copy">
-    <p><strong>Last updated:</strong> June 9, 2026</p>
+    <p><strong>Last updated:</strong> July 14, 2026</p>
     <h2>Information we collect</h2>
     <p>Terramorph may collect information you choose to provide when requesting an estimate, calling, emailing, or using our online quote form. This can include your name, phone number, email address, property address, project details, service needs, preferred timeline, photos, and any notes you submit.</p>
     <h2>How we use information</h2>
     <p>We use submitted information to respond to quote requests, schedule site visits, prepare estimates, communicate about projects, improve our services, and keep accurate customer and project records.</p>
     <h2>Quote forms and third-party tools</h2>
-    <p>Terramorph may use business tools to manage scheduling, customer communication, and project follow-up. Information you provide by phone or through future website features may be processed by service providers so Terramorph can respond and manage the request.</p>
+    <p>Terramorph uses Jobber to process quote requests and manage scheduling, customer communication, project records, and follow-up. Information submitted through the embedded or linked Jobber form is also handled under Jobber's privacy practices.</p>
     <h2>Website analytics and advertising</h2>
-    <p>This website may use standard analytics, advertising, pixels, cookies, or tracking links to understand website traffic, measure marketing performance, and improve future advertising. These tools may collect browser, device, page visit, referral, and interaction information.</p>
+    <p>This website uses Google Analytics, Google Ads, and the Meta Pixel to understand website traffic, measure marketing performance, and improve advertising. These tools may use cookies or similar identifiers and collect browser, device, page visit, referral, campaign, and interaction information.</p>
     <h2>Information sharing</h2>
     <p>Terramorph does not sell your personal information. We may share information with service providers that help operate the website, process quote requests, manage customer communication, provide advertising analytics, or perform business operations. We may also share information when required by law or to protect our business, customers, or property.</p>
     <h2>Data security</h2>
@@ -1057,9 +1059,9 @@ review_notes_body = '''<section class="section"><div class="container review-doc
 review_notes_desc = 'Summary of Terramorph V3.49 local SEO, AI visibility, local authority, conversion, and technical optimization improvements.'
 (root/'review-notes.html').write_text(page('V3.49 Final Optimization Notes | Terramorph', review_notes_desc, review_notes_body, schema_for('review-notes.html', 'V3.49 Final Optimization Notes', review_notes_desc)))
 
-readme = '''# Terramorph V3.49 Website
+readme = '''# Terramorph Website
 
-Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consistency, citation cleanup support, high-intent service-area landing pages, and phone-first conversion tracking.
+Static site focused on local search visibility, clear service information, paid campaign landing pages, Jobber quote requests, and conversion measurement.
 
 ## Open
 - `index.html` — homepage
@@ -1072,22 +1074,22 @@ Audit-response build focused on local SEO, Google/Meta entity clarity, NAP consi
 - `about.html` — About page
 - `service-areas.html` — local service area hub
 - nine city/service pages for Toledo, Perrysburg, and Maumee landscaping, drainage, and patios
-- `contact.html` — phone-first quote request page
+- `contact.html` — quote and contact page
 - `privacy.html` — privacy policy
 - `review-notes.html` — summary of changes
 
 ## V3.49 priorities implemented
-- Official NAP/entity block for citation tools and directory cleanup
+- Consistent business name, phone, website, and service-area information
 - Stronger LocalBusiness, LandscapingBusiness, HomeAndConstructionBusiness, service, FAQ, breadcrumb, and offer catalog schema
 - Canonical URLs, Open Graph, Twitter cards, and absolute social preview images across generated pages
 - SameAs signals for BBB, Yelp, and Nextdoor where public profiles are visible
 - Fewer heavy boxed/card sections
-- Reviews, trust, Google reviews, BBB Membership, license/insurance, phone, and free estimate CTAs
+- Reviews, project proof, BBB accreditation, license and insurance information, phone, and free estimate CTAs
 - Sitewide NAP consistency note in footer and official business information section
 - Accessibility improvements
 - Added an About page explaining the local, diagnosis-first approach
 - Added Outdoor Project Guides hub and eight SEO guide pages with FAQ/article schema and quote CTAs
-- Connected quote requests to phone-first call CTAs
+- Connected quote requests to the secure Jobber form and direct call CTAs
 - Added city/service pages for Toledo, Perrysburg, and Maumee core services
 '''
 (root/'README.md').write_text(readme)
@@ -1101,7 +1103,7 @@ thank_you = f"""
 (root/'thank-you.html').write_text(page('Quote Request Received | Terramorph', 'Thank-you page for Terramorph quote requests in Wood and Lucas County.', thank_you, schema_for('thank-you.html', 'Quote Request Received', 'Thank-you page for Terramorph quote requests.')))
 
 def write_static_seo_files():
-    pages = ['index.html','quote.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','terms.html','lp-patios.html','lp-drainage.html','lp-landscape-design.html','lp-outdoor-lighting.html']
+    pages = ['index.html','quote.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','terms.html']
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     priorities = {'index.html':'1.0','quote.html':'0.95','contact.html':'0.9','drainage-solutions.html':'0.9','paver-patios-hardscapes.html':'0.9','landscape-design.html':'0.9'}
     for page_name in pages:

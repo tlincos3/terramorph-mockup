@@ -17,23 +17,24 @@
   - `terramorph_page_view`
   - `quote_intent`
   - `phone_click`
-  - `quick_lead_continue`
-  - `quote_submit_fallback`
+  - `generate_lead` on an attributed thank-you visit
 - Hardened Meta lead tracking:
-  - Phone clicks fire `Lead` + `Contact`.
-  - Quick lead forms fire `Lead` before opening the phone-first call path.
-  - Phone-first quote clicks preserve attribution parameters.
-  - Thank-you page has attribution-guarded fallback tracking, but the live quote path is currently call-first rather than form-submit-first.
+  - Phone clicks fire `Contact` and `PhoneClick`, not a premature `Lead`.
+  - Quote-link clicks fire `Contact` and `QuoteIntent`.
+  - Paid landing pages use the secure Jobber request form instead of browser-only quick forms.
+  - An attributed thank-you visit fires GA4 `generate_lead` and Meta `Lead`.
 - SEO cleanup:
   - Removed `thank-you.html` and `review-notes.html` from sitemap.
   - Added `noindex, nofollow` to `thank-you.html` and `review-notes.html`.
-  - Bumped static asset cache versions to `3.49`.
+  - Added `noindex, follow` to eight paid landing pages and eleven hypothetical planning pages.
+  - Removed all noindex pages from the organic sitemap.
+  - Bumped static asset cache versions to `3.55`.
 
 ## Google Ads launch package
 
 - Added `google-ads-launch-2026-06-30/` with Search campaign build files for drainage, paver patios, landscape design, maintenance, and cleanups.
 - Campaign files are intentionally set to `Paused` so the account can be reviewed before spend starts.
-- Primary optimization should be call conversions from `419-873-6801` and verified GA4 `phone_click` events.
+- Primary optimization should use duration-qualified calls, verified quote submissions, and qualified CRM outcomes. Keep simple clicks secondary.
 
 ## Still needed outside the repo
 
@@ -46,8 +47,8 @@ These require Google/Meta/account access and should be verified in the ad platfo
 2. Google Analytics / Tag Manager
    - Confirm GA4 measurement ID `G-QRTSH6WXYK` is connected to the right property.
    - Link GA4 to Google Ads.
-   - Import `phone_click` as a primary conversion after verifying it fires once per real phone click.
-   - Keep `quick_lead_continue`, `quote_intent`, and `quote_submit_fallback` secondary until lead quality and return behavior are verified.
+   - Keep `phone_click` and `quote_intent` as secondary intent signals.
+   - Import `generate_lead` as primary only after the Jobber success/thank-you path is verified end to end.
 
 3. Meta Events Manager
    - Confirm domain verification for `terramorphllc.com`.
@@ -72,12 +73,12 @@ These require Google/Meta/account access and should be verified in the ad platfo
 
 7. Search Console
    - Submit both `https://terramorphllc.com/sitemap.xml` and `https://terramorphllc.com/image-sitemap.xml`.
-   - Inspect the new landing pages after deploy and request indexing for the highest-priority pages first.
+   - Do not request indexing for `lp-*` paid pages. Inspect and request indexing for the highest-priority service and guide pages instead.
 
 8. Conversion QA after deploy
    - Click phone CTA from a tagged URL.
-   - Submit the quick lead form from a tagged URL.
-   - Confirm attribution parameters remain attached and events show in Meta/GTM debugging.
+   - Submit the Jobber request form from a tagged URL.
+   - Confirm intent events remain secondary and the verified completion event appears once in Meta and GA4 debugging.
 
 ## Recommended Meta campaign URLs
 

@@ -8,7 +8,12 @@ ROOT = Path(__file__).resolve().parent
 BASE = 'https://terramorphllc.com'
 HTML_FILES = sorted(ROOT.glob('*.html'))
 EXTERNAL_PREFIXES = ('http://', 'https://', 'tel:', 'mailto:', 'sms:', 'javascript:')
-NOINDEX = {'thank-you.html', 'review-notes.html'}
+NOINDEX_NOFOLLOW = {'thank-you.html', 'review-notes.html'}
+NOINDEX_FOLLOW = {
+    path.name for path in HTML_FILES
+    if path.name.startswith('lp-') or path.name == 'case-studies.html' or path.name.endswith('-case-study.html')
+}
+NOINDEX = NOINDEX_NOFOLLOW | NOINDEX_FOLLOW
 
 class Parser(HTMLParser):
     def __init__(self):
@@ -75,7 +80,11 @@ for path in HTML_FILES:
         target=target.split('?')[0]
         if target.endswith('/'): target += 'index.html'
         if target not in all_names and not (ROOT/target).exists(): errors.append(f'{path.name}: broken internal link {href}')
-    if path.name not in NOINDEX and 'noindex' in html.lower(): errors.append(f'{path.name}: unexpected noindex')
+    robots=meta_content(p,'name','robots').lower()
+    if path.name not in NOINDEX and 'noindex' in robots: errors.append(f'{path.name}: unexpected noindex')
+    if path.name in NOINDEX and 'noindex' not in robots: errors.append(f'{path.name}: expected noindex')
+    if path.name in NOINDEX_FOLLOW and 'follow' not in robots: errors.append(f'{path.name}: expected follow on noindex page')
+    if path.name in NOINDEX_NOFOLLOW and 'nofollow' not in robots: errors.append(f'{path.name}: expected nofollow on private page')
 
 # sitemap coverage
 sitemap=(ROOT/'sitemap.xml').read_text() if (ROOT/'sitemap.xml').exists() else ''

@@ -181,8 +181,8 @@ function trackQuoteIntent(source, link){
 function trackPhoneClick(link){
   const context = {source: 'phone_click', phone_number: (link?.getAttribute('href') || '').replace(/^tel:/, ''), ...getTrackingContext()};
   pushAnalyticsEvent('phone_click', context);
-  metaTrack('Lead', {content_name: 'Terramorph phone lead', content_category: 'phone_call', lead_type: 'phone_call', ...context});
   metaTrack('Contact', {content_name: 'Terramorph phone click', content_category: 'phone_call', ...context});
+  metaTrackCustom('PhoneClick', context);
 }
 
 function trackThankYouFallbackLead(){
@@ -204,7 +204,8 @@ function trackThankYouFallbackLead(){
     lead_stage: 'submitted_or_returned',
     ...context
   };
-  pushAnalyticsEvent('quote_submit_fallback', fallbackContext);
+  pushAnalyticsEvent('generate_lead', fallbackContext);
+  metaTrack('Lead', {content_name: 'Terramorph quote request', content_category: context.service_category || 'quote_request', ...fallbackContext}, {eventId});
   metaTrackCustom('QuoteThankYouFallback', fallbackContext);
   window.sessionStorage?.setItem(THANK_YOU_LEAD_KEY, eventId);
 }
@@ -282,7 +283,7 @@ function handleRequestFormSubmit(form, event){
   writeStoredJson(QUICK_LEAD_KEY, storedLead);
   writeStoredJson(PHONE_LEAD_KEY, storedLead);
   pushAnalyticsEvent('quote_request_form_submit', {lead_service: lead.service, lead_city: lead.city, lead_timeline: lead.timeline, lead_problem_length: lead.problem.length, ...getTrackingContext()});
-  metaTrack('Lead', {content_name: 'Terramorph quote request form', content_category: lead.service || 'quote_request', ...getTrackingContext()}, {eventId});
+  metaTrack('Contact', {content_name: 'Terramorph text request intent', content_category: lead.service || 'quote_request', ...getTrackingContext()});
   metaTrackCustom('QuoteRequestFormSubmit', {lead_service: lead.service, lead_city: lead.city, ...getTrackingContext()});
 
   if(button){
@@ -332,7 +333,7 @@ function handleQuickLeadSubmit(form, event){
   writeStoredJson(QUICK_LEAD_KEY, storedLead);
   writeStoredJson(PHONE_LEAD_KEY, storedLead);
   pushAnalyticsEvent('quick_lead_continue', context);
-  metaTrack('Lead', {content_name: 'Terramorph quick quote lead', content_category: quickLead.service || 'paid_landing', ...context}, {eventId});
+  metaTrack('Contact', {content_name: 'Terramorph quick quote intent', content_category: quickLead.service || 'paid_landing', ...context});
   metaTrackCustom('QuickLeadContinue', context);
   if(button){
     button.disabled = true;
@@ -379,6 +380,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.querySelectorAll('[data-quote-service]').forEach(link => {
     link.addEventListener('click', () => trackQuoteIntent('phone_quote', link));
+  });
+  document.querySelectorAll('a[href*="quote.html"], a[href="#request-form"], a[href="#quote"]').forEach(link => {
+    if(link.matches('[data-quote-service]')) return;
+    link.addEventListener('click', () => trackQuoteIntent('website_quote_link', link));
   });
   document.querySelectorAll('a[href*="clienthub.getjobber.com"]').forEach(link => {
     link.addEventListener('click', () => trackQuoteIntent('jobber_direct', link));
