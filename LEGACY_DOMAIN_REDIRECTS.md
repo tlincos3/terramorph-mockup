@@ -1,74 +1,63 @@
 # Legacy terra419.com Redirect Plan
 
-Current live test result on 2026-06-29: `terra419.com` redirects only to `www.terra419.com`, and `www.terra419.com` still serves the old site. This must be changed in the legacy domain host/DNS/edge layer, not inside the `terramorphllc.com` GitHub Pages repo.
+## Current state
 
-## Required behavior
+As of July 14, 2026, GoDaddy's forwarding product sends only the apex and
+`www` homepages to `https://terramorphllc.com`. Requests for indexed legacy
+paths such as `/about-us` and `/landscape-installation-landscape-design` return
+a 404 from GoDaddy before reaching the new website.
 
-- One-hop 301 from both `terra419.com` and `www.terra419.com` to `https://terramorphllc.com`.
-- Preserve equivalent paths where a strong equivalent exists.
-- Do not redirect old domain traffic to another old-domain URL first.
-- Keep query strings for ad/campaign attribution.
-
-## Preferred edge rule
-
-If using Cloudflare, create a bulk redirect or redirect rule:
+A dedicated redirect project is deployed at:
 
 ```text
-Source hostname: terra419.com OR www.terra419.com
-Status: 301
-Preserve query string: yes
+https://terra419-redirect.vercel.app
 ```
 
-Use these path mappings before the catch-all:
+The Vercel project is named `terra419-redirect`. Both `terra419.com` and
+`www.terra419.com` are assigned to it and are waiting for DNS activation.
+
+## Required DNS activation
+
+GoDaddy's forwarding product currently owns four locked A records. Remove the
+apex and `www` forwarding entries before adding these records:
 
 ```text
-https://terra419.com/                         -> https://terramorphllc.com/
-https://www.terra419.com/                     -> https://terramorphllc.com/
-https://terra419.com/drainage                 -> https://terramorphllc.com/drainage-solutions.html
-https://www.terra419.com/drainage             -> https://terramorphllc.com/drainage-solutions.html
-https://terra419.com/paver-patios             -> https://terramorphllc.com/paver-patios-hardscapes.html
-https://www.terra419.com/paver-patios         -> https://terramorphllc.com/paver-patios-hardscapes.html
-https://terra419.com/landscape-design         -> https://terramorphllc.com/landscape-design.html
-https://www.terra419.com/landscape-design     -> https://terramorphllc.com/landscape-design.html
-https://terra419.com/outdoor-lighting         -> https://terramorphllc.com/outdoor-lighting.html
-https://www.terra419.com/outdoor-lighting     -> https://terramorphllc.com/outdoor-lighting.html
-https://terra419.com/lawn-maintenance         -> https://terramorphllc.com/lawn-maintenance.html
-https://www.terra419.com/lawn-maintenance     -> https://terramorphllc.com/lawn-maintenance.html
-https://terra419.com/contact                  -> https://terramorphllc.com/contact.html
-https://www.terra419.com/contact              -> https://terramorphllc.com/contact.html
-https://terra419.com/about                    -> https://terramorphllc.com/about.html
-https://www.terra419.com/about                -> https://terramorphllc.com/about.html
-https://terra419.com/*                        -> https://terramorphllc.com/$1
-https://www.terra419.com/*                    -> https://terramorphllc.com/$1
+Type  Name  Data
+A     @     76.76.21.21
+A     www   76.76.21.21
 ```
 
-## Nginx equivalent
+Keep GoDaddy's existing nameservers and all TXT verification records. Do not
+change the nameservers or remove Google Search Console verification records.
 
-```nginx
-server {
-    listen 443 ssl http2;
-    server_name terra419.com www.terra419.com;
+## Redirect behavior
 
-    location = / { return 301 https://terramorphllc.com/$is_args$args; }
-    location = /drainage { return 301 https://terramorphllc.com/drainage-solutions.html$is_args$args; }
-    location = /paver-patios { return 301 https://terramorphllc.com/paver-patios-hardscapes.html$is_args$args; }
-    location = /landscape-design { return 301 https://terramorphllc.com/landscape-design.html$is_args$args; }
-    location = /outdoor-lighting { return 301 https://terramorphllc.com/outdoor-lighting.html$is_args$args; }
-    location = /lawn-maintenance { return 301 https://terramorphllc.com/lawn-maintenance.html$is_args$args; }
-    location = /contact { return 301 https://terramorphllc.com/contact.html$is_args$args; }
-    location = /about { return 301 https://terramorphllc.com/about.html$is_args$args; }
+Mappings live in `legacy-redirect/vercel.json`. The project sends indexed old
+service and location URLs directly to their closest equivalents on
+`terramorphllc.com`, preserves query strings, and sends unknown legacy paths to
+the new homepage instead of returning an old-domain 404.
 
-    location / { return 301 https://terramorphllc.com$request_uri; }
-}
-```
+Vercel returns `308 Permanent Redirect`, which Google treats as a permanent
+redirect for site moves in the same way as a 301.
 
-## Verification commands
+## Verification
+
+After the DNS change, run:
 
 ```bash
-curl -sSIL https://terra419.com/drainage | sed -n '1,12p'
-curl -sSIL https://www.terra419.com/drainage | sed -n '1,12p'
-curl -sSIL https://terra419.com/paver-patios | sed -n '1,12p'
-curl -sSIL https://www.terra419.com/paver-patios | sed -n '1,12p'
+curl -sS -D - -o /dev/null https://terra419.com/
+curl -sS -D - -o /dev/null https://terra419.com/about-us
+curl -sS -D - -o /dev/null https://terra419.com/landscape-installation-landscape-design
+curl -sS -D - -o /dev/null https://www.terra419.com/snow-removal
 ```
 
-Expected: first response is `HTTP/2 301` or `HTTP/1.1 301` with `location: https://terramorphllc.com/...`; final response is `200`; no intermediate old-domain hop.
+Expected behavior:
+
+- The first response is a `308` with a `Location` on `terramorphllc.com`.
+- The redirected destination returns `200`.
+- There is no intermediate redirect to another `terra419.com` URL.
+- Query strings such as Google Ads UTM parameters remain intact.
+
+Keep this redirect project active for at least 12 months after Google finishes
+processing the Search Console change of address. Longer is preferable while
+old backlinks and directory listings still exist.

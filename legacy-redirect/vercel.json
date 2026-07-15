@@ -1,0 +1,231 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://terramorphllc.com/",
+      "permanent": true
+    },
+    {
+      "source": "/about-us",
+      "destination": "https://terramorphllc.com/about.html",
+      "permanent": true
+    },
+    {
+      "source": "/about",
+      "destination": "https://terramorphllc.com/about.html",
+      "permanent": true
+    },
+    {
+      "source": "/contact-us",
+      "destination": "https://terramorphllc.com/contact.html",
+      "permanent": true
+    },
+    {
+      "source": "/contact",
+      "destination": "https://terramorphllc.com/contact.html",
+      "permanent": true
+    },
+    {
+      "source": "/projects",
+      "destination": "https://terramorphllc.com/projects.html",
+      "permanent": true
+    },
+    {
+      "source": "/testimonials",
+      "destination": "https://terramorphllc.com/reviews.html",
+      "permanent": true
+    },
+    {
+      "source": "/services",
+      "destination": "https://terramorphllc.com/services.html",
+      "permanent": true
+    },
+    {
+      "source": "/service-areas",
+      "destination": "https://terramorphllc.com/service-areas.html",
+      "permanent": true
+    },
+    {
+      "source": "/landscape-installation-landscape-design",
+      "destination": "https://terramorphllc.com/landscape-design.html",
+      "permanent": true
+    },
+    {
+      "source": "/landscape-design",
+      "destination": "https://terramorphllc.com/landscape-design.html",
+      "permanent": true
+    },
+    {
+      "source": "/plant-installation",
+      "destination": "https://terramorphllc.com/landscape-design.html",
+      "permanent": true
+    },
+    {
+      "source": "/landscape-maintenance",
+      "destination": "https://terramorphllc.com/lawn-maintenance.html",
+      "permanent": true
+    },
+    {
+      "source": "/lawn-maintenance",
+      "destination": "https://terramorphllc.com/lawn-maintenance.html",
+      "permanent": true
+    },
+    {
+      "source": "/snow-removal",
+      "destination": "https://terramorphllc.com/snow-removal-toledo-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/tree-bush-trimming-planting",
+      "destination": "https://terramorphllc.com/tree-care-northwest-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/tree-removal",
+      "destination": "https://terramorphllc.com/tree-care-northwest-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/hauling-junk-removal",
+      "destination": "https://terramorphllc.com/services.html",
+      "permanent": true
+    },
+    {
+      "source": "/junk-removal",
+      "destination": "https://terramorphllc.com/services.html",
+      "permanent": true
+    },
+    {
+      "source": "/concrete-services",
+      "destination": "https://terramorphllc.com/paver-patios-hardscapes.html",
+      "permanent": true
+    },
+    {
+      "source": "/hardscaping",
+      "destination": "https://terramorphllc.com/paver-patios-hardscapes.html",
+      "permanent": true
+    },
+    {
+      "source": "/paver-patios",
+      "destination": "https://terramorphllc.com/paver-patios-hardscapes.html",
+      "permanent": true
+    },
+    {
+      "source": "/retaining-walls",
+      "destination": "https://terramorphllc.com/retaining-walls.html",
+      "permanent": true
+    },
+    {
+      "source": "/drainage",
+      "destination": "https://terramorphllc.com/drainage-solutions.html",
+      "permanent": true
+    },
+    {
+      "source": "/drainage-solutions",
+      "destination": "https://terramorphllc.com/drainage-solutions.html",
+      "permanent": true
+    },
+    {
+      "source": "/outdoor-lighting",
+      "destination": "https://terramorphllc.com/outdoor-lighting.html",
+      "permanent": true
+    },
+    {
+      "source": "/holiday-lighting",
+      "destination": "https://terramorphllc.com/holiday-lighting.html",
+      "permanent": true
+    },
+    {
+      "source": "/native-habitat-rehabilitation",
+      "destination": "https://terramorphllc.com/native-prairie-landscaping-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/mulch-installation",
+      "destination": "https://terramorphllc.com/mulch-installation-toledo-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/sod-installation",
+      "destination": "https://terramorphllc.com/sod-installation-toledo-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/spring-cleanup",
+      "destination": "https://terramorphllc.com/spring-cleanup-northwest-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/fall-cleanup",
+      "destination": "https://terramorphllc.com/seasonal-cleanups.html",
+      "permanent": true
+    },
+    {
+      "source": "/seasonal-cleanups",
+      "destination": "https://terramorphllc.com/seasonal-cleanups.html",
+      "permanent": true
+    },
+    {
+      "source": "/perrysburg-oh",
+      "destination": "https://terramorphllc.com/landscaping-perrysburg-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/toledo-oh",
+      "destination": "https://terramorphllc.com/landscaping-toledo-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/sylvania-oh",
+      "destination": "https://terramorphllc.com/landscaping-sylvania-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/maumee-oh",
+      "destination": "https://terramorphllc.com/landscaping-maumee-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/rossford-oh",
+      "destination": "https://terramorphllc.com/landscaping-rossford-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/oregon-oh",
+      "destination": "https://terramorphllc.com/landscaping-oregon-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/waterville-oh",
+      "destination": "https://terramorphllc.com/landscaping-waterville-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/whitehouse-oh",
+      "destination": "https://terramorphllc.com/landscaping-whitehouse-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/holland-oh",
+      "destination": "https://terramorphllc.com/landscaping-holland-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/bowling-green-oh",
+      "destination": "https://terramorphllc.com/landscaping-bowling-green-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/point-place-oh",
+      "destination": "https://terramorphllc.com/landscaping-toledo-ohio.html",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "destination": "https://terramorphllc.com/",
+      "permanent": true
+    }
+  ]
+}
