@@ -12,8 +12,13 @@ const TRACKING_STORAGE_KEY = 'terramorphAttributionContext';
 const QUICK_LEAD_KEY = 'terramorphQuickLeadContext';
 const PHONE_LEAD_KEY = 'terramorphPendingPhoneLead';
 const THANK_YOU_LEAD_KEY = 'terramorphThankYouLeadTracked';
+const QUOTE_POPUP_DISMISS_KEY = 'terramorphQuotePopupDismissedAt';
+const QUOTE_POPUP_DISMISS_MS = 14 * 24 * 60 * 60 * 1000;
+const QUOTE_POPUP_MIN_DELAY_MS = 45 * 1000;
+const QUOTE_POPUP_FALLBACK_MS = 90 * 1000;
 const SOCIAL_SOURCES = new Set(['facebook', 'instagram', 'google']);
-const TRACKING_PARAM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'msclkid'];
+const TRACKING_PARAM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'wbraid', 'gbraid', 'msclkid'];
+let quotePopupReturnFocus = null;
 
 function getDetectedTrafficSource(){
   const params = new URLSearchParams(window.location.search);
@@ -343,23 +348,105 @@ function handleQuickLeadSubmit(form, event){
   window.location.href = TERRAMORPH_PHONE_HREF;
 }
 
-function openQuotePopup(){
+function isQuotePopupDismissed(){
+  try {
+    const dismissedAt = Number(window.localStorage?.getItem(QUOTE_POPUP_DISMISS_KEY));
+    if(!Number.isFinite(dismissedAt) || dismissedAt <= 0) return false;
+    if(Date.now() - dismissedAt < QUOTE_POPUP_DISMISS_MS) return true;
+    window.localStorage?.removeItem(QUOTE_POPUP_DISMISS_KEY);
+  } catch(error) {
+    console.warn('Popup storage read failed', error);
+  }
+  return false;
+}
+
+function getQuotePopupFocusableElements(popup){
+  return Array.from(popup.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+    .filter(element => !element.hidden && element.getAttribute('aria-hidden') !== 'true');
+}
+
+function openQuotePopup(reason = 'engaged_visit'){
   const popup = document.querySelector('#quote-popup');
   if(!popup || popup.dataset.opened === 'true') return;
-  if(window.localStorage?.getItem('terramorphQuotePopupDismissed') === '1') return;
+  if(document.body.classList.contains('quote-page') || document.querySelector('[data-funnel-service]')) return;
+  if(isQuotePopupDismissed()) return;
+  const form = document.querySelector('#request-form');
+  const formRect = form?.getBoundingClientRect();
+  if(formRect && formRect.top < window.innerHeight && formRect.bottom > 0) return;
+  quotePopupReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   popup.hidden = false;
   popup.dataset.opened = 'true';
+  popup.dataset.trigger = reason;
   document.body.classList.add('quote-popup-open');
   const card = popup.querySelector('.quote-popup-card');
   setTimeout(() => card?.focus(), 50);
+  pushAnalyticsEvent('quote_popup_open', {source: reason, ...getTrackingContext()});
 }
 
 function closeQuotePopup(){
   const popup = document.querySelector('#quote-popup');
-  if(!popup) return;
+  if(!popup || popup.hidden) return;
   popup.hidden = true;
   document.body.classList.remove('quote-popup-open');
-  window.localStorage?.setItem('terramorphQuotePopupDismissed', '1');
+  try {
+    window.localStorage?.setItem(QUOTE_POPUP_DISMISS_KEY, String(Date.now()));
+    window.localStorage?.removeItem('terramorphQuotePopupDismissed');
+  } catch(error) {
+    console.warn('Popup storage write failed', error);
+  }
+  quotePopupReturnFocus?.focus?.();
+  quotePopupReturnFocus = null;
+}
+
+function handleQuotePopupKeydown(event){
+  const popup = document.querySelector('#quote-popup');
+  if(!popup || popup.hidden) return;
+  if(event.key === 'Escape'){
+    event.preventDefault();
+    closeQuotePopup();
+    return;
+  }
+  if(event.key !== 'Tab') return;
+  const focusable = getQuotePopupFocusableElements(popup);
+  if(!focusable.length){
+    event.preventDefault();
+    popup.querySelector('.quote-popup-card')?.focus();
+    return;
+  }
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if(event.shiftKey && document.activeElement === first){
+    event.preventDefault();
+    last.focus();
+  } else if(!event.shiftKey && document.activeElement === last){
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+function scheduleQuotePopup(){
+  const popup = document.querySelector('#quote-popup');
+  if(!popup || document.body.classList.contains('quote-page') || document.querySelector('[data-funnel-service]')) return;
+  let ready = false;
+  const scrollDepth = () => {
+    const scrollable = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+    return window.scrollY / scrollable;
+  };
+  const openFromScroll = () => {
+    if(ready && scrollDepth() >= 0.5) openQuotePopup('half_page_scroll');
+  };
+  const openFromExit = event => {
+    if(ready && window.innerWidth >= 900 && event.clientY <= 0 && !event.relatedTarget){
+      openQuotePopup('desktop_exit_intent');
+    }
+  };
+  window.addEventListener('scroll', openFromScroll, {passive: true});
+  document.addEventListener('mouseout', openFromExit);
+  window.setTimeout(() => {
+    ready = true;
+    openFromScroll();
+  }, QUOTE_POPUP_MIN_DELAY_MS);
+  window.setTimeout(() => openQuotePopup('engaged_time'), QUOTE_POPUP_FALLBACK_MS);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -395,6 +482,6 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', event => handleRequestFormSubmit(form, event));
   });
   document.querySelectorAll('[data-close-popup]').forEach(el => el.addEventListener('click', closeQuotePopup));
-  document.addEventListener('keydown', event => { if(event.key === 'Escape') closeQuotePopup(); });
-  window.setTimeout(openQuotePopup, 12000);
+  document.addEventListener('keydown', handleQuotePopupKeydown);
+  scheduleQuotePopup();
 });

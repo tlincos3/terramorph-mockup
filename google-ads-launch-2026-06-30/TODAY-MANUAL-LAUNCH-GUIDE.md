@@ -100,7 +100,7 @@ RSA headlines:
 - Planting And Bed Design
 - Lawn Maintenance
 - Seasonal Cleanups
-- Licensed And Insured
+- Local Northwest Ohio
 - 200+ Google Reviews
 - Call Terramorph Today
 - Wood And Lucas County
@@ -110,7 +110,7 @@ RSA descriptions:
 
 - Landscape design, installation, maintenance, cleanups, mulch, beds, and property upkeep.
 - Call Terramorph for a free estimate in Perrysburg, Toledo, Wood County, or Lucas County.
-- Licensed and insured local crew with 200+ Google reviews and real project proof.
+- Local Northwest Ohio crew with 200+ Google reviews and real project proof.
 - Design-first landscaping that can connect beds, patios, drainage, lighting, and upkeep.
 
 ## Campaign 2: Drainage + Patios
@@ -156,7 +156,7 @@ RSA headlines:
 - Yard Drainage Experts
 - Free Patio Estimate
 - Free Drainage Estimate
-- Licensed And Insured
+- Local Northwest Ohio
 - 200+ Google Reviews
 - Call Terramorph Today
 - Wood And Lucas County
@@ -167,7 +167,7 @@ RSA descriptions:
 
 - Paver patios, hardscapes, drainage, and standing-water help for Northwest Ohio homes.
 - Call Terramorph for a free estimate in Perrysburg, Toledo, Wood County, or Lucas County.
-- Local, licensed and insured team with 200+ Google reviews and real project proof.
+- Local Northwest Ohio team with 200+ Google reviews and real project proof.
 - Keep drainage and patio spend capped until lead quality is proven.
 
 ## Shared Negative Keywords
@@ -186,7 +186,7 @@ Check:
 - Call asset is attached.
 - Negative keywords are applied.
 - Final URLs open correctly.
-- Ads mention free estimates, licensed/insured, and local service area.
+- Ads mention free estimates, local service area, and local service area.
 - You are comfortable spending up to `$100/day`.
 
 Only then enable.

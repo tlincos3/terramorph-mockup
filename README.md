@@ -23,7 +23,7 @@ Static site focused on local search visibility, clear service information, paid 
 - Canonical URLs, Open Graph, Twitter cards, and absolute social preview images across generated pages
 - SameAs signals for BBB, Yelp, and Nextdoor where public profiles are visible
 - Fewer heavy boxed/card sections
-- Reviews, project proof, BBB accreditation, license and insurance information, phone, and free estimate CTAs
+- Reviews, completed-work proof, BBB accreditation, phone, and free estimate CTAs
 - Sitewide NAP consistency note in footer and official business information section
 - Accessibility improvements
 - Added an About page explaining the local, diagnosis-first approach
@@ -33,9 +33,10 @@ Static site focused on local search visibility, clear service information, paid 
 
 ## V3.49 local growth/ad expansion
 - Added 28 more city/service pages for Sylvania, Bowling Green, Holland, Waterville, Whitehouse, Oregon, and Rossford.
-- Added 10 local planning example pages for common Northwest Ohio project scenarios.
+- Added 10 clearly labeled hypothetical planning examples for common Northwest Ohio project scenarios.
+- Added three completed-work spotlights using original archived Terramorph field photos and verifiable visible details.
 - Added a review request page to support Google Business Profile review generation.
 - Added 4 dedicated Meta ad landing pages for backyard patios, standing water, curb appeal, and spring cleanup.
-- Kept paid campaign pages and hypothetical planning examples out of the organic sitemap while leaving them available to direct visitors.
+- Updated sitemap with all new indexable service, guide, completed-work, and ad landing pages while keeping hypothetical planning examples out of organic search.
 - Added Google Business Profile, BBB, Facebook, and Instagram entity/proof links sitewide.
 - Added a website terms page and footer contact/proof links.

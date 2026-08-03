@@ -215,7 +215,7 @@ def generate(ctx: dict) -> list[str]:
                 html = html.replace(marker, '</section>\n' + local_specifics(city, svc, local_faq) + '\n<section class="section"><div class="container local-grid"', 1)
             else:
                 html = html.replace('<section class="section quote-section">', local_specifics(city, svc, local_faq) + '\n<section class="section quote-section">', 1)
-        if is_major and 'proof-upgrade-section' not in html and path.name not in {'privacy.html'}:
+        if is_major and 'proof-upgrade-section' not in html and path.name not in {'index.html', 'privacy.html'}:
             html = html.replace('<section class="section quote-section">', proof_upgrade_section(review_stack) + '\n<section class="section quote-section">', 1)
         if is_local:
             # Make local FAQ schema match the visible city-specific FAQ, not only the generic service FAQ.
