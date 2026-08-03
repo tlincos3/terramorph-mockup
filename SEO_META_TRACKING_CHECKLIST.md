@@ -11,24 +11,28 @@
   - `utm_term`
   - `fbclid`
   - `gclid`
+  - `wbraid`
+  - `gbraid`
   - `msclkid`
   - Meta browser/click IDs: `_fbp`, `_fbc`
 - Added normalized `dataLayer` events and GA4 `gtag` events so Google Ads / GA4 can read clean website activity:
   - `terramorph_page_view`
   - `quote_intent`
   - `phone_click`
-  - `generate_lead` on an attributed thank-you visit
+  - `quote_thank_you_attributed` on an attributed thank-you visit for diagnostics only
 - Hardened Meta lead tracking:
   - Phone clicks fire `Contact` and `PhoneClick`, not a premature `Lead`.
   - Quote-link clicks fire `Contact` and `QuoteIntent`.
   - Paid landing pages use the secure Jobber request form instead of browser-only quick forms.
-  - An attributed thank-you visit fires GA4 `generate_lead` and Meta `Lead`.
+  - Jobber's native `form_submit` is the only source mapped to GA4 `generate_lead`.
+  - An attributed thank-you visit fires GA4 diagnostic `quote_thank_you_attributed` and Meta `Lead`, with a session guard against reload duplicates.
+  - Internal quote and direct Jobber links preserve UTMs plus `gclid`, `wbraid`, and `gbraid`.
 - SEO cleanup:
   - Removed `thank-you.html` and `review-notes.html` from sitemap.
   - Added `noindex, nofollow` to `thank-you.html` and `review-notes.html`.
   - Added `noindex, follow` to eight paid landing pages and eleven hypothetical planning pages.
   - Removed all noindex pages from the organic sitemap.
-  - Bumped static asset cache versions to `3.55`.
+  - Bumped the application cache version to `3.57`.
 
 ## Google Ads launch package
 
@@ -48,7 +52,7 @@ These require Google/Meta/account access and should be verified in the ad platfo
    - Confirm GA4 measurement ID `G-QRTSH6WXYK` is connected to the right property.
    - Link GA4 to Google Ads.
    - Keep `phone_click` and `quote_intent` as secondary intent signals.
-   - Import `generate_lead` as primary only after the Jobber success/thank-you path is verified end to end.
+   - Import `generate_lead` as the single primary website-form conversion after the repaired Jobber event is available in Google Ads.
 
 3. Meta Events Manager
    - Confirm domain verification for `terramorphllc.com`.
@@ -77,8 +81,8 @@ These require Google/Meta/account access and should be verified in the ad platfo
 
 8. Conversion QA after deploy
    - Click phone CTA from a tagged URL.
-   - Submit the Jobber request form from a tagged URL.
-   - Confirm intent events remain secondary and the verified completion event appears once in Meta and GA4 debugging.
+   - Do not create another QA request merely to force reporting; use the completed acceptance test and normal linked-account processing.
+   - Confirm intent/diagnostic events remain secondary and each genuine completed request produces one GA4 `generate_lead`.
 
 ## Recommended Meta campaign URLs
 

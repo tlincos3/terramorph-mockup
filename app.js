@@ -11,7 +11,7 @@ const TERRAMORPH_PHONE_DISPLAY = '419-873-6801';
 const TRACKING_STORAGE_KEY = 'terramorphAttributionContext';
 const QUICK_LEAD_KEY = 'terramorphQuickLeadContext';
 const PHONE_LEAD_KEY = 'terramorphPendingPhoneLead';
-const THANK_YOU_LEAD_KEY = 'terramorphThankYouLeadTracked';
+const THANK_YOU_ATTRIBUTION_KEY = 'terramorphThankYouLeadTracked';
 const QUOTE_POPUP_DISMISS_KEY = 'terramorphQuotePopupDismissedAt';
 const QUOTE_POPUP_DISMISS_MS = 14 * 24 * 60 * 60 * 1000;
 const QUOTE_POPUP_MIN_DELAY_MS = 45 * 1000;
@@ -163,6 +163,8 @@ function getTrackingContext(){
     utm_term: stored.utm_term || '',
     fbclid: stored.fbclid || '',
     gclid: stored.gclid || '',
+    wbraid: stored.wbraid || '',
+    gbraid: stored.gbraid || '',
     msclkid: stored.msclkid || '',
     fbp: stored.fbp || getCookieValue('_fbp') || '',
     fbc: stored.fbc || getCookieValue('_fbc') || getFbcFromFbclid(stored.fbclid) || '',
@@ -170,6 +172,31 @@ function getTrackingContext(){
     lead_city: quickLead.city || '',
     lead_timeline: quickLead.timeline || ''
   };
+}
+
+function decorateTrackingLink(link){
+  const href = link?.getAttribute('href') || '';
+  if(!href || href.startsWith('#')) return;
+  let destination;
+  try {
+    destination = new URL(href, window.location.href);
+  } catch(error) {
+    console.warn('Tracking link could not be parsed', href, error);
+    return;
+  }
+  const isTerramorphLink = destination.origin === window.location.origin;
+  const isJobberLink = destination.hostname === 'clienthub.getjobber.com';
+  if(!isTerramorphLink && !isJobberLink) return;
+  const context = getMergedTrackingContext();
+  TRACKING_PARAM_KEYS.forEach(key => {
+    const value = context[key];
+    if(value && !destination.searchParams.has(key)) destination.searchParams.set(key, value);
+  });
+  link.setAttribute('href', destination.toString());
+}
+
+function decorateAttributionLinks(){
+  document.querySelectorAll('a[href*="quote.html"], a[href*="clienthub.getjobber.com"]').forEach(decorateTrackingLink);
 }
 
 function trackQuoteIntent(source, link){
@@ -190,9 +217,9 @@ function trackPhoneClick(link){
   metaTrackCustom('PhoneClick', context);
 }
 
-function trackThankYouFallbackLead(){
+function trackAttributedThankYouView(){
   if(!(window.location.pathname.endsWith('/thank-you.html') || window.location.pathname.endsWith('/thank-you'))) return;
-  if(window.sessionStorage?.getItem(THANK_YOU_LEAD_KEY)) return;
+  if(window.sessionStorage?.getItem(THANK_YOU_ATTRIBUTION_KEY)) return;
   const context = getTrackingContext();
   const hasAttributionContext = Boolean(
     context.fbclid || context.gclid || context.msclkid ||
@@ -204,15 +231,17 @@ function trackThankYouFallbackLead(){
     return;
   }
   const eventId = `thank-you-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-  const fallbackContext = {
-    source: 'thank_you_page_attributed_fallback',
-    lead_stage: 'submitted_or_returned',
+  const attributionContext = {
+    source: 'thank_you_page_attributed_diagnostic',
+    lead_stage: 'thank_you_return',
     ...context
   };
-  pushAnalyticsEvent('generate_lead', fallbackContext);
-  metaTrack('Lead', {content_name: 'Terramorph quote request', content_category: context.service_category || 'quote_request', ...fallbackContext}, {eventId});
-  metaTrackCustom('QuoteThankYouFallback', fallbackContext);
-  window.sessionStorage?.setItem(THANK_YOU_LEAD_KEY, eventId);
+  // Jobber's native form_submit event is mapped to GA4 generate_lead. This
+  // diagnostic must not emit another GA4 lead when the visitor returns here.
+  pushAnalyticsEvent('quote_thank_you_attributed', attributionContext);
+  metaTrack('Lead', {content_name: 'Terramorph quote request', content_category: context.service_category || 'quote_request', ...attributionContext}, {eventId});
+  metaTrackCustom('QuoteThankYouAttribution', attributionContext);
+  window.sessionStorage?.setItem(THANK_YOU_ATTRIBUTION_KEY, eventId);
 }
 
 function buildQuickLeadEventId(){
@@ -451,11 +480,12 @@ function scheduleQuotePopup(){
 
 document.addEventListener('DOMContentLoaded', () => {
   persistTrackingContext();
+  decorateAttributionLinks();
   pushAnalyticsEvent('terramorph_page_view', getTrackingContext());
   if(document.querySelector('[data-funnel-service]')){
     metaTrack('ViewContent', {content_name: 'Terramorph service landing page', content_category: getTrackingContext().service_category, ...getTrackingContext()});
   }
-  trackThankYouFallbackLead();
+  trackAttributedThankYouView();
   document.querySelectorAll('.links a').forEach(link => link.addEventListener('click', () => {
     const menu = document.querySelector('.links');
     const button = document.querySelector('.mobile-menu');
