@@ -178,6 +178,9 @@ def head(title, desc, schema='', page_name=''):
     gtag('js', new Date());
     gtag('config', 'G-QRTSH6WXYK');
     gtag('config', 'AW-17691366114');
+    gtag('config', 'AW-17691366114/QJLGCNu6wtscEOKl8_NB', {
+      'phone_conversion_number': '419-873-6801'
+    });
   </script>'''
     meta_pixel = '''
   <!-- Meta Pixel Code -->
