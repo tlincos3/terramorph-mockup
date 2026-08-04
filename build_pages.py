@@ -431,6 +431,27 @@ def trust_band():
   </div>
 </section>'''
 
+PRIORITY_SERVICE_NAMES = {
+    'Landscape Design',
+    'Paver Patios and Hardscapes',
+    'Lawn Maintenance',
+    'Seasonal Cleanups',
+    'Drainage Solutions',
+}
+
+def priority_fit_strip(service):
+    if service not in PRIORITY_SERVICE_NAMES:
+        return ''
+    return '''
+<section class="conversion-trust-strip priority-fit-strip" aria-label="Terramorph project fit">
+  <div class="container conversion-trust-grid">
+    <span>Best-fit projects and service packages: $1,000+</span>
+    <span>Free estimates</span>
+    <span>Calls answered 7 a.m.–8 p.m.</span>
+    <span>Perrysburg · Sylvania · Maumee · Monclova · Holland · Waterville · Whitehouse · Ottawa Hills</span>
+  </div>
+</section>'''
+
 def service_cards():
     cards = []
     for name, cta, summary, includes, img, href in SERVICES:
@@ -638,7 +659,7 @@ def schema_for(page_name, title, desc, faqs=None, service=None):
     base = {
       "@context":"https://schema.org",
       "@graph":[
-        {"@type":["LocalBusiness","LandscapingBusiness","HomeAndConstructionBusiness"],"@id":BASE_URL+"/#business","name":BUSINESS_NAME,"alternateName":["Terramorph","Terramorph Outdoor Transformation Co."],"url":BASE_URL+"/","image":BASE_URL+"/assets/real-hero.webp","logo":BASE_URL+"/assets/logo.png","telephone":PHONE,"address":{"@type":"PostalAddress","addressLocality":BUSINESS_CITY,"addressRegion":BUSINESS_REGION,"postalCode":BUSINESS_POSTAL,"addressCountry":BUSINESS_COUNTRY},"contactPoint":{"@type":"ContactPoint","telephone":PHONE,"contactType":"customer service","areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"availableLanguage":"English"},"sameAs":SAME_AS_URLS,"knowsAbout":["Landscape design","Paver patios","Drainage solutions","Outdoor lighting","Lawn maintenance","Seasonal cleanups","Snow removal","Hardscaping","Retaining walls","Mulch and rock beds"],"areaServed":[{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"},{"@type":"City","name":"Perrysburg, OH"},{"@type":"City","name":"Toledo, OH"},{"@type":"City","name":"Maumee, OH"},{"@type":"AdministrativeArea","name":"Northwest Ohio"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
+        {"@type":["LocalBusiness","LandscapingBusiness","HomeAndConstructionBusiness"],"@id":BASE_URL+"/#business","name":BUSINESS_NAME,"alternateName":["Terramorph","Terramorph Outdoor Transformation Co."],"url":BASE_URL+"/","image":BASE_URL+"/assets/real-hero.webp","logo":BASE_URL+"/assets/logo.png","telephone":PHONE,"address":{"@type":"PostalAddress","addressLocality":BUSINESS_CITY,"addressRegion":BUSINESS_REGION,"postalCode":BUSINESS_POSTAL,"addressCountry":BUSINESS_COUNTRY},"contactPoint":{"@type":"ContactPoint","telephone":PHONE,"contactType":"customer service","areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"availableLanguage":"English"},"sameAs":SAME_AS_URLS,"knowsAbout":["Landscape design","Paver patios","Drainage solutions","Outdoor lighting","Lawn maintenance","Seasonal cleanups","Snow removal","Hardscaping","Retaining walls","Mulch and rock beds"],"areaServed":[{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"},{"@type":"City","name":"Perrysburg, OH"},{"@type":"City","name":"Sylvania, OH"},{"@type":"City","name":"Maumee, OH"},{"@type":"City","name":"Monclova, OH"},{"@type":"City","name":"Holland, OH"},{"@type":"City","name":"Waterville, OH"},{"@type":"City","name":"Whitehouse, OH"},{"@type":"City","name":"Ottawa Hills, OH"},{"@type":"City","name":"Toledo, OH"},{"@type":"AdministrativeArea","name":"Northwest Ohio"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
         {"@type":"WebSite","@id":BASE_URL+"/#website","url":BASE_URL+"/","name":"Terramorph LLC","publisher":{"@id":BASE_URL+"/#business"}},
         {"@type":"Organization","@id":BASE_URL+"/#organization","name":BUSINESS_NAME,"url":BASE_URL+"/","logo":BASE_URL+"/assets/logo.png","sameAs":SAME_AS_URLS},
         {"@type":"WebPage","name":title,"description":desc,"url":page_url,"isPartOf":{"@id":BASE_URL+"/#website"},"primaryImageOfPage":{"@id":page_url+"#primaryimage"}},
@@ -656,7 +677,7 @@ def schema_for(page_name, title, desc, faqs=None, service=None):
 
 DEFAULT_FAQS = [
     ('Do you offer free estimates?', 'Yes. Terramorph offers free estimates for landscape design, patios, drainage, lighting, lawn maintenance, seasonal cleanups, and related outdoor property work.'),
-    ('What areas do you serve?', 'Terramorph serves Wood and Lucas County with Northwest Ohio-specific expertise for soil, drainage, weather, maintenance, and outdoor projects.'),
+    ('What areas do you serve?', 'Terramorph serves Wood and Lucas County, with especially strong coverage in Perrysburg, Sylvania, Maumee, Monclova, Holland, Waterville, Whitehouse, and Ottawa Hills.'),
     ('Can you handle multiple services together?', 'Yes. Many projects connect design, drainage, hardscaping, lighting, cleanup, and maintenance, so Terramorph can scope related work together.'),
     ('What happens after I request a quote?', 'Terramorph reviews your service need, property location, timeline, and photos if provided, then follows up with the right next step for an estimate or site review.')
 ]
@@ -684,6 +705,7 @@ def service_page(filename, title, eyebrow, image, headline, lead, problem, outco
   </div>
 </section>
 {trust_band()}
+{priority_fit_strip(title)}
 <section class="section">
   <div class="container problem-grid">
     <div class="problem-card dark"><p class="eyebrow light">Homeowner problem</p><h2>{problem}</h2></div>
@@ -718,6 +740,7 @@ def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, 
   <div class="container page-hero-content"><p class="eyebrow light">{eyebrow}</p><h1>{headline}</h1><p>{lead}</p><div class="offer-card"><b>{offer}</b><span>Send the problem, city, timeline, and photos if you have them. Terramorph follows up with the best next step.</span></div><div class="cta-row"><a class="btn btn-gold" href="#request-form">Get My Free Assessment</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div><div class="above-fold-trust"><span>★★★★★ 200+ Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span><span>Local crew</span></div></div>
 </section>
 <section class="conversion-trust-strip" aria-label="Terramorph credibility"><div class="container conversion-trust-grid"><span>★★★★★ 200+ Google Reviews</span><span>Perrysburg-area team</span><span>BBB Accredited</span><span>Free estimates</span><span>Serving Toledo, Perrysburg, Maumee, Wood County, Lucas County</span></div></section>
+{priority_fit_strip(service)}
 {inline_jobber_quote_form(form_title, service)}
 <section class="section pain-proof-section"><div class="container pain-proof-grid"><div class="pain-card"><p class="eyebrow light">This is for you if</p><h2>{bullets[0]}</h2><ul>{''.join(f'<li>{item}</li>' for item in symptoms)}</ul><a class="btn btn-gold" href="#request-form">See What This Would Cost</a></div><div class="proof-card"><p class="eyebrow">What Terramorph checks</p><h2>{bullets[1]}</h2><div class="proof-steps">{''.join(f'<div><b>{i+1}. {title}</b><span>{copy}</span></div>' for i,(title,copy) in enumerate(next_steps))}</div></div></div></section>
 <section class="section clay-section"><div class="container local-grid"><div><p class="eyebrow">Why request now</p><h2>{bullets[2]}</h2><p>{bullets[3]}</p><a class="btn btn-primary" href="#request-form">Start My Free Assessment</a></div><div class="authority-list"><div><b>Fast next step</b><span>Submit the form or call and Terramorph can review the property, service need, timeline, and photos.</span></div><div><b>Project proof</b><span>Review photos and customer feedback before deciding whether Terramorph fits the project.</span></div><div><b>Local conditions</b><span>Wood and Lucas County soil, drainage, freeze-thaw, and weather are considered before recommending work.</span></div><div><b>Clear estimate</b><span>The goal is a practical scope, clean communication, and a path to getting the work handled.</span></div></div></div></section>
