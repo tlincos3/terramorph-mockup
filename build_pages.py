@@ -116,7 +116,7 @@ FOOT = f'''
     </div>
   </div>
 </footer>
-<script src="app.js?v=3.57"></script>
+<script src="app.js?v=3.58"></script>
 '''
 
 REVIEW_SNIPPETS = [
@@ -1154,7 +1154,7 @@ def post_process_html():
         if path.name != 'contact.html':
             html = html.replace('href="contact.html"', 'href="quote.html"')
         html = html.replace('href="#quote"', 'href="quote.html"')
-        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.57"></script>', html)
+        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.58"></script>', html)
         path.write_text(html)
 
 write_static_seo_files()

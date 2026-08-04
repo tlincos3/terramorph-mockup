@@ -16,8 +16,12 @@ const QUOTE_POPUP_DISMISS_KEY = 'terramorphQuotePopupDismissedAt';
 const QUOTE_POPUP_DISMISS_MS = 14 * 24 * 60 * 60 * 1000;
 const QUOTE_POPUP_MIN_DELAY_MS = 45 * 1000;
 const QUOTE_POPUP_FALLBACK_MS = 90 * 1000;
-const SOCIAL_SOURCES = new Set(['facebook', 'instagram', 'google']);
-const TRACKING_PARAM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'wbraid', 'gbraid', 'msclkid'];
+const META_SOURCES = new Set(['facebook', 'instagram', 'meta', 'fb', 'ig']);
+const TRACKING_PARAM_KEYS = [
+  'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
+  'fb_campaign_id', 'fb_adset_id', 'fb_ad_id', 'fb_placement',
+  'fbclid', 'gclid', 'wbraid', 'gbraid', 'msclkid'
+];
 let quotePopupReturnFocus = null;
 
 function getDetectedTrafficSource(){
@@ -161,6 +165,10 @@ function getTrackingContext(){
     utm_campaign: stored.utm_campaign || '',
     utm_content: stored.utm_content || '',
     utm_term: stored.utm_term || '',
+    fb_campaign_id: stored.fb_campaign_id || '',
+    fb_adset_id: stored.fb_adset_id || '',
+    fb_ad_id: stored.fb_ad_id || '',
+    fb_placement: stored.fb_placement || '',
     fbclid: stored.fbclid || '',
     gclid: stored.gclid || '',
     wbraid: stored.wbraid || '',
@@ -222,7 +230,7 @@ function trackAttributedThankYouView(){
   if(window.sessionStorage?.getItem(THANK_YOU_ATTRIBUTION_KEY)) return;
   const context = getTrackingContext();
   const hasAttributionContext = Boolean(
-    context.fbclid || context.gclid || context.msclkid ||
+    context.fbclid || context.fb_ad_id || context.gclid || context.msclkid ||
     context.utm_source || context.utm_campaign ||
     context.lead_service || context.lead_city || context.lead_timeline
   );
@@ -239,8 +247,16 @@ function trackAttributedThankYouView(){
   // Jobber's native form_submit event is mapped to GA4 generate_lead. This
   // diagnostic must not emit another GA4 lead when the visitor returns here.
   pushAnalyticsEvent('quote_thank_you_attributed', attributionContext);
-  metaTrack('Lead', {content_name: 'Terramorph quote request', content_category: context.service_category || 'quote_request', ...attributionContext}, {eventId});
-  metaTrackCustom('QuoteThankYouAttribution', attributionContext);
+  const normalizedSource = String(context.utm_source || '').trim().toLowerCase();
+  const hasMetaAttributionContext = normalizedSource
+    ? META_SOURCES.has(normalizedSource)
+    : Boolean(context.fbclid || context.fbc || context.fb_campaign_id || context.fb_adset_id || context.fb_ad_id);
+  // Meta Lead is reserved for Meta-attributed submissions. Sending every paid
+  // or organic Jobber completion to Meta would contaminate optimization data.
+  if(hasMetaAttributionContext){
+    metaTrack('Lead', {content_name: 'Terramorph quote request', content_category: context.service_category || 'quote_request', ...attributionContext}, {eventId});
+    metaTrackCustom('QuoteThankYouAttribution', attributionContext);
+  }
   window.sessionStorage?.setItem(THANK_YOU_ATTRIBUTION_KEY, eventId);
 }
 
