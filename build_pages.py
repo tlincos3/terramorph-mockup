@@ -32,7 +32,7 @@ NAV = f'''
 <div class="topbar" aria-label="Trust and contact bar">
   <div class="container topbar-inner">
     <div class="topbar-proof">
-      <a href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener">★★★★★ 200+ Google Reviews</a>
+      <a href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener">220+ 5-Star Google Reviews</a>
       <a href="{BBB_PROFILE_URL}" target="_blank" rel="noopener">BBB Accredited</a>
       <span>Perrysburg-area team</span>
       <span>Wood and Lucas County</span>
@@ -151,7 +151,7 @@ SERVICE_GROUPS = [
 PROJECT_PHOTOS = [
     ('Estate lawn and stone-wall property care', 'assets/real-hero.webp'),
     ('Lawn maintenance and clean striping', 'assets/real-lawn.webp'),
-    ('Retaining wall installation', 'assets/real-retaining.webp'),
+    ('Retaining wall installation', 'assets/real-retaining.webp?v=3.60'),
     ('New-construction landscape installation', 'assets/completed-new-construction-landscape.jpg'),
     ('Outdoor lighting', 'assets/real-lighting.webp?v=3.14'),
     ('Drainage and grading work', 'assets/real-drainage.webp'),
@@ -325,7 +325,7 @@ def quick_lead_form(service, offer):
     <p class="eyebrow light">Fast first step</p>
     <h2 id="quick-lead-title">Start the free assessment with a direct call.</h2>
     <p>{offer}. Send the basics first, then call Terramorph so the team can confirm the best next step.</p>
-    <div class="quick-lead-proof"><span>★★★★★ 200+ Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span></div>
+    <div class="quick-lead-proof"><span>220+ 5-Star Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span></div>
   </div>
   <form class="quick-lead-form" data-quick-lead-form data-service="{service}" novalidate>
     <label>Name <input name="name" autocomplete="name" required></label>
@@ -379,7 +379,7 @@ def inline_jobber_quote_form(title='Request My Outdoor Transformation Quote', se
       <p class="eyebrow light">Fast free estimate</p>
       <h2 id="home-request-title">{title}</h2>
       <p>Share the service, property location, timeline, project notes, and photos in the secure form. The Terramorph team receives the request directly and can follow up with the right next step.</p>
-      <div class="quick-lead-proof"><span>★★★★★ 200+ Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span></div>
+      <div class="quick-lead-proof"><span>220+ 5-Star Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span></div>
     </div>
     <div>
       <div class="jobber-embed-wrap" aria-label="Terramorph Jobber quote request form">
@@ -406,7 +406,7 @@ def quote_popup():
       <p class="eyebrow">Free estimate</p>
       <h2 id="quote-popup-title">Request a free Terramorph quote.</h2>
       <p id="quote-popup-desc">Send project details through the quote form, or call directly for urgent service questions and scheduling.</p>
-      <div class="popup-trust"><a href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener">★★★★★ 200+ Google Reviews</a><span>BBB Accredited</span><span>Serving Wood and Lucas County</span></div>
+      <div class="popup-trust"><a href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener">220+ 5-Star Google Reviews</a><span>BBB Accredited</span><span>Serving Wood and Lucas County</span></div>
     </div>
     <div class="popup-direct-actions">
       <h3>Ready for an estimate?</h3>
@@ -423,7 +423,7 @@ def trust_band():
     return f'''
 <section class="trust-band" aria-label="Terramorph credibility">
   <div class="container trust-grid">
-    <a class="trust-feature trust-link" href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener"><strong>200+</strong><span>Google Reviews</span><small>Customer feedback from homeowners across the area.</small></a>
+    <a class="trust-feature trust-link" href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener"><strong>220+</strong><span>5-Star Google Reviews</span><small>Customer feedback from homeowners across the area.</small></a>
     <a class="trust-feature trust-link" href="{GOOGLE_PROFILE_URL}" target="_blank" rel="noopener"><strong>Local</strong><span>Perrysburg-area team</span><small>Outdoor project experience across Wood and Lucas County.</small></a>
     <a class="trust-logo trust-link" href="{BBB_PROFILE_URL}" target="_blank" rel="noopener"><img src="assets/bbb-logo.svg" width="240" height="84" alt="BBB Accredited Business logo"><span>BBB Accredited</span></a>
     <div class="trust-feature"><strong>Regional</strong><span>Serving Wood and Lucas County</span><small>Northwest Ohio-specific expertise for outdoor projects, drainage, and property upkeep.</small></div>
@@ -581,7 +581,7 @@ def transformation_home():
         <span><b>New-construction landscaping</b><small>Foundation beds, new plantings, mulch, and clean property presentation.</small></span>
       </a>
       <a class="signature-card" href="completed-retaining-wall-project.html">
-        <img src="assets/real-retaining.webp?v=3.19" alt="Terramorph completed retaining wall installation" loading="lazy">
+        <img src="assets/real-retaining.webp?v=3.60" alt="Terramorph completed retaining wall installation" loading="lazy">
         <span><b>Retaining wall installation</b><small>Modular block, cap course, stepped termination, and a clean driveway transition.</small></span>
       </a>
       <a class="signature-card" href="completed-lawn-maintenance-project.html">
@@ -612,7 +612,7 @@ home = f'''
       <p class="hero-lead">From full-property transformations to wet-yard fixes and dependable upkeep, Terramorph plans the work around your property, priorities, and local conditions.</p>
       <div class="cta-row"><a class="btn btn-gold" href="#request-form">Get A Free Estimate</a><a class="btn btn-call" href="tel:{TEL}">Call {PHONE}</a></div>
       <div class="above-fold-trust">
-        <span>★★★★★ 200+ Google Reviews</span><span>BBB Accredited</span><span>Perrysburg-area team</span><span>Serving Wood and Lucas County</span>
+        <span>220+ 5-Star Google Reviews</span><span>BBB Accredited</span><span>Perrysburg-area team</span><span>Serving Wood and Lucas County</span>
       </div>
     </div>
   </div>
@@ -739,9 +739,9 @@ def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, 
     body = f'''
 <section class="page-hero premium-page-hero meta-landing-hero conversion-hero" data-funnel-service="{service}">
   <div class="page-hero-image"><img src="assets/{image}" alt="{title} project photo"></div><div class="hero-overlay"></div>
-  <div class="container page-hero-content"><p class="eyebrow light">{eyebrow}</p><h1>{headline}</h1><p>{lead}</p><div class="offer-card"><b>{offer}</b><span>Send the problem, city, timeline, and photos if you have them. Terramorph follows up with the best next step.</span></div><div class="cta-row"><a class="btn btn-gold" href="#request-form">{cta_label}</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div><div class="above-fold-trust"><span>★★★★★ 200+ Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span><span>Local crew</span></div></div>
+  <div class="container page-hero-content"><p class="eyebrow light">{eyebrow}</p><h1>{headline}</h1><p>{lead}</p><div class="offer-card"><b>{offer}</b><span>Send the problem, city, timeline, and photos if you have them. Terramorph follows up with the best next step.</span></div><div class="cta-row"><a class="btn btn-gold" href="#request-form">{cta_label}</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div><div class="above-fold-trust"><span>220+ 5-Star Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span><span>Local crew</span></div></div>
 </section>
-<section class="conversion-trust-strip" aria-label="Terramorph credibility"><div class="container conversion-trust-grid"><span>★★★★★ 200+ Google Reviews</span><span>Perrysburg-area team</span><span>BBB Accredited</span><span>Free estimates</span><span>Serving Toledo, Perrysburg, Maumee, Wood County, Lucas County</span></div></section>
+<section class="conversion-trust-strip" aria-label="Terramorph credibility"><div class="container conversion-trust-grid"><span>220+ 5-Star Google Reviews</span><span>Perrysburg-area team</span><span>BBB Accredited</span><span>Free estimates</span><span>Serving Toledo, Perrysburg, Maumee, Wood County, Lucas County</span></div></section>
 {priority_fit_strip(service)}
 {inline_jobber_quote_form(form_title, service)}
 <section class="section pain-proof-section"><div class="container pain-proof-grid"><div class="pain-card"><p class="eyebrow light">This is for you if</p><h2>{bullets[0]}</h2><ul>{''.join(f'<li>{item}</li>' for item in symptoms)}</ul><a class="btn btn-gold" href="#request-form">See What This Would Cost</a></div><div class="proof-card"><p class="eyebrow">What Terramorph checks</p><h2>{bullets[1]}</h2><div class="proof-steps">{''.join(f'<div><b>{i+1}. {title}</b><span>{copy}</span></div>' for i,(title,copy) in enumerate(next_steps))}</div></div></div></section>
@@ -875,7 +875,7 @@ about = f"""
     <div><b>Full-property thinking</b><span>Patios, drainage, beds, lighting, cleanup, maintenance, and snow all connect to how the property actually works.</span></div>
     <div><b>Clear communication</b><span>Free estimates, simple next steps, direct contact, and expectations that are easier for homeowners to understand.</span></div>
     <div><b>Clean job sites</b><span>Professional presentation matters: the goal is work that looks finished, cleaned up, and ready to use.</span></div>
-    <div><b>Documented experience</b><span>Project photos, 200+ Google reviews, BBB accreditation, and local service history help homeowners evaluate the fit.</span></div>
+    <div><b>Documented experience</b><span>Project photos, 220+ five-star Google reviews, BBB accreditation, and local service history help homeowners evaluate the fit.</span></div>
   </div>
 </section>
 <section class="section process-section">
@@ -991,7 +991,7 @@ quote_page = f'''
         <p class="eyebrow light">Project details</p>
         <h2 id="quote-title">Request a free outdoor project estimate.</h2>
         <p>Use the secure Terramorph request form below. The team receives the service, city, photos, timeline, and project notes needed to plan the right follow-up.</p>
-        <div class="quick-lead-proof"><span>★★★★★ 200+ Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span></div>
+        <div class="quick-lead-proof"><span>220+ 5-Star Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span></div>
       </div>
       <div class="jobber-embed-wrap" aria-label="Terramorph Jobber quote request form">
         <div id="{JOBBER_CLIENTHUB_ID}">
