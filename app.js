@@ -12,6 +12,11 @@ const TRACKING_STORAGE_KEY = 'terramorphAttributionContext';
 const QUICK_LEAD_KEY = 'terramorphQuickLeadContext';
 const PHONE_LEAD_KEY = 'terramorphPendingPhoneLead';
 const THANK_YOU_ATTRIBUTION_KEY = 'terramorphThankYouLeadTracked';
+const JOBBER_ORIGIN = 'https://clienthub.getjobber.com';
+const JOBBER_LEAD_TRACKED_KEY = 'terramorphJobberLeadTracked';
+// Google Ads "Request quote" conversion label (the part after AW-17691366114/).
+// Blank skips the direct Google Ads conversion ping.
+const AW_QUOTE_REQUEST_LABEL = '';
 const QUOTE_POPUP_DISMISS_KEY = 'terramorphQuotePopupDismissedAt';
 const QUOTE_POPUP_DISMISS_MS = 14 * 24 * 60 * 60 * 1000;
 const QUOTE_POPUP_MIN_DELAY_MS = 45 * 1000;
@@ -393,6 +398,94 @@ function handleQuickLeadSubmit(form, event){
   window.location.href = TERRAMORPH_PHONE_HREF;
 }
 
+function fireJobberLeadConversion(detection){
+  if(window.sessionStorage?.getItem(JOBBER_LEAD_TRACKED_KEY)) return;
+  const eventId = `jobber-lead-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  const context = {
+    source: detection.signal,
+    lead_stage: 'jobber_form_submitted',
+    iframe_load_count: detection.loadCount,
+    iframe_max_height: detection.maxHeight,
+    iframe_last_height: detection.lastHeight,
+    ...getTrackingContext()
+  };
+  pushAnalyticsEvent('jobber_request_submitted', context);
+  if(AW_QUOTE_REQUEST_LABEL && typeof gtag === 'function'){
+    try {
+      gtag('event', 'conversion', {send_to: `AW-17691366114/${AW_QUOTE_REQUEST_LABEL}`});
+    } catch(error) {
+      console.warn('Google Ads conversion tracking failed', error);
+    }
+  }
+  const normalizedSource = String(context.utm_source || '').trim().toLowerCase();
+  const hasMetaAttributionContext = normalizedSource
+    ? META_SOURCES.has(normalizedSource)
+    : Boolean(context.fbclid || context.fbc || context.fb_campaign_id || context.fb_adset_id || context.fb_ad_id);
+  if(hasMetaAttributionContext){
+    metaTrack('Lead', {content_name: 'Terramorph quote request', content_category: context.service_category || 'quote_request', ...context}, {eventId});
+    metaTrackCustom('JobberRequestSubmitted', context);
+  }
+  window.sessionStorage?.setItem(JOBBER_LEAD_TRACKED_KEY, eventId);
+  // Shares the thank-you marker so one submission cannot produce a second
+  // Meta Lead if Jobber also returns the visitor to thank-you.html.
+  window.sessionStorage?.setItem(THANK_YOU_ATTRIBUTION_KEY, eventId);
+}
+
+function watchJobberFormSubmission(){
+  const wrap = document.querySelector('.jobber-embed-wrap');
+  if(!wrap) return;
+  const state = {iframe: null, loadCount: 0, firstLoadAt: 0, maxHeight: 0, lastHeight: 0, engaged: false, signaled: {}};
+
+  const signalOnce = (signal, extras) => {
+    if(state.signaled[signal]) return;
+    state.signaled[signal] = true;
+    pushAnalyticsEvent('jobber_iframe_signal', {signal, engaged: state.engaged, ...extras, ...getTrackingContext()});
+    if(state.engaged){
+      fireJobberLeadConversion({signal, loadCount: state.loadCount, maxHeight: state.maxHeight, lastHeight: state.lastHeight});
+    }
+  };
+
+  const attach = iframe => {
+    if(!iframe || state.iframe === iframe) return;
+    state.iframe = iframe;
+    iframe.addEventListener('load', () => {
+      state.loadCount += 1;
+      if(state.loadCount === 1){
+        state.firstLoadAt = Date.now();
+        return;
+      }
+      // Jobber's form swaps to its confirmation page in a second iframe
+      // navigation; validation errors re-render without navigating.
+      signalOnce('iframe_reload', {iframe_load_count: state.loadCount});
+    });
+  };
+
+  attach(wrap.querySelector('iframe'));
+  new MutationObserver(() => attach(wrap.querySelector('iframe'))).observe(wrap, {childList: true, subtree: true});
+
+  // Clicking into the cross-origin iframe blurs the parent window while the
+  // iframe becomes the active element - the only visible sign of engagement.
+  window.addEventListener('blur', () => {
+    if(state.iframe && document.activeElement === state.iframe) state.engaged = true;
+  });
+
+  window.addEventListener('message', event => {
+    if(event.origin !== JOBBER_ORIGIN || !state.iframe) return;
+    const height = typeof event.data === 'string' ? Number.parseInt(event.data, 10) : NaN;
+    if(!Number.isFinite(height) || height <= 0) return;
+    state.lastHeight = height;
+    if(height > state.maxHeight){
+      state.maxHeight = height;
+      return;
+    }
+    const collapsed = state.maxHeight > 600 && height < state.maxHeight * 0.45;
+    const settled = state.firstLoadAt && Date.now() - state.firstLoadAt > 8000;
+    if(collapsed && settled){
+      signalOnce('iframe_collapse', {iframe_max_height: state.maxHeight, iframe_last_height: height});
+    }
+  });
+}
+
 function isQuotePopupDismissed(){
   try {
     const dismissedAt = Number(window.localStorage?.getItem(QUOTE_POPUP_DISMISS_KEY));
@@ -502,6 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
     metaTrack('ViewContent', {content_name: 'Terramorph service landing page', content_category: getTrackingContext().service_category, ...getTrackingContext()});
   }
   trackAttributedThankYouView();
+  watchJobberFormSubmission();
   document.querySelectorAll('.links a').forEach(link => link.addEventListener('click', () => {
     const menu = document.querySelector('.links');
     const button = document.querySelector('.mobile-menu');

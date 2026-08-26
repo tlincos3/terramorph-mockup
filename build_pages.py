@@ -116,7 +116,7 @@ FOOT = f'''
     </div>
   </div>
 </footer>
-<script src="app.js?v=3.58"></script>
+<script src="app.js?v=3.59"></script>
 '''
 
 REVIEW_SNIPPETS = [
@@ -176,11 +176,13 @@ def head(title, desc, schema='', page_name=''):
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-QRTSH6WXYK');
     gtag('config', 'AW-17691366114');
     gtag('config', 'AW-17691366114/QJLGCNu6wtscEOKl8_NB', {
       'phone_conversion_number': '419-873-6801'
     });
+    // Jobber's embed stitches its form events to the visitor's GA4 session by
+    // reading the LAST gtag config on the page - keep G-QRTSH6WXYK last.
+    gtag('config', 'G-QRTSH6WXYK');
   </script>'''
     meta_pixel = '''
   <!-- Meta Pixel Code -->
@@ -1156,7 +1158,7 @@ def post_process_html():
         if path.name != 'contact.html':
             html = html.replace('href="contact.html"', 'href="quote.html"')
         html = html.replace('href="#quote"', 'href="quote.html"')
-        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.58"></script>', html)
+        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.59"></script>', html)
         path.write_text(html)
 
 write_static_seo_files()
