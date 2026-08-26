@@ -598,7 +598,34 @@ function scheduleQuotePopup(){
   window.setTimeout(() => openQuotePopup('engaged_time'), QUOTE_POPUP_FALLBACK_MS);
 }
 
+function initCarousels(){
+  document.querySelectorAll('[data-carousel]').forEach(carousel => {
+    const track = carousel.querySelector('.carousel-track');
+    if(!track) return;
+    const step = () => Math.max(track.clientWidth * 0.8, 240);
+    const go = dir => track.scrollBy({left: dir * step(), behavior: 'smooth'});
+    carousel.querySelector('[data-carousel-prev]')?.addEventListener('click', () => go(-1));
+    carousel.querySelector('[data-carousel-next]')?.addEventListener('click', () => go(1));
+    let timer = null;
+    const stop = () => { if(timer){ clearInterval(timer); timer = null; } };
+    const start = () => {
+      if(timer) return;
+      timer = setInterval(() => {
+        if(track.scrollLeft + track.clientWidth >= track.scrollWidth - 8){
+          track.scrollTo({left: 0, behavior: 'smooth'});
+        } else {
+          go(1);
+        }
+      }, 4500);
+    };
+    ['pointerenter', 'pointerdown', 'focusin', 'touchstart'].forEach(ev => carousel.addEventListener(ev, stop, {passive: true}));
+    carousel.addEventListener('pointerleave', start);
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches) start();
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  initCarousels();
   persistTrackingContext();
   decorateAttributionLinks();
   pushAnalyticsEvent('terramorph_page_view', getTrackingContext());

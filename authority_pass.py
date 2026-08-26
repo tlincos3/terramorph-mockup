@@ -265,7 +265,7 @@ def generate(ctx: dict) -> list[str]:
 {trust_band()}
 <section class="section"><div class="container local-grid"><div><p class="eyebrow">Decision answer</p><h2>{answer}</h2><p>Terramorph’s recommendation should fit the property, not a canned sales script. The best choice depends on grade, soil, access, maintenance, budget, and the outcome the homeowner actually wants.</p></div><div class="decision-table">{table}</div></div></section>
 {faq_section(faqs)}
-<section class="section quote-section"><div class="container quote-grid">{quote_form('Request a Free Terramorph Recommendation', service=service)}<div class="cta-proof"><p class="eyebrow">Local proof</p><h2>Use reviews, real photos, local examples, and a clear estimate path before deciding.</h2>{review_stack(3)}</div></div></section>'''
+<section class="section quote-section"><div class="container quote-grid">{quote_form('Request a Free Terramorph Recommendation', service=service)}<div class="cta-proof"><p class="eyebrow">Local proof</p><h2>Use reviews, real photos, local examples, and a clear estimate path before deciding.</h2>{review_stack(3, service)}</div></div></section>'''
         (root / filename).write_text(page(title + ' | Terramorph', desc, body, schema_for(filename, title, desc, faqs, service)))
         decision_files.append(filename)
 

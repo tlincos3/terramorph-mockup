@@ -332,3 +332,27 @@ html,body{max-width:100%;overflow-x:hidden}.conversion-hero,.meta-landing-hero,.
 
 /* Keep display text readable and consistent across narrow and wide layouts. */
 *{letter-spacing:0}
+
+/* Carousels (photos + reviews) */
+.photo-carousel{position:relative}
+.carousel-track{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:6px}
+.carousel-track::-webkit-scrollbar{display:none}
+.carousel-track>*{flex:0 0 auto;scroll-snap-align:center}
+.carousel-slide{width:min(620px,86vw);margin:0;background:#fff;border:1px solid var(--line);overflow:hidden;box-shadow:0 16px 34px rgba(7,10,8,.08)}
+.carousel-slide img{width:100%;height:400px;object-fit:cover;filter:saturate(1.02) contrast(1.04);display:block}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:48px;height:48px;display:inline-flex;align-items:center;justify-content:center;background:rgba(7,10,8,.78);color:var(--gold-2);border:1px solid rgba(255,255,255,.28);font-size:1.6rem;font-weight:900;cursor:pointer;transition:background .18s ease}
+.carousel-btn:hover{background:var(--forest)}
+.carousel-prev{left:10px}.carousel-next{right:10px}
+.review-carousel .carousel-track blockquote{flex:0 0 auto;scroll-snap-align:center;width:min(430px,84vw);margin:0;background:var(--cream);border:1px solid var(--line);padding:26px}
+.review-carousel .carousel-track blockquote p{font-size:1.02rem;line-height:1.5;font-weight:700;margin:10px 0 12px}
+.review-carousel cite{font-style:normal;font-weight:900;color:var(--forest)}
+.depth-links{margin-top:14px;color:var(--muted)}
+.depth-links a{color:var(--forest);font-weight:900;text-decoration:underline}
+@media(max-width:760px){.carousel-slide img{height:280px}.carousel-btn{width:42px;height:42px}}
+/* Readability on dark panels: checklist text was near-invisible */
+.phone-direct-card .check-list li{color:#e9f0e4}
+.phone-direct-card .check-list li:before{color:var(--gold-2)}
+.quote-panel .check-list li{color:#e9f0e4}
+.quote-panel .check-list li:before{color:var(--gold-2)}
+.transformation-section .check-list li,.transformation-section .cta-proof p:not(.eyebrow){color:#e9f0e4}
+.transformation-section .check-list li:before{color:var(--gold-2)}

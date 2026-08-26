@@ -50,6 +50,7 @@ NAV = f'''
       <a href="landscape-design.html">Design</a>
       <a href="paver-patios-hardscapes.html">Patios</a>
       <a href="drainage-solutions.html">Drainage</a>
+      <a href="snow-removal.html">Snow</a>
       <a href="guides.html">Guides</a>
       <a href="service-areas.html">Areas</a>
       <a href="projects.html">Projects</a>
@@ -116,7 +117,7 @@ FOOT = f'''
     </div>
   </div>
 </footer>
-<script src="app.js?v=3.59"></script>
+<script src="app.js?v=3.60"></script>
 '''
 
 # Verbatim excerpts from Terramorph's public Google reviews (pulled 2026-08-26,
@@ -195,7 +196,7 @@ def head(title, desc, schema='', page_name=''):
     canonical_url = BASE_URL + ('/' if page_name in ('', 'index.html') else '/' + page_name)
     body_class = 'quote-page' if page_name == 'quote.html' else ''
     body_attr = f' class="{body_class}"' if body_class else ''
-    stylesheet_version = '3.56'
+    stylesheet_version = '3.57'
     schema_block = f'\n  <script type="application/ld+json">{schema}</script>' if schema else ''
     if page_name in ('thank-you.html', 'review-notes.html'):
         robots_block = '\n  <meta name="robots" content="noindex, nofollow">'
@@ -512,10 +513,11 @@ def full_service_directory():
     return '<section class="section service-directory"><div class="container section-heading compact"><p class="eyebrow">Full-service property work</p><h2>One crew for the work around the whole property.</h2><p>Start with the problem you want solved. Terramorph can handle the main project and the related work around it, from grading and beds to cleanup, hauling, lighting, and maintenance.</p></div><div class="container service-groups">' + ''.join(groups) + '</div></section>'
 
 def photo_gallery():
-    cards=[]
-    for label, img in PROJECT_PHOTOS:
-        cards.append(f'<figure class="work-photo"><img src="{img}" alt="Terramorph {label}" loading="lazy"><figcaption>{label}</figcaption></figure>')
-    return '<div class="work-photo-grid">' + ''.join(cards) + '</div>'
+    slides = ''.join(f'<figure class="carousel-slide"><img src="{img}" alt="Terramorph {label}" loading="lazy"></figure>' for label, img in PROJECT_PHOTOS)
+    return ('<div class="photo-carousel" data-carousel>'
+            '<button type="button" class="carousel-btn carousel-prev" data-carousel-prev aria-label="Previous photos">&#8249;</button>'
+            f'<div class="carousel-track">{slides}</div>'
+            '<button type="button" class="carousel-btn carousel-next" data-carousel-next aria-label="Next photos">&#8250;</button></div>')
 
 def review_markup(name, quote, compact=False):
     cls = ' class="compact-review"' if compact else ''
@@ -523,19 +525,49 @@ def review_markup(name, quote, compact=False):
 
 _review_rotation = [0]
 
-def review_stack(limit=None):
+# Reviews whose text actually mentions this kind of work, shown first on the
+# matching service pages. Names must exist in REVIEW_SNIPPETS.
+SERVICE_REVIEWS = {
+    'Landscape Design': ['Kate Vallerand', 'R.J. Rajner', 'Barb Flowers', 'JeanCarlo Rivera', 'Jack Higgins', 'Marla Leonard'],
+    'Paver Patios and Hardscapes': ['Roger Samson', 'Jack Higgins', 'R.J. Rajner', 'Altur Earth'],
+    'Drainage Solutions': ['Altur Earth', 'jon mercurio', 'Richard Hansen', 'Jack Higgins'],
+    'Lawn Maintenance': ['Adam Schmidbauer', 'Derrick Fawley', 'Teresa Thompson', 'Patrick Walker', 'CJ Miller'],
+    'Seasonal Cleanups': ['Nat B', 'Jennifer Tierney', 'Patrick Walker', 'Larry Calcamuggio'],
+    'Outdoor Lighting': ['Jack Higgins', 'Altur Earth', 'jon mercurio'],
+    'Snow Removal': ['Richard Hansen', 'Larry Calcamuggio', 'jon mercurio', 'Teresa Thompson'],
+}
+_REVIEWS_BY_NAME = dict((name, quote) for name, quote in REVIEW_SNIPPETS)
+
+def review_stack(limit=None, service=None):
     if limit is None:
         limit = 4
-    # Rotate through the pool so each page shows different reviews instead of
-    # every page repeating the first two. Build order is fixed, so output is
-    # deterministic.
-    start = _review_rotation[0]
-    _review_rotation[0] = (start + limit) % len(REVIEW_SNIPPETS)
-    reviews = [REVIEW_SNIPPETS[(start + i) % len(REVIEW_SNIPPETS)] for i in range(limit)]
+    matched = [(name, _REVIEWS_BY_NAME[name]) for name in SERVICE_REVIEWS.get(service, []) if name in _REVIEWS_BY_NAME][:limit]
+    # Fill any remainder from the rotating pool so each page shows different
+    # reviews instead of every page repeating the first two. Build order is
+    # fixed, so output is deterministic.
+    need = limit - len(matched)
+    reviews = list(matched)
+    if need > 0:
+        start = _review_rotation[0]
+        _review_rotation[0] = (start + need) % len(REVIEW_SNIPPETS)
+        taken = set(name for name, _ in matched)
+        i = 0
+        while len(reviews) < limit and i < len(REVIEW_SNIPPETS) * 2:
+            cand = REVIEW_SNIPPETS[(start + i) % len(REVIEW_SNIPPETS)]
+            if cand[0] not in taken:
+                reviews.append(cand)
+                taken.add(cand[0])
+            i += 1
     return '<div class="review-stack">' + ''.join(review_markup(name, quote, True) for name, quote in reviews) + '</div>'
 
-def review_section(limit=6):
-    return '<section class="section reviews-section"><div class="container section-heading compact"><p class="eyebrow">Customer Reviews</p><h2>Homeowners describe responsive service and dependable follow-through.</h2><p>Read what local customers say about Terramorph’s communication, scheduling, crew, and finished work.</p></div><div class="container review-grid">' + ''.join(review_markup(name, quote) for name, quote in REVIEW_SNIPPETS[:limit]) + '</div></section>'
+def review_section(limit=10):
+    slides = ''.join(review_markup(name, quote) for name, quote in REVIEW_SNIPPETS[:limit])
+    return ('<section class="section reviews-section"><div class="container section-heading compact"><p class="eyebrow">Customer Reviews</p><h2>Homeowners describe responsive service and dependable follow-through.</h2><p>Read what local customers say about Terramorph’s communication, scheduling, crew, and finished work.</p></div>'
+            '<div class="container"><div class="photo-carousel review-carousel" data-carousel>'
+            '<button type="button" class="carousel-btn carousel-prev" data-carousel-prev aria-label="Previous reviews">&#8249;</button>'
+            f'<div class="carousel-track">{slides}</div>'
+            '<button type="button" class="carousel-btn carousel-next" data-carousel-next aria-label="Next reviews">&#8250;</button>'
+            '</div></div></section>')
 
 def local_authority():
     return '''
@@ -675,7 +707,7 @@ home = f'''
 </section>
 {local_authority()}
 {process_home()}
-{review_section(6)}
+{review_section(10)}
 <section class="section quote-section">
   <div class="container quote-grid">
     {inline_jobber_quote_form('Request My Outdoor Transformation Quote')}
@@ -743,7 +775,7 @@ SERVICE_FAQS = {
     'Seasonal Cleanups': [('Do you handle spring and fall cleanups?', 'Yes. Terramorph handles spring cleanups, fall cleanups, leaf removal, debris removal, pruning, trimming, bed resets, and hauling.'), ('Can cleanups be paired with mulch or plant work?', 'Yes. Cleanups often pair well with mulch, rock beds, edging, pruning, plant installation, and lawn maintenance.')] + DEFAULT_FAQS[:2],
 }
 
-def service_page(filename, title, eyebrow, image, headline, lead, problem, outcome, cta, embed_jobber=False):
+def service_page(filename, title, eyebrow, image, headline, lead, problem, outcome, cta, embed_jobber=False, depth=''):
     hero_cta_href = '#request-form' if embed_jobber else 'quote.html'
     inline_form = ('\n' + inline_jobber_quote_form(f'Request a {title} Quote', title).strip()) if embed_jobber else ''
     body = f'''
@@ -766,6 +798,7 @@ def service_page(filename, title, eyebrow, image, headline, lead, problem, outco
     <div class="problem-card light-card"><p class="eyebrow">Expected outcome</p><h2>{outcome}</h2></div>
   </div>
 </section>
+{depth}
 <section class="section clay-section">
   <div class="container local-grid">
     <div><p class="eyebrow">How we work</p><h2>Clear estimates, professional work, and clean follow-through.</h2><p>Homeowners need to know what happens next: Terramorph reviews the property, talks through the goal, explains practical options, and gives a clear estimate before work begins.</p></div>
@@ -779,7 +812,7 @@ def service_page(filename, title, eyebrow, image, headline, lead, problem, outco
 </section>
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>See Terramorph work across Northwest Ohio properties.</h2></div><div class="container">{photo_gallery()}</div></section>
 {faq_section(SERVICE_FAQS.get(title, DEFAULT_FAQS))}
-<section class="section quote-section"><div class="container quote-grid">{quote_form(('Request an Outdoor Lighting Quote' if title == 'Outdoor Lighting' else 'Request a ' + title + ' Quote'))}<div class="cta-proof"><p class="eyebrow">Why homeowners reach out</p><h2>Reviews, proof, and a simple free estimate request.</h2>{review_stack(2)}</div></div></section>
+<section class="section quote-section"><div class="container quote-grid">{quote_form(('Request an Outdoor Lighting Quote' if title == 'Outdoor Lighting' else 'Request a ' + title + ' Quote'))}<div class="cta-proof"><p class="eyebrow">Why homeowners reach out</p><h2>Reviews, proof, and a simple free estimate request.</h2>{review_stack(2, title)}</div></div></section>
 '''
     desc = f'{title} in Toledo, Wood County, Lucas County, and Northwest Ohio by Terramorph. Free estimates for homeowners and property owners.'
     schema = schema_for(filename, f'{title} | Terramorph', desc, SERVICE_FAQS.get(title, DEFAULT_FAQS), title)
@@ -801,15 +834,87 @@ def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, 
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>See the kind of work this estimate can start.</h2></div><div class="container">{photo_gallery()}</div></section>
 {review_section()}
 {faq_section(faqs)}
-<section class="section quote-section"><div class="container quote-grid"><div class="phone-direct-card"><p class="eyebrow">Ready for the next step?</p><h2>Send the property details or call Terramorph directly.</h2><p>The secure request form keeps your contact information, service need, location, timeline, and photos together for follow-up.</p><div class="phone-direct-actions"><a class="btn btn-gold" href="#request-form">Open Request Form</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div><div class="cta-proof"><p class="eyebrow">Local customer feedback</p><h2>See why homeowners call Terramorph for the next project.</h2>{review_stack(3)}</div></div></section>
+<section class="section quote-section"><div class="container quote-grid"><div class="phone-direct-card"><p class="eyebrow">Ready for the next step?</p><h2>Send the property details or call Terramorph directly.</h2><p>The secure request form keeps your contact information, service need, location, timeline, and photos together for follow-up.</p><div class="phone-direct-actions"><a class="btn btn-gold" href="#request-form">Open Request Form</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div><div class="cta-proof"><p class="eyebrow">Local customer feedback</p><h2>See why homeowners call Terramorph for the next project.</h2>{review_stack(3, service)}</div></div></section>
 '''
     desc = f'{title} from Terramorph for Wood and Lucas County homeowners. Real photos, reviews, phone call, and free estimate request.'
     schema = schema_for(filename, title, desc, faqs, service)
     (root/filename).write_text(page(title + ' | Terramorph', desc, body, schema))
 
-service_page('landscape-design.html', 'Landscape Design', 'Landscape design for Northwest Ohio homes', 'real-entry.webp?v=3.14', 'A landscape plan that makes the whole property feel finished.', 'Design-first landscaping for homeowners who want curb appeal, better outdoor living, and a property that feels intentionally built, not patched together.', 'The yard looks unfinished, builder-grade, or disconnected from how the family actually wants to live outside.', 'A cohesive design with better curb appeal, outdoor flow, plantings, hardscape structure, and pride of ownership.', 'Design My Property')
-service_page('paver-patios-hardscapes.html', 'Paver Patios and Hardscapes', 'Premium patios and outdoor living', 'real-patio.webp?v=3.14', 'Build the backyard space people actually want to use.', 'Paver patios, walkways, hardscape structure, and outdoor living environments designed around entertaining, durability, and property value.', 'There is no comfortable place to grill, host, relax, or enjoy the backyard, especially after rain.', 'A durable patio or outdoor room that expands living space and makes the property feel more valuable.', 'Plan My Patio')
-service_page('drainage-solutions.html', 'Drainage Solutions', 'Drainage expertise for clay soil and flat lots', 'real-drainage.webp', 'Stop fighting standing water and start using your yard again.', 'Practical drainage solutions for wet yards, pooling water, soggy lawns, and water moving toward patios or foundations in Northwest Ohio conditions.', 'Flat lots, clay soil, poor grading, or runoff make the yard frustrating and sometimes unusable.', 'A drier, more functional landscape with water routed intentionally and finished beautifully.', 'Fix My Drainage')
+
+def _depth_section(eyebrow, heading, lead, cards, links=None):
+    card_html = ''.join(f'<div><b>{b}</b><span>{t}</span></div>' for b, t in cards)
+    link_html = ''
+    if links:
+        link_items = ' &middot; '.join(f'<a href="{href}">{label}</a>' for href, label in links)
+        link_html = f'<p class="depth-links"><b>Keep reading:</b> {link_items}</p>'
+    return f'<section class="section"><div class="container local-grid"><div><p class="eyebrow">{eyebrow}</p><h2>{heading}</h2><p>{lead}</p>{link_html}</div><div class="authority-list">{card_html}</div></div></section>'
+
+DESIGN_DEPTH = _depth_section(
+    'What a design includes',
+    'A landscape plan you can picture before anything is planted.',
+    'A Terramorph design is not a guess at the nursery. It starts with a layout you can react to, a plant palette matched to your property, and a scope that can be phased so the budget works.',
+    [('Layout drawing', 'Bed shapes, walkway connections, and focal points sketched out so you can see the plan before installation starts.'),
+     ('Plant palette', 'Plants chosen for sun, shade, clay soil, mature size, and how much maintenance you actually want to do.'),
+     ('Materials', 'Mulch versus rock, edging style, stone accents, and lighting prep decided up front instead of mid-job.'),
+     ('Phasing and budget', 'Start with front curb appeal, then add the patio, lighting, or backyard beds later without redoing earlier work.')],
+    [('landscape-design-process-northwest-ohio.html', 'What to expect from a design consultation'),
+     ('best-plants-for-ohio-clay-soil.html', 'Best plants for Ohio clay soil'),
+     ('mulch-vs-rock-landscape-beds.html', 'Mulch vs. rock beds')]
+) + _depth_section(
+    'Built for Northwest Ohio',
+    'Clay soil, flat lots, and freeze-thaw shape every bed and plant decision.',
+    'A design that works in a magazine can fail in Wood and Lucas County. Terramorph plans around the conditions this area actually has.',
+    [('Clay-tolerant planting', 'Heavy soil holds water and compacts. Plant selection and bed preparation matter more here than picking what looks good.'),
+     ('Drainage-aware beds', 'Bed placement and grading are checked so new landscaping does not trap water against the house.'),
+     ('Front-entry curb appeal', 'Entry beds, walkway edges, and lighting planned together so the home looks finished from the street.'),
+     ('New-construction lots', 'Builder-grade yards get a full plan: beds, plantings, sod edges, and drainage checked before anything goes in.')]
+)
+
+PATIOS_DEPTH = _depth_section(
+    'What makes a patio last',
+    'The work under the pavers decides whether the patio stays flat.',
+    'Freeze-thaw winters and clay soil are hard on hardscape. The parts you never see - excavation, base depth, compaction, and drainage - are what keep the surface clean and level for years.',
+    [('Base preparation', 'Proper excavation, base material depth, and compaction so the patio does not settle or heave.'),
+     ('Drainage planning', 'Water is moved off the patio and away from the house before the first paver is set.'),
+     ('Edge restraint', 'Solid borders keep pavers locked in place through winters and heavy use.'),
+     ('Steps and transitions', 'Door thresholds, step heights, and walkway connections planned so the space feels built-in, not bolted on.')],
+    [('paver-patio-cost-toledo-ohio.html', 'What a paver patio costs in Toledo'),
+     ('paver-patio-northwest-ohio-weather.html', 'What makes a patio last in this weather'),
+     ('paver-patio-vs-concrete-patio.html', 'Pavers vs. concrete')]
+) + _depth_section(
+    'Planning the space',
+    'A patio should be designed around how you will actually use it.',
+    'Before pricing, Terramorph maps how people will cook, sit, gather, and move through the backyard - so the finished space gets used instead of admired from the kitchen window.',
+    [('Seating and grill zones', 'Enough room to cook and host without traffic squeezing past the grill.'),
+     ('Fire pit areas', 'Gathering circles sized and placed for smoke, seating, and safe clearances.'),
+     ('Lighting prep', 'Conduit and wire runs placed before pavers go down, so lighting can be added without tearing anything up.'),
+     ('Connected walkways', 'Paths that tie the patio to doors, driveways, and side yards so the whole backyard flows.')]
+)
+
+DRAINAGE_DEPTH = _depth_section(
+    'How diagnosis works',
+    'Find the water source first. The fix follows from there.',
+    'Most drainage failures happen when a product gets installed before the problem is understood. Terramorph walks the property and answers three questions: where does the water come from, where can it safely go, and what is the simplest fix that gets it there.',
+    [('Find the source', 'Roof water, neighbor runoff, low spots, compacted soil, or hardscape slope - each points to a different fix.'),
+     ('Map the route', 'Water needs somewhere safe to discharge without flooding a neighbor or creating a new wet spot.'),
+     ('Match the fix', 'Grading, a swale, a French drain, a catch basin, or downspout routing - sometimes a combination.'),
+     ('Finish it clean', 'Lawn and beds restored over the work so the yard looks better, not trenched.')],
+    [('northwest-ohio-yard-drainage-problems.html', 'Why your yard holds water'),
+     ('yard-drainage-cost-northwest-ohio.html', 'What drainage work costs'),
+     ('french-drain-vs-grading-vs-catch-basin.html', 'French drain vs. grading vs. catch basin')]
+) + _depth_section(
+    'Common fixes explained',
+    'Every wet yard is not a French drain job.',
+    'These are the tools Terramorph reaches for most in Wood and Lucas County - and none of them is the right answer for every yard.',
+    [('French drains', 'A gravel-and-pipe trench that collects water along a wet zone and carries it to a safe outlet.'),
+     ('Buried downspouts', 'Roof water piped underground to a pop-up emitter instead of dumping at the foundation.'),
+     ('Grading and swales', 'Reshaping the ground so water flows where it should - often the simplest, most durable fix.'),
+     ('Dry creek beds', 'A rock channel that moves surface water and looks like landscaping instead of a repair.')]
+)
+
+service_page('landscape-design.html', 'Landscape Design', 'Landscape design for Northwest Ohio homes', 'real-entry.webp?v=3.14', 'A landscape plan that makes the whole property feel finished.', 'Design-first landscaping for homeowners who want curb appeal, better outdoor living, and a property that feels intentionally built, not patched together.', 'The yard looks unfinished, builder-grade, or disconnected from how the family actually wants to live outside.', 'A cohesive design with better curb appeal, outdoor flow, plantings, hardscape structure, and pride of ownership.', 'Design My Property', depth=DESIGN_DEPTH)
+service_page('paver-patios-hardscapes.html', 'Paver Patios and Hardscapes', 'Premium patios and outdoor living', 'real-patio.webp?v=3.14', 'Build the backyard space people actually want to use.', 'Paver patios, walkways, hardscape structure, and outdoor living environments designed around entertaining, durability, and property value.', 'There is no comfortable place to grill, host, relax, or enjoy the backyard, especially after rain.', 'A durable patio or outdoor room that expands living space and makes the property feel more valuable.', 'Plan My Patio', depth=PATIOS_DEPTH)
+service_page('drainage-solutions.html', 'Drainage Solutions', 'Drainage expertise for clay soil and flat lots', 'real-drainage.webp', 'Stop fighting standing water and start using your yard again.', 'Practical drainage solutions for wet yards, pooling water, soggy lawns, and water moving toward patios or foundations in Northwest Ohio conditions.', 'Flat lots, clay soil, poor grading, or runoff make the yard frustrating and sometimes unusable.', 'A drier, more functional landscape with water routed intentionally and finished beautifully.', 'Fix My Drainage', depth=DRAINAGE_DEPTH)
 service_page('outdoor-lighting.html', 'Outdoor Lighting', 'Outdoor lighting for paths, patios, and entries', 'real-lighting.webp?v=3.14', 'Make the property safer, warmer, and better looking at night.', 'Low-voltage outdoor lighting for walkways, patios, entries, landscape beds, feature areas, safety, security, and nighttime curb appeal.', 'The property disappears after dark, paths feel unsafe, and the finished landscape or patio loses impact at night.', 'A cleaner nighttime look with better visibility, safer movement, and outdoor spaces that feel usable after sunset.', 'Light My Property')
 service_page('lawn-maintenance.html', 'Lawn Maintenance', 'Recurring lawn and property upkeep', 'real-lawn.webp', 'Professional lawn maintenance for Northwest Ohio properties.', 'Request recurring residential or commercial mowing, edging, trimming, bed upkeep, brush control, and seasonal property maintenance. Terramorph maintains properties; we do not repair mowers or equipment.', 'The property starts looking overgrown, uneven, or neglected because mowing, edging, beds, weeds, and trimming are not handled consistently.', 'A cleaner, better-maintained property with dependable upkeep and less weekend work for the owner.', 'Request Lawn Maintenance', True)
 service_page('seasonal-cleanups.html', 'Seasonal Cleanups', 'Spring and fall cleanup service', 'real-mulch.webp', 'Reset the property before or after the season hits.', 'Spring and fall cleanups, leaf removal, pruning, trimming, debris removal, bed resets, mulch preparation, and hauling for Northwest Ohio properties.', 'Leaves, branches, overgrowth, dead material, and messy beds make the property look neglected and harder to maintain.', 'A cleaner property reset with debris removed, beds cleaned up, and the outdoor space ready for the next season.', 'Schedule Cleanup')
@@ -834,6 +939,8 @@ GUIDES = [
     {'file':'mulch-vs-rock-landscape-beds.html','title':'Mulch vs. Rock Beds: Which Is Better for Low-Maintenance Landscaping?','short':'Mulch and rock both work, but they create different looks, costs, maintenance needs, and heat conditions around plants.','category':'Landscape guide','service':'Landscape Design','image':'real-block-border-bed.webp','cta':'Choose Better Beds','sections':[('Why homeowners choose mulch','Mulch gives beds a clean fresh look, helps retain soil moisture, can improve soil over time, and is easier to change as plants grow or designs evolve.'),('Why homeowners choose rock','Rock can last longer visually, reduce annual refreshing, and work well in certain foundation beds or commercial areas, but it may hold heat and collect debris.'),('Plant health matters','Some plants prefer cooler, more organic bed conditions. Others can tolerate rock. The right choice depends on sunlight, irrigation, drainage, and the plant palette.'),('Low-maintenance still needs upkeep','Neither mulch nor rock eliminates weeds forever. Clean edges, proper fabric decisions, bed depth, drainage, and regular maintenance all affect how beds age.')],'faqs':[('Is rock lower-maintenance than mulch?','Sometimes, but not always. Rock may need less refreshing but can collect debris, hold heat, and still allow weeds if the bed is not built well.'),('Is mulch better for plants?','Often mulch is more forgiving for plant health because it moderates soil temperature and moisture, but the right answer depends on the bed.'),('Can Terramorph install mulch and rock beds?','Yes. Terramorph handles mulch, rock, edging, bed shaping, plant installation, and maintenance planning.')]},
     {'file':'snow-removal-cost-northwest-ohio.html','title':'Snow Removal Cost in Toledo and Northwest Ohio','short':'Snow removal pricing depends on driveway or lot size, trigger depth, ice management, and whether you choose per-push billing or a seasonal contract that covers the whole winter.','category':'Winter guide','service':'Snow Removal','image':'snow-removal-truck.webp?v=3.17','cta':'Reserve Winter Service','sections':[('Per-push vs. seasonal contracts','Per-push billing charges each visit, so a heavy winter costs more and a light winter costs less. A seasonal contract is one price for the whole winter, which makes budgeting simple and guarantees a spot on the route before storms hit.'),('What changes the price','Driveway length and width, parking lot size, walkways, where the snow can be pushed, trigger depth, timing requirements, and whether salting or ice management is included all affect the quote.'),('Why routes fill up in the fall','Snow crews can only serve the properties that fit a route between storms. Most Northwest Ohio providers lock in their winter routes in September through November, and late signups either pay more or get waitlisted.'),('Ice management matters as much as plowing','A cleared driveway can still be a liability if walkways and entries stay icy. For commercial properties especially, salting and ice control should be part of the plan, not an afterthought.')],'faqs':[('Is a seasonal contract cheaper than per-push?','It depends on the winter. A seasonal contract buys price certainty and a guaranteed route spot; per-push can cost less in a mild winter and more in a heavy one.'),('When should I lock in snow removal service?','Before the first storm. September through November is when routes are built in Northwest Ohio.'),('Does Terramorph offer snow removal contracts?','Yes. Terramorph offers seasonal winter service for driveways, walkways, and commercial lots in Wood and Lucas County.')]},
     {'file':'fall-cleanup-checklist-northwest-ohio.html','title':'Fall Cleanup Checklist for Northwest Ohio Properties','short':'A proper fall cleanup clears leaves and debris, resets beds, protects the lawn through winter, and sets the property up for an easier spring.','category':'Seasonal guide','service':'Seasonal Cleanups','image':'real-block-border-bed.webp','cta':'Schedule Fall Cleanup','sections':[('Leaves are a lawn problem, not just a chore','A thick layer of leaves left through winter smothers turf, invites snow mold, and leaves dead patches in spring. Removal or mulching before snow matters more than how the yard looks in November.'),('Reset the beds before the freeze','Cutting back spent perennials, pulling annuals, cleaning bed edges, and topping off mulch protects plants through freeze-thaw cycles and makes the spring reset far cheaper.'),('The last mow and the first plow','The final cut of the season should be slightly shorter to discourage matting and voles. Fall is also the right time to lock in snow removal, since the same crews often run both routes.'),('What a full-service fall visit includes','Leaf removal, stick and debris cleanup, bed cutbacks, final mow, gutter-area cleanup coordination, and hauling, done in one scheduled visit instead of five weekends.')],'faqs':[('When should fall cleanup be scheduled in Northwest Ohio?','Late October through early December, ideally after most leaves are down but before the first lasting snow.'),('Can fall cleanup include the last mow of the season?','Yes. A final shorter mow is commonly part of a fall cleanup visit.'),('Does Terramorph handle fall cleanups and snow removal together?','Yes. Many properties pair a fall cleanup with a seasonal snow removal contract so the property is covered into winter.')]},
+    {'file':'retaining-wall-cost-northwest-ohio.html','title':'Retaining Wall Cost in Northwest Ohio','short':'Retaining wall pricing depends on height, length, block choice, drainage behind the wall, and access - and the drainage detail matters more than the block people pick first.','category':'Hardscape guide','service':'Paver Patios and Hardscapes','image':'real-retaining-block.webp','cta':'Plan My Wall','sections':[('What drives the price','Wall height and length set the base cost, but excavation, base preparation, block style, caps, curves, steps, and how close equipment can get to the wall all move the number.'),('Drainage decides how long the wall lasts','Water trapped behind a wall is what pushes walls over in freeze-thaw country. Gravel backfill, drain pipe, and grading behind the wall are not upgrades - they are the difference between decades and a few winters.'),('Block walls vs. natural stone','Modular block installs faster and holds tight tolerances. Natural stone costs more and reads more custom. Both need the same base and drainage discipline underneath.'),('When a wall needs engineering','Taller walls, walls holding back driveways, and tiered walls can need engineering review. A site visit sorts that out before anyone prices anything.')],'faqs':[('How much does a retaining wall cost?','It depends on height, length, materials, drainage, and access. Terramorph gives free site-specific estimates for Wood and Lucas County properties.'),('Why do retaining walls fail?','Usually water trapped behind the wall plus freeze-thaw pressure - not the block itself. Drainage behind the wall is the critical detail.'),('Does Terramorph build retaining walls?','Yes. Terramorph builds modular block and stone retaining walls with proper base preparation and drainage.')]},
+    {'file':'landscape-design-process-northwest-ohio.html','title':'What to Expect From a Landscape Design Consultation','short':'A good design consultation ends with a layout you can picture, a plant palette matched to your yard, and a scope that can be phased to fit the budget.','category':'Landscape guide','service':'Landscape Design','image':'real-mature-front-bed.webp','cta':'Book a Design Visit','sections':[('Before the visit','Photos of the areas that bother you, a rough budget range, and a sense of how you want to use the space make the first conversation far more productive.'),('The walkthrough','Terramorph looks at sun and shade, soil, grade, drainage, existing plants worth keeping, and how the front and back of the property connect - because a design that ignores water or maintenance fails no matter how good it looks on paper.'),('The layout and palette','You get a layout you can react to - bed shapes, walkway connections, focal points - and a plant palette chosen for clay soil, mature size, and the maintenance level you actually want.'),('Phasing the work','Most projects phase cleanly: front curb appeal first, then the patio, lighting, or backyard beds later, without redoing earlier work. The design is what makes phasing possible.')],'faqs':[('Does a design consultation cost anything?','Terramorph offers free estimates. Send photos, your city, and goals through the quote form to get started.'),('Do I have to install everything at once?','No. Designs are built to phase, so the budget can spread across seasons without wasted work.'),('Does Terramorph install its own designs?','Yes. The same company plans and installs, so nothing gets lost between a designer and a separate installer.')]},
 ]
 
 def guide_schema(g):
@@ -907,6 +1014,22 @@ about = f"""
   <div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / About</p><p class="eyebrow light">About Terramorph</p><h1>Outdoor work should feel planned, professional, and finished — not patched together.</h1><p>Terramorph is built for homeowners, businesses, and property owners who want one local crew that can diagnose the property, explain the options, and handle the work with clean follow-through.</p><div class="cta-row"><a class="btn btn-gold" href="contact.html">Get a Free Estimate</a><a class="btn btn-outline-light" href="projects.html">See Real Work</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div>
 </section>
 {trust_band()}
+<section class="section">
+  <div class="container local-grid">
+    <div>
+      <p class="eyebrow">The story</p>
+      <h2>Started by two brothers. Built into a Northwest Ohio design/build team.</h2>
+      <p>Terramorph started with brothers Ty and Trent Lincoln taking on landscaping and lawn care jobs around Perrysburg. Word spread the old-fashioned way: show up when you said you would, do the work right, and leave the property cleaner than you found it.</p>
+      <p>Today Terramorph is a full design/build company - landscape design, paver patios, drainage, outdoor lighting, and year-round property care - with crews serving Wood and Lucas County, a 4.9-star rating across more than 220 Google reviews, and BBB accreditation.</p>
+    </div>
+    <div class="authority-list">
+      <div><b>4.9 stars</b><span>Average rating across 220+ public Google reviews from local homeowners and businesses.</span></div>
+      <div><b>BBB accredited</b><span>Accredited business profile with the Better Business Bureau.</span></div>
+      <div><b>Design/build</b><span>One team from the layout drawing to the finished install - no handoffs between companies.</span></div>
+      <div><b>Wood + Lucas County</b><span>Perrysburg, Toledo, Maumee, Sylvania, Bowling Green, Rossford, and surrounding communities.</span></div>
+    </div>
+  </div>
+</section>
 <section class="section about-intro-section">
   <div class="container about-split">
     <div>
@@ -989,7 +1112,7 @@ def city_service_page(item):
 <section class="section"><div class="container local-grid"><div><p class="eyebrow">Local fit</p><h2>{item['city']} outdoor work needs local judgment.</h2><p>{item['angle']}</p><p>Terramorph positions the estimate around the actual property: grade, water movement, access, materials, maintenance expectations, budget, and the outcome the owner wants.</p></div><div class="authority-list"><div><b>Property review</b><span>Service need, city, address, photos, timeline, and visible site conditions.</span></div><div><b>Connected services</b><span>Drainage, patios, beds, lighting, cleanups, and maintenance can be scoped together when it makes sense.</span></div><div><b>Northwest Ohio conditions</b><span>Clay soil, flat lots, freeze-thaw, and heavy rain are considered before recommendations.</span></div><div><b>Fast follow-up</b><span>Quote requests include the details the team needs to respond with the right next step.</span></div></div></div></section>
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Related {item['city']} services</p><h2>Other outdoor work Terramorph can review nearby.</h2></div><div class="container guide-grid">{related}</div></section>
 {faq_section(faqs)}
-<section class="section quote-section"><div class="container quote-grid">{quote_form(item['cta'])}<div class="cta-proof"><p class="eyebrow">Fast estimate path</p><h2>Send photos, timeline, and service details in one secure request.</h2>{review_stack(2)}</div></div></section>
+<section class="section quote-section"><div class="container quote-grid">{quote_form(item['cta'])}<div class="cta-proof"><p class="eyebrow">Fast estimate path</p><h2>Send photos, timeline, and service details in one secure request.</h2>{review_stack(2, item['service'])}</div></div></section>
 <section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">More local pages</p><h2>Compare by service area and project type.</h2></div><div class="container guide-grid related-guides">{service_related}</div></section>
 '''
     desc = f"{item['headline']} Phone-first free estimates from Terramorph for {item['city']} and Northwest Ohio properties."
@@ -1211,7 +1334,7 @@ def post_process_html():
         if path.name != 'contact.html':
             html = html.replace('href="contact.html"', 'href="quote.html"')
         html = html.replace('href="#quote"', 'href="quote.html"')
-        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.59"></script>', html)
+        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.60"></script>', html)
         path.write_text(html)
 
 write_static_seo_files()
