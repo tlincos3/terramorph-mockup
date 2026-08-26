@@ -16,7 +16,7 @@ const JOBBER_ORIGIN = 'https://clienthub.getjobber.com';
 const JOBBER_LEAD_TRACKED_KEY = 'terramorphJobberLeadTracked';
 // Google Ads "Request quote" conversion label (the part after AW-17691366114/).
 // Blank skips the direct Google Ads conversion ping.
-const AW_QUOTE_REQUEST_LABEL = '';
+const AW_QUOTE_REQUEST_LABEL = 'obvlCJaFougcEOKl8_NB';
 const QUOTE_POPUP_DISMISS_KEY = 'terramorphQuotePopupDismissedAt';
 const QUOTE_POPUP_DISMISS_MS = 14 * 24 * 60 * 60 * 1000;
 const QUOTE_POPUP_MIN_DELAY_MS = 45 * 1000;
