@@ -119,14 +119,34 @@ FOOT = f'''
 <script src="app.js?v=3.59"></script>
 '''
 
+# Verbatim excerpts from Terramorph's public Google reviews (pulled 2026-08-26,
+# 4.9 stars / 225 reviews). Excerpts end on the reviewer's own sentence
+# boundaries - never paraphrase or stitch fragments when adding more.
 REVIEW_SNIPPETS = [
-    ('CJ Miller', '“Amazing service every time and prompt to all appointments.”'),
+    ('Kate Vallerand', '“We are absolutely thrilled with the work Brad and his team completed! They completely redesigned our flower beds, providing us with a potential layout drawing, guiding us in selecting the right flowers, and executing everything perfectly. Besides the excellent craftsmanship, Brad and his team are genuinely kind and considerate.”'),
+    ('R.J. Rajner', '“Ty and his crew are a great group of young professionals. Their work was well planned and executed with great attention to detail. I would not hesitate to recommend them for any level of landscaping project you may have.”'),
+    ('Jack Higgins', '“Terramorph did an outstanding job from start to finish. The team was professional, punctual, and paid close attention to every detail. They transformed the property with high-quality work, and the results exceeded my expectations.”'),
+    ('Altur Earth', '“I don’t usually leave reviews, but Terramorph honestly deserves one. These guys just get it. You can tell right away they actually care about what they’re doing, not just trying to rush through a job.”'),
     ('Richard Hansen', '“Great work at a fair price. They did what they said they were going to do, when they said they would do it. Fast, friendly. Will definitely use them again.”'),
-    ('Derrick Fawley', '“Ty and his team put hydro mulch down in my front yard and they did an excellent job. The grass is looking awesome! Thanks guys.”'),
+    ('jon mercurio', '“A lot of companies tell you what they are going to do. This company far exceeded their word.”'),
+    ('JeanCarlo Rivera', '“Brad Porter and his crew are great! Before hiring them I had 3 different quotes and I am so glad I went with him. Military friendly, Highly recommend!!!”'),
     ('Barb Flowers', '“I am so impressed with Ty and Terramorph. I called on a Monday and they did the landscaping on Friday. It looks fantastic. A great group of hard working young men. Would recommend to everyone.”'),
+    ('Adam Schmidbauer', '“The other day when they mowed my lawn not only did they do a great job removing the weeds from the cracks in my driveway, they also took the time to pick up my trash cans that had fallen over! They are quick, efficient, and very easy to work with.”'),
+    ('Nat B', '“We had a crew out to clean out some very overgrown and junk filled corners of the yard. They did great and were friendly and efficient. Would definitely hire them again.”'),
+    ('Jennifer Tierney', '“The tree the guys at Terramorph took down was quite tall and located close to my pool. They removed the tree without dropping a ton of tree into my pool. I highly recommend this company and will use them again.”'),
+    ('Teresa Thompson', '“They did an excellent job and completed the same day. I would highly recommend them.”'),
+    ('Alejandro Urrea', '“10/10 Company, the boys made my house look great. Customer Service is great, best deal on the market.”'),
+    ('Pete Detgen', '“Great work very accommodating and extremely professional will definitely have them do all my future work.”'),
+    ('Patrick Walker', '“Bravo to the young men who took care of my mother’s yard. Thank you so much. Mom is really happy.”'),
+    ('Roger Samson', '“Stone wall around porch was removed and reset the way we wanted. The men were very polite.”'),
+    ('Dominic Urquiola', '“They did a fantastic job for me. I will recommend them to colleagues.”'),
+    ('Adam Raider', '“Attention to detail was 2nd to none!”'),
+    ('Marla Leonard', '“I was very happy with the services the Terramorph team provided.”'),
+    ('Derrick Fawley', '“Ty and his team put hydro mulch down in my front yard and they did an excellent job. The grass is looking awesome! Thanks guys.”'),
+    ('CJ Miller', '“Amazing service every time and prompt to all appointments.”'),
     ('Larry Calcamuggio', '“Fast and reliable. Ty did excellent work and very reasonable cost. I would not hesitate to suggest him to others. Thanks Ty!”'),
-    ('Karen Chiaverini', '“Wonderful experience with the young men that worked on my waterfall. They did a good job.”'),
-    ('Elliott Hudson', '“The crew came and did an amazing job!”'),
+    ('Josh Johnson', '“Great, professional group of guys!”'),
+    ('Jennifer Nagy Lake', '“Professional and awesome people.”'),
 ]
 
 SERVICES = [
@@ -501,11 +521,20 @@ def review_markup(name, quote, compact=False):
     cls = ' class="compact-review"' if compact else ''
     return f'<blockquote{cls}><div class="stars">★★★★★</div><p>{quote}</p><cite>— {name}</cite></blockquote>'
 
+_review_rotation = [0]
+
 def review_stack(limit=None):
-    reviews = REVIEW_SNIPPETS if limit is None else REVIEW_SNIPPETS[:limit]
+    if limit is None:
+        limit = 4
+    # Rotate through the pool so each page shows different reviews instead of
+    # every page repeating the first two. Build order is fixed, so output is
+    # deterministic.
+    start = _review_rotation[0]
+    _review_rotation[0] = (start + limit) % len(REVIEW_SNIPPETS)
+    reviews = [REVIEW_SNIPPETS[(start + i) % len(REVIEW_SNIPPETS)] for i in range(limit)]
     return '<div class="review-stack">' + ''.join(review_markup(name, quote, True) for name, quote in reviews) + '</div>'
 
-def review_section(limit=3):
+def review_section(limit=6):
     return '<section class="section reviews-section"><div class="container section-heading compact"><p class="eyebrow">Customer Reviews</p><h2>Homeowners describe responsive service and dependable follow-through.</h2><p>Read what local customers say about Terramorph’s communication, scheduling, crew, and finished work.</p></div><div class="container review-grid">' + ''.join(review_markup(name, quote) for name, quote in REVIEW_SNIPPETS[:limit]) + '</div></section>'
 
 def local_authority():
@@ -646,7 +675,7 @@ home = f'''
 </section>
 {local_authority()}
 {process_home()}
-{review_section(3)}
+{review_section(6)}
 <section class="section quote-section">
   <div class="container quote-grid">
     {inline_jobber_quote_form('Request My Outdoor Transformation Quote')}
