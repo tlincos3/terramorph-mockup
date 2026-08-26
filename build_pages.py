@@ -196,7 +196,7 @@ def head(title, desc, schema='', page_name=''):
     canonical_url = BASE_URL + ('/' if page_name in ('', 'index.html') else '/' + page_name)
     body_class = 'quote-page' if page_name == 'quote.html' else ''
     body_attr = f' class="{body_class}"' if body_class else ''
-    stylesheet_version = '3.57'
+    stylesheet_version = '3.58'
     schema_block = f'\n  <script type="application/ld+json">{schema}</script>' if schema else ''
     if page_name in ('thank-you.html', 'review-notes.html'):
         robots_block = '\n  <meta name="robots" content="noindex, nofollow">'
