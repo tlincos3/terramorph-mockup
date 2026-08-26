@@ -100,6 +100,30 @@ robots=(ROOT/'robots.txt').read_text() if (ROOT/'robots.txt').exists() else ''
 if f'Sitemap: {BASE}/sitemap.xml' not in robots: errors.append('robots missing sitemap')
 if f'Sitemap: {BASE}/image-sitemap.xml' not in robots: warnings.append('robots missing image sitemap')
 
+# letterboxed photos: baked-in black bars look broken in the carousels.
+# Trent's rule (2026-08-26): no photo with black bars ships. Night photos can
+# legitimately trip this - crop the bar or rename the check-in if intentional.
+try:
+    from PIL import Image
+    import numpy as _np
+    for _img in sorted((ROOT/'assets').glob('*')):
+        if _img.suffix.lower() not in ('.webp', '.jpg', '.jpeg', '.png'):
+            continue
+        if 'logo' in _img.name or 'verified' in _img.name or 'bbb' in _img.name or 'contact-sheet' in _img.name:
+            continue
+        try:
+            _arr = _np.asarray(Image.open(_img).convert('L'))
+        except Exception:
+            continue
+        if _arr.shape[0] < 120:
+            continue
+        _band = max(4, _arr.shape[0] // 25)
+        for _label, _rows in (('top', _arr[:_band]), ('bottom', _arr[-_band:])):
+            if _rows.mean() < 10 and _rows.max() < 40:
+                warnings.append(f'assets/{_img.name}: solid black bar at {_label} - crop it before shipping')
+except ImportError:
+    warnings.append('Pillow not installed - letterbox photo check skipped')
+
 print(f'HTML files: {len(HTML_FILES)}')
 print(f'Errors: {len(errors)}')
 for e in errors[:200]: print('ERROR:', e)
