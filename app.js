@@ -252,6 +252,17 @@ function trackAttributedThankYouView(){
   // Jobber's native form_submit event is mapped to GA4 generate_lead. This
   // diagnostic must not emit another GA4 lead when the visitor returns here.
   pushAnalyticsEvent('quote_thank_you_attributed', attributionContext);
+  // Jobber's HOSTED form (not the embed) redirects here after submission, a
+  // path the iframe detector never sees. The Ads action counts one per click,
+  // so a double fire with the embed path cannot inflate conversions.
+  if(AW_QUOTE_REQUEST_LABEL && typeof gtag === 'function' &&
+     (context.gclid || context.wbraid || context.gbraid)){
+    try {
+      gtag('event', 'conversion', {send_to: `AW-17691366114/${AW_QUOTE_REQUEST_LABEL}`});
+    } catch(error) {
+      console.warn('Google Ads conversion tracking failed', error);
+    }
+  }
   const normalizedSource = String(context.utm_source || '').trim().toLowerCase();
   const hasMetaAttributionContext = normalizedSource
     ? META_SOURCES.has(normalizedSource)
