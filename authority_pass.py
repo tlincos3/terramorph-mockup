@@ -119,7 +119,7 @@ SERVICE_LINKS = {
     'lighting': '<a href="outdoor-lighting.html">Outdoor Lighting</a> · <a href="outdoor-lighting-cost-ohio.html">Lighting Cost</a> · <a href="landscape-lighting-toledo-ohio.html">Lighting in Toledo</a>',
     'maintenance': '<a href="lawn-maintenance.html">Lawn Maintenance</a> · <a href="landscape-maintenance-packages-northwest-ohio.html">Maintenance Packages</a> · <a href="spring-cleanup-cost-toledo-ohio.html">Cleanup Cost</a>',
     'mulch': '<a href="mulch-installation-toledo-ohio.html">Mulch Installation</a> · <a href="mulch-vs-rock-landscape-beds.html">Mulch vs Rock</a> · <a href="seasonal-cleanups.html">Seasonal Cleanups</a>',
-    'snow': '<a href="snow-removal-toledo-ohio.html">Snow Removal</a> · <a href="commercial-landscaping-toledo-ohio.html">Commercial Landscaping</a> · <a href="service-areas.html">Service Areas</a>',
+    'snow': '<a href="snow-removal.html">Snow Removal</a> · <a href="commercial-landscaping-toledo-ohio.html">Commercial Landscaping</a> · <a href="service-areas.html">Service Areas</a>',
 }
 
 DECISION_PAGES = [
