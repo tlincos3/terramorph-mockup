@@ -1329,7 +1329,7 @@ def post_process_html():
         html = path.read_text()
         url = BASE_URL + ('/' if path.name == 'index.html' else '/' + path.name)
         html = html.replace('<meta property="og:image" content="assets/real-hero.webp">', f'<meta property="og:image" content="{BASE_URL}/assets/real-hero.webp">\n  <meta property="og:url" content="{url}">\n  <meta name="twitter:card" content="summary_large_image">\n  <link rel="canonical" href="{url}">')
-        html = html.replace('Request a Outdoor Lighting Quote', 'Request an Outdoor Lighting Quote')
+        html = html.replace('a Outdoor', 'an Outdoor')
         html = html.replace('href="contact.html#quote"', 'href="quote.html"')
         if path.name != 'contact.html':
             html = html.replace('href="contact.html"', 'href="quote.html"')
