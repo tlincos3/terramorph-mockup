@@ -251,7 +251,16 @@ def generate(ctx: dict) -> list[str]:
             ('Why does Northwest Ohio matter?', 'Clay soil, flat lots, freeze-thaw, mature neighborhoods, and heavy rain change how landscaping, patios, drainage, and lighting should be planned.'),
         ]
         table = ''.join(f'<div class="decision-row"><b>{a}</b><span>{b}</span><span>{c}</span></div>' for a, b, c in rows)
-        body = f'''<section class="page-hero premium-page-hero decision-hero"><div class="page-hero-image"><img src="assets/real-hero.webp" alt="{title} by Terramorph"></div><div class="hero-overlay"></div><div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / <a href="guides.html">Guides</a> / {eyebrow}</p><p class="eyebrow light">{eyebrow}</p><h1>{title}</h1><p>{desc}</p><div class="cta-row"><a class="btn btn-gold" href="#quote">Ask Terramorph</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div></section>
+        decision_hero_images = {
+            'Drainage Solutions': 'real-shoreline-riprap.webp',
+            'Paver Patios and Hardscapes': 'real-modern-stone-wall.webp',
+            'Landscape Design': 'real-mature-front-bed.webp',
+            'Lawn Maintenance': 'real-striped-lawn-lot.webp',
+            'Outdoor Lighting': 'real-lighting-night.webp',
+            'Seasonal Cleanups': 'real-block-border-bed.webp',
+        }
+        hero_image = decision_hero_images.get(service, 'real-hero.webp')
+        body = f'''<section class="page-hero premium-page-hero decision-hero"><div class="page-hero-image"><img src="assets/{hero_image}" alt="{title} by Terramorph"></div><div class="hero-overlay"></div><div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / <a href="guides.html">Guides</a> / {eyebrow}</p><p class="eyebrow light">{eyebrow}</p><h1>{title}</h1><p>{desc}</p><div class="cta-row"><a class="btn btn-gold" href="#quote">Ask Terramorph</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div></section>
 {ai_answer_block('Short answer', 'Perrysburg')}
 {trust_band()}
 <section class="section"><div class="container local-grid"><div><p class="eyebrow">Decision answer</p><h2>{answer}</h2><p>Terramorph’s recommendation should fit the property, not a canned sales script. The best choice depends on grade, soil, access, maintenance, budget, and the outcome the homeowner actually wants.</p></div><div class="decision-table">{table}</div></div></section>
