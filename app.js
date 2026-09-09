@@ -223,6 +223,13 @@ function trackQuoteIntent(source, link){
   metaTrackCustom('QuoteIntent', context);
 }
 
+function hasMetaAttribution(context){
+  const normalizedSource = String(context.utm_source || '').trim().toLowerCase();
+  return normalizedSource
+    ? META_SOURCES.has(normalizedSource)
+    : Boolean(context.fbclid || context.fbc || context.fb_campaign_id || context.fb_adset_id || context.fb_ad_id);
+}
+
 function trackPhoneClick(link){
   const context = {source: 'phone_click', phone_number: (link?.getAttribute('href') || '').replace(/^tel:/, ''), ...getTrackingContext()};
   pushAnalyticsEvent('phone_click', context);
@@ -263,16 +270,9 @@ function trackAttributedThankYouView(){
       console.warn('Google Ads conversion tracking failed', error);
     }
   }
-  const normalizedSource = String(context.utm_source || '').trim().toLowerCase();
-  const hasMetaAttributionContext = normalizedSource
-    ? META_SOURCES.has(normalizedSource)
-    : Boolean(context.fbclid || context.fbc || context.fb_campaign_id || context.fb_adset_id || context.fb_ad_id);
-  // Meta Lead is reserved for Meta-attributed submissions. Sending every paid
-  // or organic Jobber completion to Meta would contaminate optimization data.
-  if(hasMetaAttributionContext){
-    metaTrack('Lead', {content_name: 'Terramorph quote request', content_category: context.service_category || 'quote_request', ...attributionContext}, {eventId});
-    metaTrackCustom('QuoteThankYouAttribution', attributionContext);
-  }
+  const leadContext = {...attributionContext, meta_attributed: hasMetaAttribution(context)};
+  metaTrack('Lead', {content_name: 'Terramorph quote request', content_category: context.service_category || 'quote_request', ...leadContext}, {eventId});
+  metaTrackCustom('QuoteThankYouAttribution', leadContext);
   window.sessionStorage?.setItem(THANK_YOU_ATTRIBUTION_KEY, eventId);
 }
 
@@ -428,14 +428,12 @@ function fireJobberLeadConversion(detection){
       console.warn('Google Ads conversion tracking failed', error);
     }
   }
-  const normalizedSource = String(context.utm_source || '').trim().toLowerCase();
-  const hasMetaAttributionContext = normalizedSource
-    ? META_SOURCES.has(normalizedSource)
-    : Boolean(context.fbclid || context.fbc || context.fb_campaign_id || context.fb_adset_id || context.fb_ad_id);
-  if(hasMetaAttributionContext){
-    metaTrack('Lead', {content_name: 'Terramorph quote request', content_category: context.service_category || 'quote_request', ...context}, {eventId});
-    metaTrackCustom('JobberRequestSubmitted', context);
-  }
+  // Every submission goes to Meta. Meta does its own click/view matching, so
+  // withholding non-Meta submissions starves the optimizer (3 Leads in 28 days
+  // as of 2026-09-09) and drops cross-device conversions it could have matched.
+  const leadContext = {...context, meta_attributed: hasMetaAttribution(context)};
+  metaTrack('Lead', {content_name: 'Terramorph quote request', content_category: context.service_category || 'quote_request', ...leadContext}, {eventId});
+  metaTrackCustom('JobberRequestSubmitted', leadContext);
   window.sessionStorage?.setItem(JOBBER_LEAD_TRACKED_KEY, eventId);
   // Shares the thank-you marker so one submission cannot produce a second
   // Meta Lead if Jobber also returns the visitor to thank-you.html.
