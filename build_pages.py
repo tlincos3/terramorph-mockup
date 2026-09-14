@@ -117,7 +117,7 @@ FOOT = f'''
     </div>
   </div>
 </footer>
-<script src="app.js?v=3.61"></script>
+<script src="app.js?v=3.62"></script>
 '''
 
 # Verbatim excerpts from Terramorph's public Google reviews (pulled 2026-08-26,
@@ -196,7 +196,7 @@ def head(title, desc, schema='', page_name=''):
     canonical_url = BASE_URL + ('/' if page_name in ('', 'index.html') else '/' + page_name)
     body_class = 'quote-page' if page_name == 'quote.html' else ''
     body_attr = f' class="{body_class}"' if body_class else ''
-    stylesheet_version = '3.58'
+    stylesheet_version = '3.59'
     schema_block = f'\n  <script type="application/ld+json">{schema}</script>' if schema else ''
     if page_name in ('thank-you.html', 'review-notes.html'):
         robots_block = '\n  <meta name="robots" content="noindex, nofollow">'
@@ -429,9 +429,25 @@ def inline_jobber_quote_form(title='Request My Outdoor Transformation Quote', se
         <a class="btn btn-gold" href="{JOBBER_DIRECT_URL}" target="_blank" rel="noopener">Open Jobber Quote Form</a>
         <a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a>
       </div>
+      {callback_form('inline-embed', dark=True)}
     </div>
   </div>
 </section>'''
+
+def callback_form(source, dark=False):
+    cls = ' callback-dark' if dark else ''
+    return f'''<form class="callback-form{cls}" data-callback-form data-callback-source="{source}">
+  <p class="callback-title"><b>Rather have us call you?</b><span>Leave your name and number and Terramorph calls you back.</span></p>
+  <div class="callback-fields">
+    <label class="sr-only" for="cb-name-{source}">Your name</label>
+    <input id="cb-name-{source}" type="text" name="name" autocomplete="name" placeholder="Name" required maxlength="120">
+    <label class="sr-only" for="cb-phone-{source}">Phone number</label>
+    <input id="cb-phone-{source}" type="tel" name="phone" autocomplete="tel" placeholder="Phone number" required maxlength="40">
+    <input type="text" name="company" class="cb-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <button type="submit" class="btn btn-gold">Request a Call Back</button>
+  </div>
+  <p class="callback-status" data-callback-status role="status" aria-live="polite"></p>
+</form>'''
 
 def quote_popup():
     return f'''
@@ -452,6 +468,7 @@ def quote_popup():
         <a class="btn btn-gold" href="tel:{TEL}">Call {PHONE}</a>
         <a class="btn btn-primary" href="quote.html#request-form" data-close-popup data-quote-service="Popup quote request">Get a Quote</a>
       </div>
+      {callback_form('popup')}
     </div>
   </section>
 </div>'''
@@ -1182,6 +1199,7 @@ quote_page = f'''
         <a class="btn btn-gold" href="{JOBBER_DIRECT_URL}" target="_blank" rel="noopener">Open Jobber Quote Form</a>
         <a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a>
       </div>
+      {callback_form('quote-page', dark=True)}
     </div>
     <div class="quote-request-copy">
       <p class="eyebrow">Before Terramorph follows up</p>
@@ -1335,7 +1353,7 @@ def post_process_html():
         if path.name != 'contact.html':
             html = html.replace('href="contact.html"', 'href="quote.html"')
         html = html.replace('href="#quote"', 'href="quote.html"')
-        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.61"></script>', html)
+        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.62"></script>', html)
         path.write_text(html)
 
 write_static_seo_files()

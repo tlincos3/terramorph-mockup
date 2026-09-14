@@ -17,6 +17,10 @@ const JOBBER_LEAD_TRACKED_KEY = 'terramorphJobberLeadTracked';
 // Google Ads "Request quote" conversion label (the part after AW-17691366114/).
 // Blank skips the direct Google Ads conversion ping.
 const AW_QUOTE_REQUEST_LABEL = 'obvlCJaFougcEOKl8_NB';
+// Backup lead catcher: the two-field callback form posts here. The key is a
+// publishable (public) key and the table only allows inserts, never reads.
+const CALLBACK_LEADS_ENDPOINT = 'https://bnmqhtlaptwmwkdajabh.supabase.co/rest/v1/terramorph_backup_leads';
+const CALLBACK_LEADS_KEY = 'sb_publishable_-U6vZvZIQuv2r7dounnnhA_GfQoFTij';
 const QUOTE_POPUP_DISMISS_KEY = 'terramorphQuotePopupDismissedAt';
 const QUOTE_POPUP_DISMISS_MS = 14 * 24 * 60 * 60 * 1000;
 const QUOTE_POPUP_MIN_DELAY_MS = 45 * 1000;
@@ -274,6 +278,84 @@ function trackAttributedThankYouView(){
   metaTrack('Lead', {content_name: 'Terramorph quote request', content_category: context.service_category || 'quote_request', ...leadContext}, {eventId});
   metaTrackCustom('QuoteThankYouAttribution', leadContext);
   window.sessionStorage?.setItem(THANK_YOU_ATTRIBUTION_KEY, eventId);
+}
+
+async function handleCallbackFormSubmit(form, event){
+  event.preventDefault();
+  const status = form.querySelector('[data-callback-status]');
+  const button = form.querySelector('[type="submit"]');
+  const data = new FormData(form);
+  if(String(data.get('company') || '').trim()) return; // honeypot: bots only
+  const name = String(data.get('name') || '').trim();
+  const phone = String(data.get('phone') || '').trim();
+  const digits = phone.replace(/\D/g, '');
+  if(!name || digits.length < 7 || digits.length > 15){
+    if(status) status.textContent = 'Add your name and a valid phone number.';
+    return;
+  }
+  const context = getTrackingContext();
+  const payload = {
+    name,
+    phone,
+    page: window.location.pathname,
+    service: context.service_category || null,
+    gclid: context.gclid || null,
+    utm: {
+      utm_source: context.utm_source || '',
+      utm_medium: context.utm_medium || '',
+      utm_campaign: context.utm_campaign || '',
+      fbclid: context.fbclid || '',
+      wbraid: context.wbraid || '',
+      gbraid: context.gbraid || '',
+      form_source: form.dataset.callbackSource || ''
+    },
+    user_agent: String(navigator.userAgent || '').slice(0, 400)
+  };
+  if(button){
+    button.disabled = true;
+    button.textContent = 'Sending...';
+  }
+  let ok = false;
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10000);
+    const res = await fetch(CALLBACK_LEADS_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': CALLBACK_LEADS_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+    clearTimeout(timer);
+    ok = res.ok;
+  } catch(error) {
+    ok = false;
+  }
+  if(!ok){
+    if(button){
+      button.disabled = false;
+      button.textContent = 'Request a Call Back';
+    }
+    if(status) status.textContent = `Something went wrong sending that. Please call ${TERRAMORPH_PHONE_DISPLAY} instead.`;
+    return;
+  }
+  form.querySelector('.callback-fields')?.setAttribute('hidden', '');
+  if(status) status.textContent = `Got it - Terramorph will call you back at ${phone}.`;
+  const eventId = `callback-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  const leadContext = {source: form.dataset.callbackSource || 'callback_form', lead_stage: 'callback_request', ...context};
+  pushAnalyticsEvent('callback_lead_submitted', leadContext);
+  if(AW_QUOTE_REQUEST_LABEL && typeof gtag === 'function'){
+    try {
+      gtag('event', 'conversion', {send_to: `AW-17691366114/${AW_QUOTE_REQUEST_LABEL}`});
+    } catch(error) {
+      console.warn('Google Ads conversion tracking failed', error);
+    }
+  }
+  metaTrack('Lead', {content_name: 'Terramorph callback request', content_category: context.service_category || 'callback', meta_attributed: hasMetaAttribution(context), ...leadContext}, {eventId});
+  metaTrackCustom('CallbackLeadSubmitted', leadContext);
 }
 
 function buildQuickLeadEventId(){
@@ -653,6 +735,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.querySelectorAll('[data-quick-lead-form]').forEach(form => {
     form.addEventListener('submit', event => handleQuickLeadSubmit(form, event));
+  });
+  document.querySelectorAll('[data-callback-form]').forEach(form => {
+    form.addEventListener('submit', event => handleCallbackFormSubmit(form, event));
   });
   document.querySelectorAll('[data-request-form]').forEach(form => {
     form.addEventListener('submit', event => handleRequestFormSubmit(form, event));
