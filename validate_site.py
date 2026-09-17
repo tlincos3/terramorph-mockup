@@ -109,7 +109,7 @@ try:
     for _img in sorted((ROOT/'assets').glob('*')):
         if _img.suffix.lower() not in ('.webp', '.jpg', '.jpeg', '.png'):
             continue
-        if 'logo' in _img.name or 'verified' in _img.name or 'bbb' in _img.name or 'contact-sheet' in _img.name:
+        if 'logo' in _img.name or 'verified' in _img.name or 'bbb' in _img.name or 'contact-sheet' in _img.name or _img.suffix.lower() == '.svg':
             continue
         try:
             _arr = _np.asarray(Image.open(_img).convert('L'))
@@ -118,9 +118,14 @@ try:
         if _arr.shape[0] < 120:
             continue
         _band = max(4, _arr.shape[0] // 25)
-        for _label, _rows in (('top', _arr[:_band]), ('bottom', _arr[-_band:])):
+        _cband = max(4, _arr.shape[1] // 25)
+        for _label, _rows in (('top', _arr[:_band]), ('bottom', _arr[-_band:]),
+                              ('left', _arr[:, :_cband]), ('right', _arr[:, -_cband:])):
             if _rows.mean() < 10 and _rows.max() < 40:
                 warnings.append(f'assets/{_img.name}: solid black bar at {_label} - crop it before shipping')
+            # Same rule for white borders (Trent, 2026-09-17: no white space in photos).
+            if _rows.mean() > 245 and _rows.min() > 215:
+                warnings.append(f'assets/{_img.name}: solid white border at {_label} - crop it before shipping')
 except ImportError:
     warnings.append('Pillow not installed - letterbox photo check skipped')
 
