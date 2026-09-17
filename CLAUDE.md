@@ -38,6 +38,14 @@ Commit author email must be `261499129+tlincos3@users.noreply.github.com`.
 After pushing, verify the Pages build succeeded and the change is actually live — then
 re-check the tracking contract.
 
+## Rejected: call-back mini-form
+
+A two-field "Rather have us call you?" form ran 2026-09-14 to 2026-09-17 and was removed
+at Trent's request — he tried it and did not like it. Do not re-add it or any similar
+secondary mini-form without asking him. Its Supabase table
+`public.terramorph_backup_leads` (project `bnmqhtlaptwmwkdajabh`) was left in place;
+the scheduled task `terramorph-callback-lead-alert` is paused.
+
 ## Known gap
 
 There is no first-party lead capture on this site. Leads go to a phone number or into a
