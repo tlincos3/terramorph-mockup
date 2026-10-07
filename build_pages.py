@@ -1353,7 +1353,7 @@ privacy = f'''
 </section>
 <section class="section legal-page">
   <div class="container narrow-copy">
-    <p><strong>Last updated:</strong> July 14, 2026</p>
+    <p><strong>Last updated:</strong> October 7, 2026</p>
     <h2>Information we collect</h2>
     <p>Terramorph may collect information you choose to provide when requesting an estimate, calling, emailing, or using our online quote form. This can include your name, phone number, email address, property address, project details, service needs, preferred timeline, photos, and any notes you submit.</p>
     <h2>How we use information</h2>
@@ -1368,6 +1368,8 @@ privacy = f'''
     <p>We use reasonable administrative and technical safeguards to protect information. No website, email, or online form can guarantee perfect security, so avoid submitting highly sensitive information through website forms.</p>
     <h2>Your choices</h2>
     <p>You can request updates, corrections, or removal of your contact information from active marketing lists by contacting Terramorph. Some records may be retained when needed for business, legal, accounting, or project-history purposes.</p>
+    <h2>Text messages (SMS)</h2>
+    <p>Terramorph LLC sends work-related text alerts only to its own owners and employees who have agreed to receive them, from the company line (419) 540-4529. Mobile numbers and SMS opt-in data are used only to send those alerts. We do not sell or share your SMS opt-in data or personal information with third parties for marketing purposes. Message frequency varies and message and data rates may apply. Reply STOP to opt out or HELP for help at any time.</p>
     <h2>Contact</h2>
     <p>For privacy questions, call <a href="tel:{TEL}">{PHONE}</a>.</p>
   </div>
@@ -1383,14 +1385,14 @@ terms = f'''
   <div class="hero-overlay"></div>
   <div class="container page-hero-content">
     <p class="crumb"><a href="index.html">Home</a> / Terms</p>
-    <p class="eyebrow light">Website terms</p>
-    <h1>Terramorph website terms</h1>
+    <p class="eyebrow light">Terms of Service</p>
+    <h1>Terramorph Terms of Service</h1>
     <p>Plain-language terms for using this website, requesting estimates, and following links to third-party tools.</p>
   </div>
 </section>
 <section class="section legal-page">
   <div class="container narrow-copy">
-    <p><strong>Last updated:</strong> June 29, 2026</p>
+    <p><strong>Last updated:</strong> October 7, 2026</p>
     <h2>Website use</h2>
     <p>This website is provided by Terramorph LLC to help property owners learn about services, view project information, and request estimates.</p>
     <h2>Estimates and service requests</h2>
@@ -1401,13 +1403,15 @@ terms = f'''
     <p>The website may link to Google, BBB, Facebook, Instagram, Yelp, Nextdoor, and other third-party platforms. Those platforms operate under their own terms and privacy practices.</p>
     <h2>No guarantee from website content alone</h2>
     <p>Terramorph aims to keep the website accurate, but final recommendations require property-specific review and direct communication with the team.</p>
+    <h2>SMS Terms</h2>
+    <p>Terramorph LLC staff text alerts: Terramorph LLC sends work-related text alerts about customer calls from (419) 540-4529 only to its own owners and employees who agree to receive them. Message frequency varies. Message and data rates may apply. Reply STOP to opt out at any time and you will receive one confirmation message. Reply HELP for help, or contact contact@terramorphllc.com or 419-873-6801. Carriers are not liable for delayed or undelivered messages. See our <a href="privacy.html">Privacy Policy</a> for how mobile numbers are handled.</p>
     <h2>Contact</h2>
     <p>Questions about these terms can be handled by phone at <a href="tel:{TEL}">{PHONE}</a> or through the <a href="contact.html">Terramorph quote request page</a>.</p>
   </div>
 </section>
 '''
 terms_desc = 'Website terms for Terramorph LLC visitors, quote requests, third-party links, and service information.'
-(root/'terms.html').write_text(page('Terms | Terramorph LLC', terms_desc, terms, schema_for('terms.html', 'Terms', terms_desc)))
+(root/'terms.html').write_text(page('Terms of Service | Terramorph LLC', terms_desc, terms, schema_for('terms.html', 'Terms of Service', terms_desc)))
 
 review_notes_body = '''<section class="section"><div class="container review-doc"><p class="eyebrow">V3.49 final optimization summary</p><h1>Terramorph local SEO, citation, and conversion response</h1><h2>What changed</h2><ul><li>Added official business information blocks so Google, Meta, and directories have one consistent NAP/entity source.</li><li>Strengthened LocalBusiness/LandscapingBusiness/HomeAndConstructionBusiness schema, sameAs links, contact point, service areas, categories, and service offer catalog.</li><li>Added canonical, Open Graph, Twitter card, and absolute social image metadata across generated pages.</li><li>Kept high-intent quote CTAs, phone-click tracking, city/service pages, proof, reviews, and local service-area copy visible near conversion points.</li></ul><p><a class="btn btn-primary" href="index.html">Open homepage</a></p></div></section>'''
 review_notes_desc = 'Summary of Terramorph V3.49 local SEO, AI visibility, local authority, conversion, and technical optimization improvements.'
