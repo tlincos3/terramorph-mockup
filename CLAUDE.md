@@ -31,6 +31,21 @@ The 10 invented "planning example" case-study pages are now redirect pages to pr
 (RETIRED_REDIRECTS in build_pages.py). Do not bring invented jobs back. The June ad-launch
 spreadsheets moved out of this public repo to ~/projects/terramorph/04-marketing/.
 
+## Phase 1 facts (2026-10-13)
+
+- The Jobber embed is LAZY: markup is a `[data-jobber-lazy]` div with a "Tell us about your
+  project" button; app.js `initLazyJobber()` injects Jobber's own script (same clienthub_id /
+  form_url) when the form is within ~900px of view, on tap, or immediately on quote.html.
+  It runs AFTER `routePaidTrafficToHostedForm()`, so paid clicks never load the embed.
+  Testing gotcha: Jobber's bot check blocks the in-app preview browser and localhost (form
+  stays a 40px strip even with the old code) - test the form in real Chrome on the live site,
+  in a FOREGROUND tab (background tabs leave the iframe at 40px until shown).
+- `responsive_images()` makes -w480/-w960 WebP copies + srcset for every on-site photo.
+  The hero keeps its full 1280px file: smaller/AVIF versions visibly blurred the stone wall.
+- After a deploy that changes pages, ping IndexNow: key file is INDEXNOW_KEY in build_pages.py;
+  POST the sitemap URLs to https://api.indexnow.org/indexnow (202 = accepted).
+- GOOGLE_PROFILE_URL is the verified cid link to the real Google Business Profile.
+
 ## Pages are generated
 
 Many pages come from `build_pages.py`. Edit the generator, not the output — check which
