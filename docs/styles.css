@@ -390,8 +390,9 @@ html,body{max-width:100%;overflow-x:hidden}.conversion-hero,.meta-landing-hero,.
   .hosted-request-action{padding:22px 18px}
   .hosted-request-action .btn-request-primary{font-size:.98rem;padding:16px 18px}
 }
-/* Jobber form placeholder until the embed loads (scroll-near or tap) */
-.jobber-load-card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;min-height:180px;justify-content:center;padding:26px 24px;border:1px dashed rgba(216,170,77,.7);background:rgba(255,255,255,.06);color:#fff;text-align:left;cursor:pointer;font:inherit;transition:background .18s ease,border-color .18s ease}
-.jobber-load-card:hover,.jobber-load-card:focus-visible{background:rgba(255,255,255,.12);border-color:var(--gold)}
-.jobber-load-card b{font-size:1.25rem;color:#fff}
-.jobber-load-card span{color:#e9f0e4;line-height:1.5}
+/* Jobber form placeholder until the embed loads (scroll-near or tap). Sits on
+   the light .jobber-embed-wrap, so text is dark. */
+.jobber-load-card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;min-height:180px;justify-content:center;padding:26px 24px;border:1px dashed var(--gold);background:#fffdf8;color:var(--ink);text-align:left;cursor:pointer;font:inherit;transition:background .18s ease,border-color .18s ease}
+.jobber-load-card:hover,.jobber-load-card:focus-visible{background:#f7f2e8;border-style:solid}
+.jobber-load-card b{font-size:1.25rem;color:var(--forest)}
+.jobber-load-card span{color:var(--muted);line-height:1.5}
