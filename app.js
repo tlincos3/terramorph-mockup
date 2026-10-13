@@ -237,6 +237,60 @@ function trackPhoneClick(link){
   metaTrackCustom('PhoneClick', context);
 }
 
+const JOBBER_HOSTED_FORM_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new';
+
+// True only when the visitor actually clicked a paid ad. Deliberately does NOT
+// trust utm_source alone: getDetectedTrafficSource() infers that from
+// document.referrer, so an organic Facebook post click would look paid here.
+function hasPaidClickAttribution(context){
+  const medium = String(context.utm_medium || '').trim().toLowerCase();
+  return Boolean(
+    context.fbclid || context.fb_ad_id || context.fb_campaign_id ||
+    context.gclid || context.wbraid || context.gbraid || context.msclkid ||
+    medium === 'paid' || medium === 'cpc' || medium === 'ppc' || medium === 'paid_social'
+  );
+}
+
+// Jobber's EMBED is a cross-origin iframe. Jobber states in the form settings
+// that "custom confirmation pages won't work in embedded forms", so a
+// submission inside it can never redirect and can only ever be guessed at from
+// iframe load/height signals -- which is why Meta under-reported form leads
+// about 4x (1 counted vs 4 self-reported in Jobber, Oct 5-11 2026).
+//
+// For paid clicks only, swap the embed for the HOSTED form. It redirects to
+// /thank-you.html on submit, where trackAttributedThankYouView() fires exactly
+// one Meta Lead and one Google Ads conversion per real submission. Organic
+// visitors keep the inline embed, so their experience is unchanged.
+function routePaidTrafficToHostedForm(){
+  const panels = document.querySelectorAll('.jobber-quote-panel:not([data-request-route])');
+  if(!panels.length) return;
+  if(!hasPaidClickAttribution(getMergedTrackingContext())) return;
+  panels.forEach(panel => {
+    const embed = panel.querySelector('.jobber-embed-wrap');
+    const fallback = panel.querySelector('.jobber-fallback');
+    if(!embed) return;
+    const heading = panel.querySelector('h2')?.textContent?.trim() || 'Request My Free Estimate';
+    const action = document.createElement('div');
+    action.className = 'hosted-request-action';
+    action.innerHTML = [
+      '<p class="eyebrow">Takes about a minute</p>',
+      '<ul class="hosted-request-list">',
+      '<li>Your name, phone, and email</li>',
+      '<li>Property address and ZIP code</li>',
+      '<li>What the project needs and your timeline</li>',
+      '<li>Photos of the area, if you have them</li>',
+      '</ul>',
+      `<a class="btn btn-gold btn-request-primary" href="${JOBBER_HOSTED_FORM_URL}" rel="noopener">${heading}</a>`,
+      '<p class="hosted-request-note">Opens Terramorph\'s secure Jobber request form. No account needed.</p>',
+      '<p class="hosted-request-or">Would rather talk it through?</p>',
+      `<a class="btn btn-request-secondary" href="${TERRAMORPH_PHONE_HREF}">Call ${TERRAMORPH_PHONE_DISPLAY}</a>`
+    ].join('');
+    embed.replaceWith(action);
+    fallback?.remove();
+    panel.setAttribute('data-request-route', 'hosted');
+  });
+}
+
 function trackAttributedThankYouView(){
   if(!(window.location.pathname.endsWith('/thank-you.html') || window.location.pathname.endsWith('/thank-you'))) return;
   if(window.sessionStorage?.getItem(THANK_YOU_ATTRIBUTION_KEY)) return;
@@ -625,6 +679,10 @@ function initCarousels(){
 document.addEventListener('DOMContentLoaded', () => {
   initCarousels();
   persistTrackingContext();
+  // Must run BEFORE decorateAttributionLinks() so the hosted-form button it
+  // creates gets the utm/fbclid query string appended, and before the
+  // clienthub click handlers below bind to it.
+  routePaidTrafficToHostedForm();
   decorateAttributionLinks();
   pushAnalyticsEvent('terramorph_page_view', getTrackingContext());
   if(document.querySelector('[data-funnel-service]')){

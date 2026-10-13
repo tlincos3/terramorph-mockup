@@ -117,7 +117,7 @@ FOOT = f'''
     </div>
   </div>
 </footer>
-<script src="app.js?v=3.63"></script>
+<script src="app.js?v=3.64"></script>
 '''
 
 # Verbatim excerpts from Terramorph's public Google reviews (pulled 2026-08-26,
@@ -198,7 +198,7 @@ def head(title, desc, schema='', page_name=''):
     canonical_url = BASE_URL + ('/' if page_name in ('', 'index.html') else '/' + page_name)
     body_class = 'quote-page' if page_name == 'quote.html' else ''
     body_attr = f' class="{body_class}"' if body_class else ''
-    stylesheet_version = '3.62'
+    stylesheet_version = '3.64'
     schema_block = f'\n  <script type="application/ld+json">{schema}</script>' if schema else ''
     if page_name in ('thank-you.html', 'review-notes.html'):
         robots_block = '\n  <meta name="robots" content="noindex, nofollow">'
@@ -431,6 +431,43 @@ def inline_jobber_quote_form(title='Request My Outdoor Transformation Quote', se
         <a class="btn btn-gold" href="{JOBBER_DIRECT_URL}" target="_blank" rel="noopener">Open Jobber Quote Form</a>
         <a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a>
       </div>
+    </div>
+  </div>
+</section>'''
+
+def hosted_jobber_quote_form(title='Request My Outdoor Transformation Quote', service='Outdoor Transformation'):
+    """Paid-traffic version of the request panel.
+
+    Sends the visitor to Jobber's HOSTED request form instead of the embed. The
+    embed is a cross-origin iframe, so a submission inside it can only ever be
+    GUESSED at from iframe load/height signals -- Jobber states plainly in the
+    form settings that custom confirmation pages "won't work in embedded forms."
+    The hosted form redirects to /thank-you.html on submit, where app.js fires
+    one exact Meta Lead and Google Ads conversion per real submission. app.js
+    also appends the stored utm/fbclid context to any clienthub.getjobber.com
+    link, so the campaign that paid for the click keeps the credit.
+    """
+    return f'''
+<section class="quote-panel jobber-quote-panel quote-request-section hosted-request-panel" id="request-form" aria-labelledby="home-request-title" data-service="{service}" data-request-route="hosted">
+  <div class="quick-lead-card quote-request-card">
+    <div class="quick-lead-copy">
+      <p class="eyebrow light">Fast free estimate</p>
+      <h2 id="home-request-title">{title}</h2>
+      <p>Share the service, property location, timeline, project notes, and photos in the secure form. The Terramorph team receives the request directly and can follow up with the right next step.</p>
+      <div class="quick-lead-proof"><span>220+ 5-Star Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span></div>
+    </div>
+    <div class="hosted-request-action">
+      <p class="eyebrow">Takes about a minute</p>
+      <ul class="hosted-request-list">
+        <li>Your name, phone, and email</li>
+        <li>Property address and ZIP code</li>
+        <li>What the project needs and your timeline</li>
+        <li>Photos of the area, if you have them</li>
+      </ul>
+      <a class="btn btn-gold btn-request-primary" href="{JOBBER_DIRECT_URL}" rel="noopener">{title}</a>
+      <p class="hosted-request-note">Opens Terramorph's secure Jobber request form. No account needed.</p>
+      <p class="hosted-request-or">Would rather talk it through?</p>
+      <a class="btn btn-request-secondary" href="tel:{TEL}">Call {PHONE}</a>
     </div>
   </div>
 </section>'''
@@ -838,7 +875,7 @@ def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, 
 </section>
 <section class="conversion-trust-strip" aria-label="Terramorph credibility"><div class="container conversion-trust-grid"><span>220+ 5-Star Google Reviews</span><span>Perrysburg-area team</span><span>BBB Accredited</span><span>Free estimates</span><span>Serving Toledo, Perrysburg, Maumee, Wood County, Lucas County</span></div></section>
 {priority_fit_strip(service)}
-{inline_jobber_quote_form(form_title, service)}
+{hosted_jobber_quote_form(form_title, service)}
 <section class="section pain-proof-section"><div class="container pain-proof-grid"><div class="pain-card"><p class="eyebrow light">This is for you if</p><h2>{bullets[0]}</h2><ul>{''.join(f'<li>{item}</li>' for item in symptoms)}</ul><a class="btn btn-gold" href="#request-form">See What This Would Cost</a></div><div class="proof-card"><p class="eyebrow">What Terramorph checks</p><h2>{bullets[1]}</h2><div class="proof-steps">{''.join(f'<div><b>{i+1}. {title}</b><span>{copy}</span></div>' for i,(title,copy) in enumerate(next_steps))}</div></div></div></section>
 <section class="section clay-section"><div class="container local-grid"><div><p class="eyebrow">Why request now</p><h2>{bullets[2]}</h2><p>{bullets[3]}</p><a class="btn btn-primary" href="#request-form">Start My Free Assessment</a></div><div class="authority-list"><div><b>Fast next step</b><span>Submit the form or call and Terramorph can review the property, service need, timeline, and photos.</span></div><div><b>Project proof</b><span>Review photos and customer feedback before deciding whether Terramorph fits the project.</span></div><div><b>Local conditions</b><span>Wood and Lucas County soil, drainage, freeze-thaw, and weather are considered before recommending work.</span></div><div><b>Clear estimate</b><span>The goal is a practical scope, clean communication, and a path to getting the work handled.</span></div></div></div></section>
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>See the kind of work this estimate can start.</h2></div><div class="container">{photo_gallery()}</div></section>
@@ -1481,7 +1518,7 @@ def post_process_html():
         if path.name != 'contact.html':
             html = html.replace('href="contact.html"', 'href="quote.html"')
         html = html.replace('href="#quote"', 'href="quote.html"')
-        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.63"></script>', html)
+        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.64"></script>', html)
         path.write_text(html)
 
 write_static_seo_files()
