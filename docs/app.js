@@ -650,6 +650,58 @@ function scheduleQuotePopup(){
   window.setTimeout(() => openQuotePopup('engaged_time'), QUOTE_POPUP_FALLBACK_MS);
 }
 
+const JOBBER_EMBED_SCRIPT = 'https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js';
+
+// The Jobber embed pulls ~1.4 MB (reCAPTCHA, Google Maps, Jobber's app) the
+// moment its script runs. Load it only when the form is about to scroll into
+// view, or immediately on tap. Attributes and IDs are exactly Jobber's own.
+function loadJobberEmbed(holder){
+  if(!holder || holder.dataset.jobberLoaded) return;
+  holder.dataset.jobberLoaded = '1';
+  holder.querySelector('[data-jobber-load]')?.remove();
+  const script = document.createElement('script');
+  script.src = JOBBER_EMBED_SCRIPT;
+  script.setAttribute('clienthub_id', holder.dataset.clienthubId);
+  script.setAttribute('form_url', holder.dataset.formUrl);
+  holder.appendChild(script);
+  pushAnalyticsEvent('jobber_form_loaded', {trigger: holder.dataset.jobberTrigger || 'scroll', ...getTrackingContext()});
+}
+
+function initLazyJobber(){
+  const holders = [...document.querySelectorAll('[data-jobber-lazy]')];
+  if(!holders.length) return;
+  holders.forEach(holder => {
+    holder.querySelector('[data-jobber-load]')?.addEventListener('click', () => {
+      holder.dataset.jobberTrigger = 'tap';
+      loadJobberEmbed(holder);
+    });
+  });
+  // On the quote page the form IS the page: load it right away.
+  if(document.body.classList.contains('quote-page') || !('IntersectionObserver' in window)){
+    holders.forEach(loadJobberEmbed);
+    return;
+  }
+  // Backup trigger in case the observer never reports (some in-app browsers).
+  const nearCheck = () => {
+    holders.forEach(holder => {
+      if(!holder.dataset.jobberLoaded && holder.getBoundingClientRect().top < window.innerHeight + 900){
+        loadJobberEmbed(holder);
+      }
+    });
+    if(holders.every(holder => holder.dataset.jobberLoaded)) window.removeEventListener('scroll', nearCheck);
+  };
+  window.addEventListener('scroll', nearCheck, {passive: true});
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        io.unobserve(entry.target);
+        loadJobberEmbed(entry.target);
+      }
+    });
+  }, {rootMargin: '900px 0px'});
+  holders.forEach(holder => io.observe(holder));
+}
+
 function initCarousels(){
   document.querySelectorAll('[data-carousel]').forEach(carousel => {
     const track = carousel.querySelector('.carousel-track');
@@ -690,6 +742,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   trackAttributedThankYouView();
   watchJobberFormSubmission();
+  initLazyJobber();
   document.querySelectorAll('.links a').forEach(link => link.addEventListener('click', () => {
     const menu = document.querySelector('.links');
     const button = document.querySelector('.mobile-menu');

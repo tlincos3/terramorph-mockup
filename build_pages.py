@@ -5,7 +5,10 @@ root = Path(__file__).resolve().parent
 PHONE = '419-873-6801'
 TEL = '4198736801'
 BASE_URL = 'https://terramorphllc.com'
-GOOGLE_PROFILE_URL = 'https://www.google.com/maps/search/?api=1&query=Terramorph+LLC+Perrysburg+OH'
+GOOGLE_PROFILE_URL = 'https://www.google.com/maps?cid=8318909328903785238'  # verified 2026-10-13: opens the real Terramorph LLC profile
+BUSINESS_STREET = '23090 N Dixie Hwy'
+BUSINESS_GEO = (41.4861736, -83.6442511)
+SERVICE_TOWNS = ['Perrysburg', 'Toledo', 'Maumee', 'Sylvania', 'Bowling Green', 'Rossford', 'Oregon', 'Waterville', 'Whitehouse', 'Holland', 'Monclova', 'Ottawa Hills']
 BBB_PROFILE_URL = 'https://www.bbb.org/us/oh/perrysburg/profile/landscape-contractors/terramorph-llc-0422-211013048'
 FACEBOOK_URL = 'https://facebook.com/p/Terramorph-100089790245208/'
 INSTAGRAM_URL = 'https://instagram.com/terramorphllc/'
@@ -19,7 +22,10 @@ OFFICIAL_NAP_NOTE = 'Terramorph LLC | Perrysburg, OH 43551 | 419-873-6801 | terr
 JOBBER_CLIENTHUB_ID = 'e644a784-b214-4a2b-93df-ace28dbb2a70-1578803'
 JOBBER_FORM_URL = 'https://clienthub.getjobber.com/client_hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/work_request/embedded_work_request_form?form_id=1578803'
 JOBBER_DIRECT_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new'
+AREA_SERVED = [{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"}] + [{"@type":"City","name":t + ", OH"} for t in SERVICE_TOWNS]
+
 SAME_AS_URLS = [
+    GOOGLE_PROFILE_URL,
     BBB_PROFILE_URL,
     FACEBOOK_URL,
     INSTAGRAM_URL,
@@ -117,7 +123,7 @@ FOOT = f'''
     </div>
   </div>
 </footer>
-<script src="app.js?v=3.64"></script>
+<script src="app.js?v=3.65"></script>
 '''
 
 # Verbatim excerpts from Terramorph's public Google reviews (pulled 2026-08-26,
@@ -197,7 +203,7 @@ def head(title, desc, schema='', page_name=''):
     canonical_url = BASE_URL + ('/' if page_name in ('', 'index.html') else '/' + page_name)
     body_class = 'quote-page' if page_name == 'quote.html' else ''
     body_attr = f' class="{body_class}"' if body_class else ''
-    stylesheet_version = '3.64'
+    stylesheet_version = '3.65'
     schema_block = f'\n  <script type="application/ld+json">{schema}</script>' if schema else ''
     if page_name in ('thank-you.html', 'review-notes.html'):
         robots_block = '\n  <meta name="robots" content="noindex, nofollow">'
@@ -421,9 +427,10 @@ def inline_jobber_quote_form(title='Request My Outdoor Transformation Quote', se
     </div>
     <div>
       <div class="jobber-embed-wrap" aria-label="Terramorph Jobber quote request form">
-        <div id="{JOBBER_CLIENTHUB_ID}">
-          <script src="https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js" clienthub_id="{JOBBER_CLIENTHUB_ID}" form_url="{JOBBER_FORM_URL}"></script>
+        <div id="{JOBBER_CLIENTHUB_ID}" data-jobber-lazy data-clienthub-id="{JOBBER_CLIENTHUB_ID}" data-form-url="{JOBBER_FORM_URL}">
+          <button type="button" class="jobber-load-card" data-jobber-load><b>Tell us about your project</b><span>Takes about 2 minutes. Tap to open the secure request form.</span></button>
         </div>
+        <noscript><a class="btn btn-gold" href="{JOBBER_DIRECT_URL}" rel="noopener">Open the secure request form</a></noscript>
       </div>
       <div class="jobber-fallback">
         <p>If the embedded form does not load, open the secure Jobber request form directly.</p>
@@ -774,7 +781,7 @@ def schema_for(page_name, title, desc, faqs=None, service=None):
     base = {
       "@context":"https://schema.org",
       "@graph":[
-        {"@type":["LocalBusiness","LandscapingBusiness","HomeAndConstructionBusiness"],"@id":BASE_URL+"/#business","name":BUSINESS_NAME,"alternateName":["Terramorph","Terramorph Outdoor Transformation Co."],"url":BASE_URL+"/","image":BASE_URL+"/assets/real-hero.webp","logo":BASE_URL+"/assets/logo.png","telephone":PHONE,"address":{"@type":"PostalAddress","addressLocality":BUSINESS_CITY,"addressRegion":BUSINESS_REGION,"postalCode":BUSINESS_POSTAL,"addressCountry":BUSINESS_COUNTRY},"contactPoint":{"@type":"ContactPoint","telephone":PHONE,"contactType":"customer service","areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"availableLanguage":"English"},"sameAs":SAME_AS_URLS,"knowsAbout":["Landscape design","Paver patios","Drainage solutions","Outdoor lighting","Lawn maintenance","Seasonal cleanups","Snow removal","Hardscaping","Retaining walls","Mulch and rock beds"],"areaServed":[{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"},{"@type":"City","name":"Perrysburg, OH"},{"@type":"City","name":"Sylvania, OH"},{"@type":"City","name":"Maumee, OH"},{"@type":"City","name":"Monclova, OH"},{"@type":"City","name":"Holland, OH"},{"@type":"City","name":"Waterville, OH"},{"@type":"City","name":"Whitehouse, OH"},{"@type":"City","name":"Ottawa Hills, OH"},{"@type":"City","name":"Toledo, OH"},{"@type":"AdministrativeArea","name":"Northwest Ohio"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
+        {"@type":["LocalBusiness","LandscapingBusiness","HomeAndConstructionBusiness"],"@id":BASE_URL+"/#business","name":BUSINESS_NAME,"alternateName":["Terramorph","Terramorph Outdoor Transformation Co."],"url":BASE_URL+"/","image":BASE_URL+"/assets/real-hero.webp","logo":BASE_URL+"/assets/logo.png","telephone":PHONE,"address":{"@type":"PostalAddress","streetAddress":BUSINESS_STREET,"addressLocality":BUSINESS_CITY,"addressRegion":BUSINESS_REGION,"postalCode":BUSINESS_POSTAL,"addressCountry":BUSINESS_COUNTRY},"contactPoint":{"@type":"ContactPoint","telephone":PHONE,"contactType":"customer service","areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"availableLanguage":"English"},"sameAs":SAME_AS_URLS,"knowsAbout":["Landscape design","Paver patios","Drainage solutions","Outdoor lighting","Lawn maintenance","Seasonal cleanups","Snow removal","Hardscaping","Retaining walls","Mulch and rock beds"],"areaServed":AREA_SERVED,"geo":{"@type":"GeoCoordinates","latitude":BUSINESS_GEO[0],"longitude":BUSINESS_GEO[1]},"hasMap":GOOGLE_PROFILE_URL,"founder":[{"@type":"Person","name":"Ty Lincoln"},{"@type":"Person","name":"Trent Lincoln"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
         {"@type":"WebSite","@id":BASE_URL+"/#website","url":BASE_URL+"/","name":"Terramorph LLC","publisher":{"@id":BASE_URL+"/#business"}},
         {"@type":"Organization","@id":BASE_URL+"/#organization","name":BUSINESS_NAME,"url":BASE_URL+"/","logo":BASE_URL+"/assets/logo.png","sameAs":SAME_AS_URLS},
         {"@type":"WebPage","name":title,"description":desc,"url":page_url,"isPartOf":{"@id":BASE_URL+"/#website"},"primaryImageOfPage":{"@id":page_url+"#primaryimage"}},
@@ -783,7 +790,7 @@ def schema_for(page_name, title, desc, faqs=None, service=None):
       ]
     }
     if service:
-        base["@graph"].append({"@type":"Service","name":service,"provider":{"@id":BASE_URL+"/#business"},"areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"url":page_url})
+        base["@graph"].append({"@type":"Service","name":service,"provider":{"@id":BASE_URL+"/#business"},"areaServed":AREA_SERVED,"url":page_url})
     if page_name == 'index.html':
         base["@graph"].append({"@type":"OfferCatalog","name":"Terramorph outdoor services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":name,"url":BASE_URL+"/"+href}} for name,_,_,_,_,href in SERVICES if href.endswith('.html')]})
     if faqs:
@@ -1351,9 +1358,10 @@ quote_page = f'''
         <div class="quick-lead-proof"><span>220+ 5-Star Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span></div>
       </div>
       <div class="jobber-embed-wrap" aria-label="Terramorph Jobber quote request form">
-        <div id="{JOBBER_CLIENTHUB_ID}">
-          <script src="https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js" clienthub_id="{JOBBER_CLIENTHUB_ID}" form_url="{JOBBER_FORM_URL}"></script>
+        <div id="{JOBBER_CLIENTHUB_ID}" data-jobber-lazy data-clienthub-id="{JOBBER_CLIENTHUB_ID}" data-form-url="{JOBBER_FORM_URL}">
+          <button type="button" class="jobber-load-card" data-jobber-load><b>Tell us about your project</b><span>Takes about 2 minutes. Tap to open the secure request form.</span></button>
         </div>
+        <noscript><a class="btn btn-gold" href="{JOBBER_DIRECT_URL}" rel="noopener">Open the secure request form</a></noscript>
       </div>
       <div class="jobber-fallback">
         <p>If the embedded form does not load, open the secure Jobber request form directly.</p>
@@ -1517,7 +1525,7 @@ def post_process_html():
         if path.name != 'contact.html':
             html = html.replace('href="contact.html"', 'href="quote.html"')
         html = html.replace('href="#quote"', 'href="quote.html"')
-        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.64"></script>', html)
+        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.65"></script>', html)
         path.write_text(html)
 
 write_static_seo_files()
@@ -1578,13 +1586,89 @@ def export_public_site():
     for path in root.glob('*.html'):
         if path.name not in PUBLIC_EXCLUDE:
             shutil.copy2(path, out / path.name)
-    for name in ['app.js', 'styles.css', 'robots.txt', 'sitemap.xml', 'image-sitemap.xml', 'CNAME', 'favicon.ico', '.nojekyll']:
+    for name in ['app.js', 'styles.css', 'robots.txt', 'sitemap.xml', 'image-sitemap.xml', 'CNAME', 'favicon.ico', '.nojekyll', f'{INDEXNOW_KEY}.txt']:
         if (root / name).exists():
             shutil.copy2(root / name, out / name)
     for path in (root / 'assets').iterdir():
         if path.is_file() and path.name not in ASSET_EXCLUDE and not path.name.startswith('.'):
             shutil.copy2(path, out / 'assets' / path.name)
 
+VARIANT_WIDTHS = (480, 960)
+
+def responsive_images():
+    """Give every on-site photo smaller copies and a srcset so phones download
+    a right-sized file. Originals are never altered or cropped."""
+    from PIL import Image, ImageOps
+    made = {}
+    def variants(name):
+        if name in made:
+            return made[name]
+        src = root / 'assets' / name
+        out = []
+        try:
+            with Image.open(src) as im:
+                im = ImageOps.exif_transpose(im)
+                w, h = im.size
+                for target in VARIANT_WIDTHS:
+                    if w <= target + 120:
+                        continue
+                    vname = f"{src.stem}-w{target}.webp"
+                    vpath = root / 'assets' / vname
+                    if not vpath.exists() or vpath.stat().st_mtime < src.stat().st_mtime:
+                        im.convert('RGB').resize((target, round(h * target / w)), Image.LANCZOS).save(vpath, 'WEBP', quality=80, method=5)
+                    out.append((vname, target))
+                out.append((name, w))
+        except Exception:
+            out = []
+        made[name] = out if len(out) > 1 else []
+        return made[name]
+    tag_re = re.compile(r'<img\b[^>]*\bsrc="assets/([A-Za-z0-9_.-]+\.(?:webp|jpg|jpeg|png))(?:\?[^"]*)?"[^>]*>')
+    for path in root.glob('*.html'):
+        html = path.read_text()
+        def swap(m):
+            tag = m.group(0)
+            if 'srcset=' in tag:
+                return tag
+            v = variants(m.group(1))
+            if not v:
+                return tag
+            before = html[max(0, m.start() - 60):m.start()]
+            if 'fetchpriority="high"' in tag:
+                sizes = '(max-width: 760px) 170vw, 100vw'
+            elif 'carousel-slide' in before:
+                sizes = '(max-width: 760px) 86vw, 460px'
+            else:
+                sizes = '(max-width: 760px) 100vw, 50vw'
+            srcset = ', '.join(f'assets/{n} {w}w' for n, w in v)
+            return tag[:-1].rstrip().rstrip('/').rstrip() + f' srcset="{srcset}" sizes="{sizes}">'
+        new = tag_re.sub(swap, html)
+        if new != html:
+            path.write_text(new)
+
+INDEXNOW_KEY = '1f172d9b3f6a53473cd4126fd50a203a'
+
+def sitemap_lastmod():
+    """Stamp each sitemap URL with the date its page last changed in git
+    (today for pages changed but not yet committed)."""
+    import subprocess, datetime
+    today = datetime.date.today().isoformat()
+    changed = set(subprocess.run(['git', 'status', '--porcelain'], cwd=root, capture_output=True, text=True).stdout.split())
+    def lastmod(name):
+        if name in changed:
+            return today
+        out = subprocess.run(['git', 'log', '-1', '--format=%cs', '--', name], cwd=root, capture_output=True, text=True).stdout.strip()
+        return out or today
+    path = root / 'sitemap.xml'
+    xml = re.sub(r'<lastmod>[^<]*</lastmod>', '', path.read_text())
+    def add(m):
+        loc = m.group(1)
+        name = 'index.html' if loc.rstrip('/') == BASE_URL else loc.rsplit('/', 1)[-1]
+        return f'<loc>{loc}</loc><lastmod>{lastmod(name)}</lastmod>'
+    path.write_text(re.sub(r'<loc>([^<]+)</loc>', add, xml))
+    (root / f'{INDEXNOW_KEY}.txt').write_text(INDEXNOW_KEY)
+
 retire_planning_examples()
+responsive_images()
+sitemap_lastmod()
 export_public_site()
 print('phase 0: planning examples retired, public site exported to docs/')
