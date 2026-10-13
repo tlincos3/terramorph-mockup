@@ -6,7 +6,12 @@ from urllib.parse import urldefrag, urlparse
 
 ROOT = Path(__file__).resolve().parent
 BASE = 'https://terramorphllc.com'
-HTML_FILES = sorted(ROOT.glob('*.html'))
+ALL_HTML = sorted(ROOT.glob('*.html'))
+def _is_redirect_stub(p):
+    head = p.read_text(errors='ignore')[:600]
+    return 'http-equiv="refresh"' in head
+REDIRECT_STUBS = {p.name for p in ALL_HTML if _is_redirect_stub(p)}
+HTML_FILES = [p for p in ALL_HTML if p.name not in REDIRECT_STUBS]
 EXTERNAL_PREFIXES = ('http://', 'https://', 'tel:', 'mailto:', 'sms:', 'javascript:')
 NOINDEX_NOFOLLOW = {'thank-you.html', 'review-notes.html'}
 NOINDEX_FOLLOW = {
@@ -128,6 +133,57 @@ try:
                 warnings.append(f'assets/{_img.name}: solid white border at {_label} - crop it before shipping')
 except ImportError:
     warnings.append('Pillow not installed - letterbox photo check skipped')
+
+
+# --- Phase 0 publish gates (2026-10-13) ---
+# 1) Lead tracking on EVERY real page. This has broken silently before.
+for _p in HTML_FILES:
+    if _p.name == 'review-notes.html':
+        continue
+    _h = _p.read_text(errors='ignore')
+    _cfg = re.findall(r"gtag\('config', '([^']+)'", _h)
+    if not _cfg:
+        errors.append(f'{_p.name}: no gtag config at all'); continue
+    if _cfg[-1] != 'G-QRTSH6WXYK':
+        errors.append(f'{_p.name}: G-QRTSH6WXYK is not the LAST gtag config (Jobber form tracking breaks)')
+    if 'AW-17691366114' not in _cfg:
+        errors.append(f'{_p.name}: missing Google Ads config AW-17691366114')
+    if 'QJLGCNu6wtscEOKl8_NB' not in _h or "phone_conversion_number" not in _h:
+        errors.append(f'{_p.name}: missing phone conversion snippet')
+    if "fbq('init', '1286455403443187')" not in _h:
+        errors.append(f'{_p.name}: missing Meta pixel')
+    if not re.search(r'<script src="app\.js(\?v=[^"]+)?"', _h):
+        errors.append(f'{_p.name}: missing app.js')
+_app = (ROOT/'app.js').read_text()
+if "AW_QUOTE_REQUEST_LABEL = 'obvlCJaFougcEOKl8_NB'" not in _app:
+    errors.append('app.js: quote conversion label missing or changed')
+if 'thank-you.html' not in {p.name for p in HTML_FILES}:
+    errors.append('thank-you.html missing (Jobber hosted form redirects there)')
+# 2) No invented "hypothetical" jobs presented anywhere.
+for _p in HTML_FILES:
+    if re.search(r'hypothetical', _p.read_text(errors='ignore'), re.I):
+        errors.append(f'{_p.name}: contains "hypothetical" planning-example content')
+# 3) The published folder holds only public files.
+_docs = ROOT/'docs'
+if not _docs.exists():
+    errors.append('docs/ (the published site) is missing - run build_pages.py')
+else:
+    _bad = [str(f.relative_to(_docs)) for f in _docs.rglob('*') if f.is_file() and (
+        f.suffix.lower() in ('.py', '.md', '.csv', '.json', '.mjs', '.pyc') or
+        f.name in ('review-notes.html', 'terramorph-photo-contact-sheet.jpg') or
+        'ads' in f.relative_to(_docs).parts[:-1] or 'screenshots' in f.parts)]
+    if _bad:
+        errors.append(f'docs/ contains internal files: {_bad[:10]}')
+    _live = {p.name for p in ALL_HTML if p.name != 'review-notes.html'}
+    _pub = {p.name for p in _docs.glob('*.html')}
+    if _live != _pub:
+        errors.append(f'docs/ is stale vs generated pages: missing {sorted(_live-_pub)[:5]} extra {sorted(_pub-_live)[:5]}')
+    for _p in _docs.glob('*.html'):
+        if _p.read_text(errors='ignore') != (ROOT/_p.name).read_text(errors='ignore'):
+            errors.append(f'docs/{_p.name} differs from the generated page - rebuild'); break
+    for _need in ('CNAME', 'app.js', 'styles.css', 'robots.txt', 'sitemap.xml'):
+        if not (_docs/_need).exists():
+            errors.append(f'docs/{_need} missing')
 
 print(f'HTML files: {len(HTML_FILES)}')
 print(f'Errors: {len(errors)}')

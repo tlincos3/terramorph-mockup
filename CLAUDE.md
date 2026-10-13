@@ -18,6 +18,19 @@ four:
 
 If any fail, that is the headline of your report, above everything else.
 
+## Publishing (since 2026-10-13, Phase 0)
+
+GitHub Pages serves the **docs/** folder, not the repo root. `build_pages.py` regenerates the
+pages and then copies ONLY public files into docs/ (pages, app.js, styles.css, sitemaps,
+robots, CNAME, favicon, top-level assets). Internal notes, code, screenshots, ad creatives
+(assets/ads) and review-notes.html never reach the live site. Always run build_pages.py
+then validate_site.py and commit docs/ with your change. validate_site.py now blocks on:
+broken tracking on ANY page, "hypothetical" content, internal files in docs/, or a stale docs/.
+
+The 10 invented "planning example" case-study pages are now redirect pages to projects.html
+(RETIRED_REDIRECTS in build_pages.py). Do not bring invented jobs back. The June ad-launch
+spreadsheets moved out of this public repo to ~/projects/terramorph/04-marketing/.
+
 ## Pages are generated
 
 Many pages come from `build_pages.py`. Edit the generator, not the output — check which

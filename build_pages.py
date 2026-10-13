@@ -167,7 +167,6 @@ SERVICE_GROUPS = [
     ('Lawn Maintenance', ['Lawn care and mowing', 'Commercial maintenance', 'Residential maintenance', 'Trimming', 'Weeding', 'Bed maintenance', 'Brush clearing']),
     ('Seasonal Cleanups', ['Spring cleanups', 'Fall cleanups', 'Leaf removal', 'Debris cleanup', 'Tree and bush trimming', 'Bed resets', 'Junk removal and hauling']),
     ('Snow Removal', ['Residential snow removal', 'Commercial snow service', 'Industrial property access', 'Walkways', 'Ice management coordination', 'Winter response planning']),
-    ('Additional Property Services', ['Power washing', 'Roof cleaning', 'Exterior services', 'Demolition and site prep', 'Moving and hauling', 'Holiday lighting'])
 ]
 PROJECT_PHOTOS = [
     ('Estate lawn and stone-wall property care', 'assets/real-estate-stone-wall.webp'),
@@ -1532,3 +1531,60 @@ try:
     print(f'wrote V3.49 local SEO/ad authority expansion pages ({len(authority_changed)} authority updates)')
 except Exception as exc:
     raise RuntimeError('seo expansion generation failed') from exc
+
+
+# --- Phase 0 (2026-10-13): retire invented planning examples, publish a clean folder ---
+RETIRED_REDIRECTS = {name: 'projects.html' for name in [
+    'case-studies.html',
+    'perrysburg-paver-patio-case-study.html', 'maumee-yard-drainage-case-study.html',
+    'toledo-front-yard-curb-appeal-case-study.html', 'sylvania-landscape-bed-refresh-case-study.html',
+    'bowling-green-lawn-maintenance-case-study.html', 'holland-standing-water-case-study.html',
+    'waterville-outdoor-living-case-study.html', 'whitehouse-new-construction-landscape-case-study.html',
+    'oregon-seasonal-cleanup-case-study.html', 'rossford-walkway-patio-case-study.html',
+]}
+
+def redirect_stub(target):
+    url = BASE_URL + '/' + target
+    return (f'<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Moved | Terramorph LLC</title>'
+            f'<meta name="robots" content="noindex, follow"><link rel="canonical" href="{url}">'
+            f'<meta http-equiv="refresh" content="0; url={target}"></head>'
+            f'<body><p>This page has moved. <a href="{target}">Go to Terramorph project photos</a>.</p></body></html>\n')
+
+def retire_planning_examples():
+    for name, target in RETIRED_REDIRECTS.items():
+        (root / name).write_text(redirect_stub(target))
+    card = re.compile(r'<a class="guide-card[^"]*" href="(?:' + '|'.join(re.escape(n) for n in RETIRED_REDIRECTS) + r')">.*?</a>', re.S)
+    section = re.compile(r'<section class="section guide-index-section v345-case-studies".*?</section>\s*', re.S)
+    for path in root.glob('*.html'):
+        if path.name in RETIRED_REDIRECTS:
+            continue
+        html = path.read_text()
+        new = section.sub('', card.sub('', html))
+        new = new.replace(', clearly separated from hypothetical project-planning examples', '')
+        if new != html:
+            path.write_text(new)
+
+PUBLIC_EXCLUDE = {'review-notes.html'}
+ASSET_EXCLUDE = {'terramorph-photo-contact-sheet.jpg'}
+
+def export_public_site():
+    """Only these files are published (GitHub Pages serves docs/). Internal
+    notes, code, ad spreadsheets and screenshots stay out of the live site."""
+    import shutil
+    out = root / 'docs'
+    if out.exists():
+        shutil.rmtree(out)
+    (out / 'assets').mkdir(parents=True)
+    for path in root.glob('*.html'):
+        if path.name not in PUBLIC_EXCLUDE:
+            shutil.copy2(path, out / path.name)
+    for name in ['app.js', 'styles.css', 'robots.txt', 'sitemap.xml', 'image-sitemap.xml', 'CNAME', 'favicon.ico', '.nojekyll']:
+        if (root / name).exists():
+            shutil.copy2(root / name, out / name)
+    for path in (root / 'assets').iterdir():
+        if path.is_file() and path.name not in ASSET_EXCLUDE and not path.name.startswith('.'):
+            shutil.copy2(path, out / 'assets' / path.name)
+
+retire_planning_examples()
+export_public_site()
+print('phase 0: planning examples retired, public site exported to docs/')
