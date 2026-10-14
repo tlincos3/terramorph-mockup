@@ -747,3 +747,4 @@ body.tm-skin .hosted-request-action .eyebrow,body.tm .hosted-request-action .eye
 body.tm-skin .quote-panel .hosted-request-action .eyebrow,body.tm-skin .hosted-request-action .eyebrow{color:var(--tm-forest)!important}
 body.tm-skin .phone-direct-card .eyebrow{color:var(--tm-gold-hi)!important}
 body.tm-skin .reviews-section .stars,body.tm-skin .review-carousel .stars,body.tm-skin .review-grid .stars{color:#9a6b1c!important}
+.tm-glance{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}

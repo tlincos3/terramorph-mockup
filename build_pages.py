@@ -1726,7 +1726,7 @@ def sitemap_lastmod():
     path.write_text(re.sub(r'<loc>([^<]+)</loc>', add, xml))
     (root / f'{INDEXNOW_KEY}.txt').write_text(INDEXNOW_KEY)
 
-TM_CSS_VERSION = '3.8'
+TM_CSS_VERSION = '3.9'
 
 def apply_v2_design():
     import v2_pages
