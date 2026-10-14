@@ -702,11 +702,335 @@ function initLazyJobber(){
   holders.forEach(holder => io.observe(holder));
 }
 
+// ---------- Phase 2 (v2 design) interactions. Each no-ops if its element is absent. ----------
+function initTmChrome(){
+  const header = document.querySelector('[data-tm-header]');
+  const menuBtn = document.querySelector('[data-tm-menu]');
+  const nav = document.getElementById('tm-nav');
+  if(header){
+    const solid = () => header.classList.toggle('is-solid', window.scrollY > 40);
+    solid();
+    window.addEventListener('scroll', solid, {passive: true});
+  }
+  if(menuBtn && nav){
+    menuBtn.addEventListener('click', () => {
+      const open = nav.classList.toggle('is-open');
+      menuBtn.setAttribute('aria-expanded', String(open));
+      if(open) header?.classList.add('is-solid');
+    });
+    nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+      nav.classList.remove('is-open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }));
+  }
+  const bar = document.querySelector('[data-tm-bar]');
+  const form = document.getElementById('request-form');
+  if(bar && form && 'IntersectionObserver' in window){
+    new IntersectionObserver(entries => {
+      entries.forEach(entry => bar.classList.toggle('is-hidden', entry.isIntersecting));
+    }, {threshold: 0.15}).observe(form);
+  }
+}
+
+function initTmReveal(){
+  if(document.body.classList.contains('tm-skin')){
+    document.querySelectorAll('.section-heading, .why-grid > div, .authority-list > div, .local-specifics-grid > div, .guide-card, .ai-answer-card, .problem-card, .compact-review, .guide-content-block, .photo-carousel').forEach(el => el.classList.add('tm-reveal'));
+  }
+  const els = [...document.querySelectorAll('.tm-reveal')];
+  if(!els.length) return;
+  // Siblings come in one after another instead of all at once.
+  els.forEach(el => {
+    const sibs = el.parentElement ? [...el.parentElement.children].filter(c => c.classList.contains('tm-reveal')) : [el];
+    const n = sibs.indexOf(el);
+    if(n > 0) el.style.transitionDelay = (Math.min(n, 6) * 0.09).toFixed(2) + 's';
+  });
+  const showAll = () => els.forEach(el => el.classList.add('is-in'));
+  if(!('IntersectionObserver' in window) || document.documentElement.classList.contains('tm-calm')){ showAll(); return; }
+  document.documentElement.classList.add('tm-js');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('is-in'); io.unobserve(entry.target); } });
+  }, {rootMargin: '0px 0px -8% 0px'});
+  els.forEach(el => io.observe(el));
+  // Never leave content hidden if the observer is slow or unavailable.
+  setTimeout(showAll, 2500);
+}
+
+function initTmBeforeAfter(){
+  document.querySelectorAll('[data-ba]').forEach(box => {
+    const range = box.querySelector('.tm-ba-range');
+    if(!range) return;
+    let used = false;
+    const set = value => {
+      box.style.setProperty('--pos', value + '%');
+      if(!used){ used = true; pushAnalyticsEvent('slider_used', getTrackingContext()); }
+    };
+    range.addEventListener('input', () => set(range.value));
+  });
+}
+
+function initTmMap(){
+  const holder = document.querySelector('[data-leaflet]');
+  const card = document.querySelector('[data-town-card]');
+  if(!holder) return;
+  let data;
+  try { data = JSON.parse(holder.dataset.leaflet); } catch(e){ return; }
+  let started = false;
+  const start = () => {
+    if(started) return;
+    started = true;
+    loadLeaflet().then(L => buildMap(L, holder, card, data)).catch(() => {
+      holder.innerHTML = '<div class="tm-map-loading">Map unavailable. Pick your town from the list.</div>';
+    });
+  };
+  const near = () => holder.getBoundingClientRect().top < window.innerHeight + 500;
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver(entries => { if(entries.some(e => e.isIntersecting)){ io.disconnect(); start(); } }, {rootMargin: '500px 0px'});
+    io.observe(holder);
+  }
+  // Backup for browsers or embedded views where the observer never fires.
+  const onScroll = () => { if(near()){ window.removeEventListener('scroll', onScroll); start(); } };
+  window.addEventListener('scroll', onScroll, {passive: true});
+  onScroll();
+}
+
+function loadLeaflet(){
+  if(window.L) return Promise.resolve(window.L);
+  return new Promise((resolve, reject) => {
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    css.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
+    css.crossOrigin = '';
+    document.head.appendChild(css);
+    const js = document.createElement('script');
+    js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    js.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
+    js.crossOrigin = '';
+    js.onload = () => window.L ? resolve(window.L) : reject();
+    js.onerror = reject;
+    document.head.appendChild(js);
+  });
+}
+
+function buildMap(L, holder, card, data){
+  holder.innerHTML = '';
+  const touch = window.matchMedia('(pointer: coarse)').matches;
+  const map = L.map(holder, {zoomSnap: 0.25, zoomControl: false, scrollWheelZoom: false, dragging: !touch, tap: false, attributionControl: true});
+  L.control.zoom({position: 'bottomright'}).addTo(map);
+  map.attributionControl.setPrefix('<a href="https://leafletjs.com">Leaflet</a>');
+  const minor = ['Ottawa Hills', 'Rossford', 'Monclova', 'Holland'];
+  const zoomClass = () => holder.classList.toggle('tm-z-low', map.getZoom() < 11);
+  map.on('zoomend', zoomClass);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 15, minZoom: 9,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+  const bounds = L.latLngBounds(data.towns.map(t => [t.la, t.lo]));
+  map.fitBounds(bounds, {padding: touch ? [64, 26] : [60, 50]});
+  zoomClass();
+  const home = () => map.flyToBounds(bounds, {padding: touch ? [64, 26] : [60, 50], duration: 1});
+  // Service zone grows out from the shop.
+  const zone = L.circle([data.hq.la, data.hq.lo], {radius: 1, color: '#f1d384', weight: 1.5, fillColor: '#d8aa4d', fillOpacity: .09, className: 'tm-zone', interactive: false}).addTo(map);
+  const target = 30000, t0 = performance.now();
+  const grow = now => {
+    const k = Math.min((now - t0) / 1600, 1);
+    zone.setRadius(target * (1 - Math.pow(1 - k, 3)));
+    if(k < 1) requestAnimationFrame(grow);
+  };
+  requestAnimationFrame(grow);
+  L.marker([data.hq.la, data.hq.lo], {icon: L.divIcon({className: '', html: '<div class="tm-hq"><i></i><b>Terramorph HQ</b></div>', iconSize: [22, 22], iconAnchor: [11, 11]}), keyboard: false, interactive: false}).addTo(map);
+  const left = ['Holland', 'Monclova', 'Waterville', 'Sylvania', 'Maumee', 'Toledo'].concat(touch ? [] : ['Whitehouse']);
+  const pins = [];
+  data.towns.forEach((t, i) => {
+    const isLeft = left.includes(t.n);
+    const icon = L.divIcon({className: '', html: '<div class="tm-pin' + (isLeft ? ' is-left' : '') + (minor.includes(t.n) ? ' is-minor' : '') + '" style="--d:' + (0.5 + i * 0.09).toFixed(2) + 's"><i></i><b>' + t.n + '</b></div>', iconSize: [14, 14], iconAnchor: isLeft ? [-0, 7] : [7, 7]});
+    const m = L.marker([t.la, t.lo], {icon, title: t.n, alt: t.n, riseOnHover: true}).addTo(map);
+    pins.push(m);
+    m.on('click', () => {
+      pins.forEach(p => p.getElement()?.querySelector('.tm-pin')?.classList.remove('is-on'));
+      m.getElement()?.querySelector('.tm-pin')?.classList.add('is-on');
+      map.flyTo([t.la, t.lo], 12, {duration: 1.1});
+      if(card){
+        const local = t.p !== 'service-areas.html';
+        card.innerHTML = '<b>Yes, we serve ' + t.n + '.</b><p>Design, patios, drainage, lighting, maintenance, and cleanups in ' + t.n + ' and the surrounding area.</p>' +
+          '<div class="tm-town-links">' + (local ? '<a class="tm-btn tm-btn-line tm-btn-sm" href="' + t.p + '">' + t.n + ' landscaping</a>' : '') +
+          '<a class="tm-btn tm-btn-gold tm-btn-sm" href="#request-form">Get a free quote</a><button type="button" class="tm-btn tm-btn-line tm-btn-sm" data-map-reset>Show all towns</button></div>';
+        card.querySelector('[data-map-reset]')?.addEventListener('click', () => { pins.forEach(p => p.getElement()?.querySelector('.tm-pin')?.classList.remove('is-on')); home(); });
+        card.classList.remove('tm-card-pop'); void card.offsetWidth; card.classList.add('tm-card-pop');
+      }
+      pushAnalyticsEvent('map_town_tapped', {town: t.n, ...getTrackingContext()});
+    });
+  });
+}
+
+if(/[?&]calm\b/.test(window.location.search)) document.documentElement.classList.add('tm-calm');
+
+// Site-wide motion: scroll progress, hero drift, headline word rise, count-ups,
+// card tilt and the How-it-works timeline. Everything is skipped for visitors
+// who ask for reduced motion.
+function initTmMotion(){
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('tm-calm');
+  // Timeline + any [data-inview] block: add .is-in once on screen.
+  const inview = [...document.querySelectorAll('[data-proc], [data-inview]')];
+  if(calm || !('IntersectionObserver' in window)){ inview.forEach(el => el.classList.add('is-in')); }
+  else {
+    const io = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); } }), {rootMargin: '0px 0px -18% 0px'});
+    inview.forEach(el => io.observe(el));
+    // Backup: never leave a block un-played if the observer stays silent.
+    const check = () => {
+      inview.forEach(el => { const r = el.getBoundingClientRect(); if(r.top < window.innerHeight * 0.85 && r.bottom > 0) el.classList.add('is-in'); });
+      if(inview.every(el => el.classList.contains('is-in'))) window.removeEventListener('scroll', check);
+    };
+    window.addEventListener('scroll', check, {passive: true});
+    check();
+  }
+  if(calm) return;
+  // Thin gold scroll-progress line.
+  const bar = document.createElement('div');
+  bar.className = 'tm-progress';
+  bar.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(bar);
+  // Hero photo drifts slower than the page.
+  const media = document.querySelector('.tm-hero-media, .page-hero-image');
+  let ticking = false;
+  const onScroll = () => {
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(y / max, 1) : 0) + ')';
+      if(media && y < window.innerHeight * 1.2) media.style.transform = 'translate3d(0,' + (y * 0.22).toFixed(1) + 'px,0)';
+      ticking = false;
+    });
+  };
+  window.addEventListener('scroll', onScroll, {passive: true});
+  onScroll();
+  // Inner-page headlines rise in word by word.
+  const h1 = document.querySelector('.page-hero h1');
+  if(h1 && !h1.querySelector('.tm-w')){
+    const words = h1.textContent.trim().split(/\s+/);
+    h1.setAttribute('aria-label', h1.textContent.trim());
+    h1.innerHTML = words.map((w, i) => '<span class="tm-w" aria-hidden="true" style="animation-delay:' + (0.05 + i * 0.055).toFixed(2) + 's">' + w.replace(/[&<>]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'})[c]) + '</span>').join(' ');
+    h1.classList.add('tm-split');
+  }
+  // Numbers count up when they come into view (220+, 4.9).
+  const counters = [...document.querySelectorAll('.trust-feature strong, .tm-rating-big b')].filter(el => /^\d+(\.\d)?\+?$/.test(el.textContent.trim()));
+  if(counters.length && 'IntersectionObserver' in window){
+    const cio = new IntersectionObserver(entries => entries.forEach(e => {
+      if(!e.isIntersecting) return;
+      cio.unobserve(e.target);
+      const el = e.target, raw = el.textContent.trim(), plus = raw.endsWith('+') ? '+' : '';
+      const end = parseFloat(raw), dec = raw.includes('.') ? 1 : 0, t0 = performance.now();
+      const tick = now => {
+        const k = Math.min((now - t0) / 1400, 1), v = end * (1 - Math.pow(1 - k, 3));
+        el.textContent = v.toFixed(dec) + (k === 1 ? plus : '');
+        if(k < 1) requestAnimationFrame(tick); else el.textContent = raw;
+      };
+      requestAnimationFrame(tick);
+    }), {threshold: 0.6});
+    counters.forEach(el => cio.observe(el));
+  }
+  // Subtle 3D tilt on photo tiles and guide cards (mouse only).
+  if(window.matchMedia('(hover: hover) and (pointer: fine)').matches){
+    document.querySelectorAll('.tm-tile, .guide-card').forEach(card => {
+      card.addEventListener('pointermove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = 'perspective(900px) rotateY(' + (x * 5).toFixed(2) + 'deg) rotateX(' + (-y * 5).toFixed(2) + 'deg) translateY(-4px)';
+      });
+      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+    });
+  }
+}
+
+// Homepage "What is going on with your yard?" picker.
+function initTmPicker(){
+  const box = document.querySelector('[data-picker]');
+  if(!box) return;
+  const opts = [...box.querySelectorAll('[data-pick]')];
+  const panes = [...box.querySelectorAll('[data-pane]')];
+  opts.forEach(btn => btn.addEventListener('click', () => {
+    const key = btn.dataset.pick;
+    opts.forEach(o => o.setAttribute('aria-pressed', String(o === btn)));
+    panes.forEach(p => {
+      const on = p.dataset.pane === key;
+      p.hidden = !on;
+      p.classList.toggle('is-on', on);
+      p.classList.remove('is-entering');
+      if(on){ void p.offsetWidth; p.classList.add('is-entering'); }
+    });
+    if(window.matchMedia('(max-width: 900px)').matches){
+      btn.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'center'});
+    }
+    pushAnalyticsEvent('yard_picker_choice', {choice: key, ...getTrackingContext()});
+  }));
+  box.querySelectorAll('[data-pick-cta]').forEach(a => a.addEventListener('click', () => {
+    pushAnalyticsEvent('yard_picker_quote_click', {choice: a.dataset.pickCta, ...getTrackingContext()});
+  }));
+}
+
+// Before/after cards: wipe from the before shot to the after shot when they
+// scroll into view; the Before/After pills switch back and forth.
+function initTmFlip(){
+  const cards = [...document.querySelectorAll('[data-flip]')];
+  if(!cards.length) return;
+  const show = (card, which) => {
+    card.classList.toggle('show-after', which === 'after');
+    card.querySelectorAll('[data-show]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.show === which)));
+  };
+  cards.forEach(card => {
+    show(card, 'before');
+    card.querySelectorAll('[data-show]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); card.dataset.played = '1'; show(card, b.dataset.show); }));
+    card.querySelector('.tm-flip-media')?.addEventListener('click', () => { card.dataset.played = '1'; show(card, card.classList.contains('show-after') ? 'before' : 'after'); });
+  });
+  const play = card => { if(card.dataset.played) return; card.dataset.played = '1'; setTimeout(() => show(card, 'after'), 900); };
+  const check = () => cards.forEach(card => { const r = card.getBoundingClientRect(); if(r.top < window.innerHeight * 0.75 && r.bottom > 0) play(card); });
+  window.addEventListener('scroll', check, {passive: true});
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ play(e.target); io.unobserve(e.target); } }), {threshold: 0.45});
+    cards.forEach(c => io.observe(c));
+  }
+  check();
+}
+
+// Gallery photos carry data-src until the gallery is close to the screen,
+// so they never compete with the page's first photo for bandwidth.
+function hydrateCarousel(carousel){
+  carousel.querySelectorAll('img[data-src]').forEach(img => {
+    if(img.dataset.srcset) img.srcset = img.dataset.srcset;
+    img.src = img.dataset.src;
+    img.removeAttribute('data-src');
+    img.removeAttribute('data-srcset');
+  });
+}
+
+function watchCarouselLoad(carousel, then){
+  if(!carousel.querySelector('img[data-src]') && !then) return;
+  let done = false;
+  const near = () => { const r = carousel.getBoundingClientRect(); return r.top < window.innerHeight + 600 && r.bottom > -600; };
+  const go = () => { if(done) return; done = true; window.removeEventListener('scroll', onScroll); hydrateCarousel(carousel); if(then) then(); };
+  const onScroll = () => { if(near()) go(); };
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => { if(es.some(e => e.isIntersecting)){ io.disconnect(); go(); } }, {rootMargin: '600px 0px'});
+    io.observe(carousel);
+  }
+  window.addEventListener('scroll', onScroll, {passive: true});
+  requestAnimationFrame(() => setTimeout(onScroll, 0));
+}
+
 function initCarousels(){
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('tm-calm');
   document.querySelectorAll('[data-carousel]').forEach(carousel => {
     const track = carousel.querySelector('.carousel-track');
     if(!track) return;
     const step = () => Math.max(track.clientWidth * 0.8, 240);
+    if(carousel.classList.contains('photo-carousel') && !calm){
+      // Set up the glide only when the gallery is about to be seen, so page load stays light.
+      watchCarouselLoad(carousel, () => initGlide(carousel, track, step));
+      return;
+    }
+    watchCarouselLoad(carousel);
     const go = dir => track.scrollBy({left: dir * step(), behavior: 'smooth'});
     carousel.querySelector('[data-carousel-prev]')?.addEventListener('click', () => go(-1));
     carousel.querySelector('[data-carousel-next]')?.addEventListener('click', () => go(1));
@@ -724,12 +1048,67 @@ function initCarousels(){
     };
     ['pointerenter', 'pointerdown', 'focusin', 'touchstart'].forEach(ev => carousel.addEventListener(ev, stop, {passive: true}));
     carousel.addEventListener('pointerleave', start);
-    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches) start();
+    if(!calm) start();
   });
+}
+
+// Project photos glide continuously in a seamless loop; touching, hovering or
+// using the arrows pauses the glide, and it picks back up a few seconds later.
+function initGlide(carousel, track, step){
+  const originals = [...track.children];
+  originals.forEach(slide => {
+    const copy = slide.cloneNode(true);
+    copy.setAttribute('aria-hidden', 'true');
+    copy.querySelectorAll('img').forEach(img => { img.alt = ''; });
+    track.appendChild(copy);
+  });
+  carousel.classList.add('is-gliding');
+  track.style.scrollSnapType = 'none';
+  track.style.scrollBehavior = 'auto';
+  const SPEED = 38; // px per second
+  let pos = 0, last = 0, visible = false, pausedUntil = 0, hovering = false;
+  const half = () => track.scrollWidth / 2;
+  const pause = ms => { pausedUntil = performance.now() + ms; };
+  const frame = now => {
+    const dt = last ? Math.min(now - last, 64) : 16;
+    last = now;
+    if(visible && !hovering && now > pausedUntil && half() > track.clientWidth){
+      if(Math.abs(track.scrollLeft - pos) > 2) pos = track.scrollLeft; // user moved it
+      pos += SPEED * dt / 1000;
+      if(pos >= half()) pos -= half();
+      track.scrollLeft = pos;
+    }
+    requestAnimationFrame(frame);
+  };
+  const jump = dir => {
+    pause(5000);
+    let target = track.scrollLeft + dir * step();
+    if(target < 0) { track.scrollLeft += half(); target += half(); }
+    track.scrollTo({left: target, behavior: 'smooth'});
+  };
+  carousel.querySelector('[data-carousel-prev]')?.addEventListener('click', () => jump(-1));
+  carousel.querySelector('[data-carousel-next]')?.addEventListener('click', () => jump(1));
+  carousel.addEventListener('pointerenter', e => { if(e.pointerType === 'mouse') hovering = true; });
+  carousel.addEventListener('pointerleave', () => { hovering = false; pos = track.scrollLeft; });
+  ['pointerdown', 'touchstart', 'wheel', 'focusin'].forEach(ev => carousel.addEventListener(ev, () => pause(3500), {passive: true}));
+  track.addEventListener('scroll', () => { if(track.scrollLeft >= half()) { track.scrollLeft -= half(); pos = track.scrollLeft; } }, {passive: true});
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(entries => { visible = entries[0].isIntersecting; }, {rootMargin: '100px'}).observe(carousel);
+  } else {
+    visible = true;
+  }
+  requestAnimationFrame(frame);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   initCarousels();
+  initTmChrome();
+  initTmReveal();
+  initTmBeforeAfter();
+  initTmMap();
+  initTmMotion();
+  initTmPicker();
+  initTmFlip();
   persistTrackingContext();
   // Must run BEFORE decorateAttributionLinks() so the hosted-form button it
   // creates gets the utm/fbclid query string appended, and before the
@@ -739,6 +1118,9 @@ document.addEventListener('DOMContentLoaded', () => {
   pushAnalyticsEvent('terramorph_page_view', getTrackingContext());
   if(document.querySelector('[data-funnel-service]')){
     metaTrack('ViewContent', {content_name: 'Terramorph service landing page', content_category: getTrackingContext().service_category, ...getTrackingContext()});
+  } else if(document.body.classList.contains('tm-svc')){
+    // Main service pages: lets Meta build audiences of people who looked at a service.
+    metaTrack('ViewContent', {content_name: document.title, content_category: 'service_page', ...getTrackingContext()});
   }
   trackAttributedThankYouView();
   watchJobberFormSubmission();

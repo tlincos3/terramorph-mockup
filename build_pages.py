@@ -123,7 +123,7 @@ FOOT = f'''
     </div>
   </div>
 </footer>
-<script src="app.js?v=3.65"></script>
+<script src="app.js?v=3.93"></script>
 '''
 
 # Verbatim excerpts from Terramorph's public Google reviews (pulled 2026-08-26,
@@ -174,29 +174,42 @@ SERVICE_GROUPS = [
     ('Seasonal Cleanups', ['Spring cleanups', 'Fall cleanups', 'Leaf removal', 'Debris cleanup', 'Tree and bush trimming', 'Bed resets', 'Junk removal and hauling']),
     ('Snow Removal', ['Residential snow removal', 'Commercial snow service', 'Industrial property access', 'Walkways', 'Ice management coordination', 'Winter response planning']),
 ]
-PROJECT_PHOTOS = [
+PROJECT_PHOTOS = [  # best first; 2026-10-13 curated, low-res shots dropped
     ('Estate lawn and stone-wall property care', 'assets/real-estate-stone-wall.webp'),
+    ('Striped lawn and front beds at a new home', 'assets/real-navy-home-stripes.webp'),
+    ('Front walk and entry lighting at night', 'assets/real-lighting-night.webp'),
+    ('Block seat wall and front landscape beds', 'assets/real-modern-stone-wall.webp'),
+    ('Estate lawn with fresh mowing stripes', 'assets/real-estate-lawn-stripes.webp'),
+    ('Front-entry plantings with paver border', 'assets/real-entry-columns-bed.webp'),
+    ('Curved planting bed at a new build', 'assets/real-curved-bed-new-home.webp'),
+    ('Brick paver patio with timber edge', 'assets/real-brick-patio-timber-edge.webp'),
     ('Fall leaf cleanup crew at work', 'assets/real-fall-leaf-crew.webp'),
+    ('Backyard lawn striping by the pool', 'assets/real-pool-lawn-stripes.webp'),
+    ('New front planting bed with paver border', 'assets/real-front-bed-paver-border.webp'),
+    ('Paver walkway and foundation beds', 'assets/real-bungalow-walkway-beds.webp'),
+    ('Estate front beds with white rock', 'assets/real-estate-front-bed.webp'),
+    ('Commercial flower bed at an office entrance', 'assets/real-commercial-flower-bed.webp'),
+    ('Hydroseeded slope with a rock channel', 'assets/real-hydroseed-slope.webp'),
+    ('Landscape lighting on a driveway', 'assets/real-lighting-driveway.webp'),
+    ('Colonial home lawn striping', 'assets/real-colonial-lawn-stripes.webp'),
+    ('Mature front-yard bed refresh', 'assets/real-mature-front-bed.webp'),
+    ('Front walk and mulch bed', 'assets/real-front-walk-bed.webp'),
     ('Finished fall cleanup on a wooded property', 'assets/real-fall-cleanup-after.webp'),
     ('Boxwood and mulch foundation beds', 'assets/real-boxwood-front-bed.webp'),
+    ('Curved beds and striped lawn', 'assets/real-curved-beds-stripes.webp'),
     ('Brick paver walkway and garage beds', 'assets/real-brick-paver-walkway.webp'),
-    ('Retaining wall installation', 'assets/real-retaining-block.webp'),
-    ('Front-entry columns and fresh plantings', 'assets/real-entry-columns-bed.webp'),
-    ('New-construction landscape installation', 'assets/completed-new-construction-landscape.jpg'),
-    ('Landscape lighting at night', 'assets/real-lighting-night.webp'),
-    ('Deck-side patio landing with white rock', 'assets/real-deck-patio-landing.webp'),
-    ('Estate front beds with white rock', 'assets/real-estate-front-bed.webp'),
-    ('Lawn maintenance and clean striping', 'assets/real-striped-lawn-pool.webp'),
-    ('Backyard garden bed transformation', 'assets/real-backyard-garden-bed.webp'),
-    ('Arborvitae privacy row planting', 'assets/real-arborvitae-row.webp'),
-    ('Shoreline rock and erosion control', 'assets/real-shoreline-riprap.webp'),
-    ('Modern stone wall and plantings', 'assets/real-modern-stone-wall.webp'),
-    ('Fence-line planting bed with flowers', 'assets/real-fence-line-planting.webp'),
-    ('Mature front-yard bed refresh', 'assets/real-mature-front-bed.webp'),
-    ('Tree ring with stone border', 'assets/real-tree-ring-pergola.webp'),
-    ('Hydroseed lawn installation', 'assets/real-hydroseed.webp'),
+    ('River rock bed by the front porch', 'assets/real-river-rock-bed.webp'),
+    ('Core aeration with a stand-on aerator', 'assets/real-stinger-aerator.webp'),
     ('Commercial grounds with rock beds', 'assets/real-commercial-rock-beds.webp'),
-    ('Driveway lighting after dark', 'assets/real-lighting-driveway.webp'),
+    ('Brick home with striped lawn', 'assets/real-brick-home-stripes.webp'),
+    ('Retaining wall installation', 'assets/real-retaining-block.webp'),
+    ('Side-yard bed with stone edging', 'assets/real-side-bed-stone-edge.webp'),
+    ('Poolside planting bed', 'assets/real-poolside-bed.webp'),
+    ('Side-yard river rock and stepping stones', 'assets/real-side-yard-stepping-stones.webp'),
+    ('Commercial building beds and walkway', 'assets/real-commercial-walkway.webp'),
+    ('Commercial sign bed with fresh mulch', 'assets/real-camping-world-bed.webp'),
+    ('Commercial rock bed along a building', 'assets/real-commercial-rock-bed.webp'),
+    ('New-construction landscape installation', 'assets/completed-new-construction-landscape.jpg'),
 ]
 
 def head(title, desc, schema='', page_name=''):
@@ -1514,7 +1527,11 @@ def write_static_seo_files():
         sitemap += f'  <url><loc>{loc}</loc><changefreq>monthly</changefreq><priority>{priorities.get(page_name, "0.7")}</priority></url>\n'
     sitemap += '</urlset>\n'
     (root/'sitemap.xml').write_text(sitemap)
-    (root/'robots.txt').write_text(f'User-agent: *\nAllow: /\nSitemap: {BASE_URL}/sitemap.xml\n')
+    ai_bots = ['Googlebot', 'Google-Extended', 'Bingbot', 'OAI-SearchBot', 'ChatGPT-User', 'GPTBot', 'ClaudeBot', 'Claude-SearchBot',
+               'Claude-User', 'PerplexityBot', 'Perplexity-User', 'Applebot', 'Applebot-Extended', 'DuckAssistBot', 'meta-externalagent', 'Amazonbot']
+    (root/'robots.txt').write_text('# terramorphllc.com - every page is open to search engines and AI assistants.\n'
+                                   'User-agent: *\nAllow: /\n\n# Search + AI answer crawlers, named so it is explicit they are welcome.\n'
+                                   + ''.join(f'User-agent: {b}\n' for b in ai_bots) + f'Allow: /\n\nSitemap: {BASE_URL}/sitemap.xml\n')
 
 def post_process_html():
     for path in root.glob('*.html'):
@@ -1526,7 +1543,7 @@ def post_process_html():
         if path.name != 'contact.html':
             html = html.replace('href="contact.html"', 'href="quote.html"')
         html = html.replace('href="#quote"', 'href="quote.html"')
-        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.65"></script>', html)
+        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.93"></script>', html)
         path.write_text(html)
 
 write_static_seo_files()
@@ -1587,14 +1604,14 @@ def export_public_site():
     for path in root.glob('*.html'):
         if path.name not in PUBLIC_EXCLUDE:
             shutil.copy2(path, out / path.name)
-    for name in ['app.js', 'styles.css', 'robots.txt', 'sitemap.xml', 'image-sitemap.xml', 'CNAME', 'favicon.ico', '.nojekyll', f'{INDEXNOW_KEY}.txt']:
+    for name in ['app.js', 'styles.css', 'tm.css', 'robots.txt', 'llms.txt', 'sitemap.xml', 'image-sitemap.xml', 'CNAME', 'favicon.ico', '.nojekyll', f'{INDEXNOW_KEY}.txt']:
         if (root / name).exists():
             shutil.copy2(root / name, out / name)
     for path in (root / 'assets').iterdir():
         if path.is_file() and path.name not in ASSET_EXCLUDE and not path.name.startswith('.'):
             shutil.copy2(path, out / 'assets' / path.name)
 
-VARIANT_WIDTHS = (480, 960)
+VARIANT_WIDTHS = (480, 640, 960)
 
 def responsive_images():
     """Give every on-site photo smaller copies and a srcset so phones download
@@ -1623,6 +1640,35 @@ def responsive_images():
             out = []
         made[name] = out if len(out) > 1 else []
         return made[name]
+    dim_cache = {}
+    def dims(name):
+        if name in dim_cache:
+            return dim_cache[name]
+        dim_cache[name] = _dims(name)
+        return dim_cache[name]
+    def _dims(name):
+        try:
+            with Image.open(root / 'assets' / name) as im:
+                return ImageOps.exif_transpose(im).size
+        except Exception:
+            return (4, 3)
+    def phone_crop(name):
+        """Center crop of a hero photo in phone shape (0.62:1), same pixels, no upscaling."""
+        src = root / 'assets' / name
+        out = root / 'assets' / f'{src.stem}-m.webp'
+        try:
+            if not out.exists() or out.stat().st_mtime < src.stat().st_mtime:
+                with Image.open(src) as im:
+                    im = ImageOps.exif_transpose(im).convert('RGB')
+                    w, h = im.size
+                    cw = min(w, round(h * 0.62))
+                    if cw >= w:
+                        return None
+                    x = (w - cw) // 2
+                    im.crop((x, 0, x + cw, h)).save(out, 'WEBP', quality=80, method=5)
+            return out.name
+        except Exception:
+            return None
     tag_re = re.compile(r'<img\b[^>]*\bsrc="assets/([A-Za-z0-9_.-]+\.(?:webp|jpg|jpeg|png))(?:\?[^"]*)?"[^>]*>')
     for path in root.glob('*.html'):
         html = path.read_text()
@@ -1637,10 +1683,22 @@ def responsive_images():
             if 'fetchpriority="high"' in tag:
                 sizes = '(max-width: 760px) 170vw, 100vw'
             elif 'carousel-slide' in before:
-                sizes = '(max-width: 760px) 86vw, 460px'
+                sizes = '(max-width: 640px) 340px, 460px'
             else:
                 sizes = '(max-width: 760px) 100vw, 50vw'
             srcset = ', '.join(f'assets/{n} {w}w' for n, w in v)
+            if 'carousel-slide' in before and 'fetchpriority' not in tag:
+                # Gallery photos load only when the gallery nears the screen (app.js
+                # hydrateCarousel); an SVG of the right shape holds the space until then.
+                w, h = dims(m.group(1))
+                ph = f"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='{w}' height='{h}' viewBox='0 0 {w} {h}'%3E%3C/svg%3E"
+                t2 = tag.replace(f'src="assets/{m.group(1)}"', f'src="{ph}" data-src="assets/{m.group(1)}"', 1)
+                return t2[:-1].rstrip().rstrip('/').rstrip() + f' data-srcset="{srcset}" sizes="{sizes}">'
+            if 'fetchpriority="high"' in tag:
+                mob = phone_crop(m.group(1))
+                if mob:
+                    return (f'<picture><source media="(max-width: 640px)" srcset="assets/{mob}">'
+                            + tag[:-1].rstrip().rstrip('/').rstrip() + f' srcset="{srcset}" sizes="{sizes}"></picture>')
             return tag[:-1].rstrip().rstrip('/').rstrip() + f' srcset="{srcset}" sizes="{sizes}">'
         new = tag_re.sub(swap, html)
         if new != html:
@@ -1668,7 +1726,17 @@ def sitemap_lastmod():
     path.write_text(re.sub(r'<loc>([^<]+)</loc>', add, xml))
     (root / f'{INDEXNOW_KEY}.txt').write_text(INDEXNOW_KEY)
 
+TM_CSS_VERSION = '3.8'
+
+def apply_v2_design():
+    import v2_pages
+    app_v = re.search(r'app\.js\?v=([0-9.]+)', (root / 'about.html').read_text()).group(1)
+    ctx = dict(globals())
+    ctx.update({'TM_CSS_VERSION': TM_CSS_VERSION, 'APP_JS_VERSION': app_v})
+    v2_pages.apply(ctx)
+
 retire_planning_examples()
+apply_v2_design()
 responsive_images()
 sitemap_lastmod()
 export_public_site()

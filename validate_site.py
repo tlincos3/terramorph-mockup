@@ -71,6 +71,8 @@ for path in HTML_FILES:
     # image checks
     for img in p.imgs:
         src=img.get('src','')
+        if src.startswith('data:'):
+            src=img.get('data-src','')  # deferred gallery photo: check the real file
         if not img.get('alt') and img.get('alt')!='': errors.append(f'{path.name}: img missing alt {src}')
         if src and not src.startswith(EXTERNAL_PREFIXES):
             clean=src.split('?')[0]
@@ -114,7 +116,7 @@ try:
     for _img in sorted((ROOT/'assets').glob('*')):
         if _img.suffix.lower() not in ('.webp', '.jpg', '.jpeg', '.png'):
             continue
-        if 'logo' in _img.name or 'verified' in _img.name or 'bbb' in _img.name or 'contact-sheet' in _img.name or _img.suffix.lower() == '.svg':
+        if 'logo' in _img.name or 'tm-mark' in _img.name or 'verified' in _img.name or 'bbb' in _img.name or 'contact-sheet' in _img.name or _img.suffix.lower() == '.svg':
             continue
         try:
             _arr = _np.asarray(Image.open(_img).convert('L'))
