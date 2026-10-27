@@ -70,6 +70,7 @@ def foot(c, home=False):
       <a href="lawn-maintenance.html">Lawn maintenance</a>
       <a href="seasonal-cleanups.html">Seasonal cleanups</a>
       <a href="snow-removal.html">Snow removal</a>
+      <a href="snow-removal-signup.html">Snow removal sign-up</a>
     </div>
     <div>
       <h2>Learn</h2>
@@ -453,9 +454,9 @@ def apply(c):
             extra_cls = ' tm-lp' if path.name.startswith('lp-') else ''
             t = re.sub(r'<body(?: class="([^"]*)")?>', lambda m: f'<body class="{(m.group(1) + " ") if m.group(1) else ""}tm-skin{extra_cls}">', t, count=1)
         # Real-work gallery on every content page that has no project photos yet.
-        if 'photo-carousel' not in t and path.name not in NO_GALLERY:
+        if 'photo-carousel' not in t and path.name not in NO_GALLERY and len(c['photos_for_page'](path.name)) >= 3:
             gal = ('<section class="section work-section tm-added-work"><div class="container section-heading compact"><p class="eyebrow">Recent work</p>'
-                   '<h2>Real Terramorph projects around Northwest Ohio.</h2></div><div class="container">' + c['photo_gallery']() + '</div></section>\n')
+                   '<h2>' + c['gallery_heading_for_page'](path.name, 'Real Terramorph projects around Northwest Ohio.') + '</h2></div><div class="container">' + c['photo_gallery'](c['photos_for_page'](path.name)) + '</div></section>\n')
             for marker in ('<section class="section faq-section">', '<section class="section quote-section">'):
                 if marker in t:
                     t = t.replace(marker, gal + marker, 1)
@@ -475,4 +476,9 @@ def apply(c):
             t = re.sub(r'(<meta name="twitter:image" content=")[^"]+(")', lambda m: m.group(1) + img_url + m.group(2), t, count=1)
         if 'tm-marquee' not in t:
             t = re.sub(r'(<section class="page-hero[^"]*".*?</section>)', lambda m: m.group(1) + '\n' + marquee_html(c), t, count=1, flags=re.S)
+        # Every snow page points at the seasonal sign-up page (2026-10-26).
+        if path.name.startswith('snow-removal') and path.name != 'snow-removal-signup.html' and 'tm-snow-cta' not in t:
+            strip = ('<section class="tm-snow-cta"><div class="tm-wrap"><p><b>Winter sign-up is open.</b> Residential and commercial seasonal snow service. Reserve before the first storm.</p>'
+                     f'<div class="tm-cta-row"><a class="tm-btn tm-btn-gold" href="snow-removal-signup.html">Sign up for winter service</a><a class="tm-btn tm-btn-line" href="tel:{c["TEL"]}">Call {c["PHONE"]}</a></div></div></section>\n')
+            t = re.sub(r'(<div class="tm-marquee[^>]*>.*?</div>\s*</div>\s*)', lambda m: m.group(1) + strip, t, count=1, flags=re.S) if '<div class="tm-marquee' in t else t.replace('<main id="main">', '<main id="main">' + strip, 1)
         path.write_text(t)

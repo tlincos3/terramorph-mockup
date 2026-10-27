@@ -212,6 +212,177 @@ PROJECT_PHOTOS = [  # best first; 2026-10-13 curated, low-res shots dropped
     ('New-construction landscape installation', 'assets/completed-new-construction-landscape.jpg'),
 ]
 
+# Per-service photo sets (2026-10-26). Only Trent's real project photos, best
+# first, captions limited to what the photo plainly shows - no towns or dates
+# are known from the filenames, so none are claimed. A service page or landing
+# page shows ONLY its own set; the big PROJECT_PHOTOS rotation stays on
+# projects.html and general pages.
+SERVICE_PHOTOS = {
+    'patios': [
+        ('Paver patio with a gas fire pit and block seat wall', 'assets/real-patio.webp'),
+        ('Curved paver walkway along a front landscape bed', 'assets/real-walkway.webp'),
+        ('Brick paver patio with a timber edge', 'assets/real-brick-patio-timber-edge.webp'),
+        ('Block retaining wall with a paver patio and bench', 'assets/real-retaining.webp'),
+        ('Brick paver walkway to the garage', 'assets/real-brick-paver-walkway.webp'),
+        ('Flagstone front walk through planted beds', 'assets/real-entry.webp'),
+        ('Brick walkway and foundation beds', 'assets/real-bungalow-walkway-beds.webp'),
+        ('Block seat wall at the front of the house', 'assets/real-modern-stone-wall.webp'),
+        ('Paver edging on a front planting bed', 'assets/real-front-bed-paver-border.webp'),
+    ],
+    'retaining': [
+        ('Block retaining wall with a paver patio and bench', 'assets/real-retaining.webp'),
+        ('Block retaining wall beside a driveway, mid-build', 'assets/real-retaining-block.webp'),
+        ('Block seat wall at the front of the house', 'assets/real-modern-stone-wall.webp'),
+        ('Block border wall holding a planting bed', 'assets/real-block-border-bed.webp'),
+        ('Lawn along a natural stone wall', 'assets/real-estate-stone-wall.webp'),
+        ('Block curb edge on a commercial bed', 'assets/real-arborvitae-row.webp'),
+    ],
+    'drainage': [
+        ('Culvert outlet finished with rock', 'assets/real-drainage.webp'),
+        ('Rock channel and hydroseed on a regraded slope', 'assets/real-hydroseed-slope.webp'),
+        ('Shoreline stabilized with rock', 'assets/real-shoreline-riprap.webp'),
+        ('Side yard finished with river rock and stepping stones', 'assets/real-side-yard-stepping-stones.webp'),
+        ('Hydroseeded lawn after grading', 'assets/real-hydroseed.webp'),
+        ('River rock bed beside the front porch', 'assets/real-river-rock-bed.webp'),
+        ('Side yard rock bed along the house', 'assets/real-side-yard-rock-bed.webp'),
+    ],
+    'lighting': [
+        ('Front walk and entry lit at night', 'assets/real-lighting-night.webp'),
+        ('Brick home with uplighting at night', 'assets/real-lighting.webp'),
+        ('Trees and driveway lit at night', 'assets/real-lighting-driveway.webp'),
+        ('Same front walk by day', 'assets/real-navy-home-stripes.webp'),
+    ],
+    'design': [
+        ('Front-entry plantings with a paver border', 'assets/real-entry-columns-bed.webp'),
+        ('Curved planting bed at a new build', 'assets/real-curved-bed-new-home.webp'),
+        ('New front bed with a paver border', 'assets/real-front-bed-paver-border.webp'),
+        ('Curved front bed with boxwoods', 'assets/real-front-bed-curved-boxwood.webp'),
+        ('Front beds with white rock', 'assets/real-estate-front-bed.webp'),
+        ('Block seat wall and front landscape beds', 'assets/real-modern-stone-wall.webp'),
+        ('Mature front-yard bed refresh', 'assets/real-mature-front-bed.webp'),
+        ('Front walk and mulch bed', 'assets/real-front-walk-bed.webp'),
+        ('Boxwood and mulch foundation beds', 'assets/real-boxwood-front-bed.webp'),
+        ('Curved paver walkway along a front bed', 'assets/real-walkway.webp'),
+        ('Flagstone front walk through planted beds', 'assets/real-entry.webp'),
+        ('Brick walkway and foundation beds', 'assets/real-bungalow-walkway-beds.webp'),
+        ('River rock bed beside the front porch', 'assets/real-river-rock-bed.webp'),
+        ('Side yard rock bed along the house', 'assets/real-side-yard-rock-bed.webp'),
+        ('Side-yard bed with stone edging', 'assets/real-side-bed-stone-edge.webp'),
+        ('Poolside planting bed', 'assets/real-poolside-bed.webp'),
+        ('Backyard garden bed with fresh mulch', 'assets/real-backyard-garden-bed.webp'),
+        ('Arborvitae row on a commercial lot', 'assets/real-arborvitae-row.webp'),
+        ('Block border bed along a fence', 'assets/real-block-border-bed.webp'),
+        ('Commercial flower bed at an office entrance', 'assets/real-commercial-flower-bed.webp'),
+        ('Commercial grounds with rock beds', 'assets/real-commercial-rock-beds.webp'),
+        ('Commercial building beds and walkway', 'assets/real-commercial-walkway.webp'),
+        ('Commercial rock bed along a building', 'assets/real-commercial-rock-bed.webp'),
+    ],
+    'fall-cleanup': [
+        ('Crew blowing leaves on a wooded lot', 'assets/real-fall-leaf-crew.webp'),
+        ('Walk-behind blower on a finished lawn', 'assets/real-fall-windstorm-blower.webp'),
+        ('Backyard before the fall cleanup', 'assets/real-fall-cleanup-before.webp'),
+        ('Same backyard after the fall cleanup', 'assets/real-fall-cleanup-after.webp'),
+        ('Clean striped lawn after a fall cleanup', 'assets/real-fall-finished-lawn.webp'),
+        ('Skid steer clearing leaves and brush', 'assets/real-fall-skidsteer-leaves.webp'),
+        ('Skid steer loaded for haul-off', 'assets/real-fall-haul-trailer.webp'),
+    ],
+    'spring-cleanup': [
+        ('Mature front-yard bed refresh', 'assets/real-mature-front-bed.webp'),
+        ('Block border bed with fresh mulch', 'assets/real-block-border-bed.webp'),
+        ('Backyard garden bed with fresh mulch', 'assets/real-backyard-garden-bed.webp'),
+        ('Boxwood and mulch foundation beds', 'assets/real-boxwood-front-bed.webp'),
+        ('Side-yard bed with stone edging', 'assets/real-side-bed-stone-edge.webp'),
+        ('Poolside planting bed', 'assets/real-poolside-bed.webp'),
+        ('First striped mow of the season', 'assets/real-estate-lawn-stripes.webp'),
+        ('Stand-on mower on a fresh-cut lawn', 'assets/real-stander-mower.webp'),
+    ],
+    'aeration': [
+        ('Stand-on core aerator at work', 'assets/real-stinger-aerator.webp'),
+        ('Hydroseeded lawn after grading', 'assets/real-hydroseed.webp'),
+        ('Hydroseed on a regraded slope', 'assets/real-hydroseed-slope.webp'),
+        ('Thick striped lawn at a new home', 'assets/real-navy-home-stripes.webp'),
+        ('Estate lawn with fresh mowing stripes', 'assets/real-estate-lawn-stripes.webp'),
+        ('Large lot with mowing stripes', 'assets/real-striped-lawn-lot.webp'),
+        ('Backyard lawn striping by the pool', 'assets/real-pool-lawn-stripes.webp'),
+        ('Striped backyard lawn off a deck', 'assets/real-striped-lawn-deck.webp'),
+    ],
+    'lawn': [
+        ('Thick striped lawn at a new home', 'assets/real-navy-home-stripes.webp'),
+        ('Estate lawn with fresh mowing stripes', 'assets/real-estate-lawn-stripes.webp'),
+        ('Backyard lawn striping by the pool', 'assets/real-pool-lawn-stripes.webp'),
+        ('Colonial home lawn striping', 'assets/real-colonial-lawn-stripes.webp'),
+        ('Brick home with striped lawn', 'assets/real-brick-home-stripes.webp'),
+        ('Curved beds and striped lawn', 'assets/real-curved-beds-stripes.webp'),
+        ('Lawn along a natural stone wall', 'assets/real-estate-stone-wall.webp'),
+        ('Mowing a front lawn', 'assets/real-mowing-service.webp'),
+        ('Stand-on core aerator at work', 'assets/real-stinger-aerator.webp'),
+        ('Large lot with mowing stripes', 'assets/real-striped-lawn-lot.webp'),
+        ('Striped backyard lawn off a deck', 'assets/real-striped-lawn-deck.webp'),
+        ('Striped front lawn', 'assets/real-striped-lawn-front.webp'),
+        ('Commercial building beds and walkway', 'assets/real-commercial-walkway.webp'),
+    ],
+    # No real fall-decor photos exist yet (ad graphics are not proof). Show the
+    # entries and porches the crews already keep sharp until Trent sends some.
+    'fall-decor': [
+        ('Front-entry plantings with a paver border', 'assets/real-entry-columns-bed.webp'),
+        ('Front walk and mulch bed', 'assets/real-front-walk-bed.webp'),
+        ('River rock bed beside the front porch', 'assets/real-river-rock-bed.webp'),
+        ('Flagstone front walk through planted beds', 'assets/real-entry.webp'),
+        ('Commercial flower bed at an office entrance', 'assets/real-commercial-flower-bed.webp'),
+        ('Brick walkway and foundation beds', 'assets/real-bungalow-walkway-beds.webp'),
+    ],
+    # Only one real snow photo exists (the plow truck). No stock fill.
+    'snow': [
+        ('Terramorph plow truck after a storm', 'assets/snow-removal-truck.webp'),
+    ],
+}
+
+SERVICE_PHOTO_HEADINGS = {
+    'patios': 'Patios, walkways, and seat walls our crews built.',
+    'retaining': 'Retaining walls and block work our crews built.',
+    'drainage': 'Drainage and grading work our crews finished.',
+    'lighting': 'Properties our crews lit.',
+    'design': 'Landscape beds and front entries our crews installed.',
+    'fall-cleanup': 'Fall cleanups by our crews.',
+    'spring-cleanup': 'Beds and lawns after a spring reset by our crews.',
+    'aeration': 'Aeration, seeding, and the lawns that follow.',
+    'lawn': 'Lawns our crews maintain.',
+    'fall-decor': 'Front entries our crews keep sharp.',
+    'snow': 'Winter service.',
+}
+
+# Page filename -> service photo set. Checked in order; first hit wins.
+PAGE_PHOTO_RULES = [
+    ('snow', 'snow'), ('retaining-wall', 'retaining'),
+    ('patio', 'patios'), ('fire-pit', 'patios'), ('outdoor-kitchen', 'patios'), ('outdoor-living', 'patios'),
+    ('drainage', 'drainage'), ('standing-water', 'drainage'), ('french-drain', 'drainage'), ('move-water', 'drainage'),
+    ('lighting', 'lighting'),
+    ('fall-cleanup', 'fall-cleanup'), ('seasonal-cleanup', 'fall-cleanup'), ('spring-fall-cleanups', 'fall-cleanup'),
+    ('spring-cleanup', 'spring-cleanup'),
+    ('aeration', 'aeration'), ('sod-installation', 'aeration'),
+    ('fall-decor', 'fall-decor'),
+    ('lawn-maintenance', 'lawn'), ('lawn-care', 'lawn'), ('maintenance-packages', 'lawn'), ('native-plants-vs-lawn', 'lawn'),
+    ('landscape-design', 'design'), ('landscape-lighting', 'lighting'), ('curb-appeal', 'design'), ('landscaping', 'design'),
+    ('mulch', 'design'), ('plants', 'design'), ('prairie', 'design'), ('new-construction', 'design'), ('commercial-landscaping', 'design'),
+    ('landscaper', 'design'), ('low-maintenance', 'design'), ('bed-refresh', 'design'),
+]
+
+def photo_set_for_page(filename):
+    """Which SERVICE_PHOTOS key a page should show, or None for the general rotation."""
+    name = filename.lower()
+    for needle, key in PAGE_PHOTO_RULES:
+        if needle in name:
+            return key
+    return None
+
+def photos_for_page(filename):
+    key = photo_set_for_page(filename)
+    return SERVICE_PHOTOS[key] if key else PROJECT_PHOTOS
+
+def gallery_heading_for_page(filename, default):
+    key = photo_set_for_page(filename)
+    return SERVICE_PHOTO_HEADINGS.get(key, default) if key else default
+
 def head(title, desc, schema='', page_name=''):
     canonical_url = BASE_URL + ('/' if page_name in ('', 'index.html') else '/' + page_name)
     body_class = 'quote-page' if page_name == 'quote.html' else ''
@@ -572,7 +743,7 @@ def full_service_directory():
     return '<section class="section service-directory"><div class="container section-heading compact"><p class="eyebrow">Full-service property work</p><h2>One crew for the work around the whole property.</h2><p>Start with the problem you want solved. Terramorph can handle the main project and the related work around it, from grading and beds to cleanup, hauling, lighting, and maintenance.</p></div><div class="container service-groups">' + ''.join(groups) + '</div></section>'
 
 def photo_gallery(photos=None):
-    slides = ''.join(f'<figure class="carousel-slide"><img src="{img}" alt="Terramorph {label}" loading="lazy"></figure>' for label, img in (photos or PROJECT_PHOTOS))
+    slides = ''.join(f'<figure class="carousel-slide"><img src="{img}" alt="Terramorph: {label}" title="{label}" loading="lazy"></figure>' for label, img in (photos or PROJECT_PHOTOS))
     return ('<div class="photo-carousel" data-carousel>'
             '<button type="button" class="carousel-btn carousel-prev" data-carousel-prev aria-label="Previous photos">&#8249;</button>'
             f'<div class="carousel-track">{slides}</div>'
@@ -877,7 +1048,7 @@ def service_page(filename, title, eyebrow, image, headline, lead, problem, outco
     </div>
   </div>
 </section>
-<section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>See Terramorph work across Northwest Ohio properties.</h2></div><div class="container">{photo_gallery()}</div></section>
+<section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>{gallery_heading_for_page(filename, 'See Terramorph work across Northwest Ohio properties.')}</h2></div><div class="container">{photo_gallery(photos_for_page(filename))}</div></section>
 {faq_section(SERVICE_FAQS.get(title, DEFAULT_FAQS))}
 <section class="section quote-section"><div class="container quote-grid">{quote_form(('Request an Outdoor Lighting Quote' if title == 'Outdoor Lighting' else 'Request a ' + title + ' Quote'))}<div class="cta-proof"><p class="eyebrow">Why homeowners reach out</p><h2>Reviews, proof, and a simple free estimate request.</h2>{review_stack(2, title)}</div></div></section>
 '''
@@ -898,7 +1069,7 @@ def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, 
 {hosted_jobber_quote_form(form_title, service)}
 <section class="section pain-proof-section"><div class="container pain-proof-grid"><div class="pain-card"><p class="eyebrow light">This is for you if</p><h2>{bullets[0]}</h2><ul>{''.join(f'<li>{item}</li>' for item in symptoms)}</ul><a class="btn btn-gold" href="#request-form">See What This Would Cost</a></div><div class="proof-card"><p class="eyebrow">What Terramorph checks</p><h2>{bullets[1]}</h2><div class="proof-steps">{''.join(f'<div><b>{i+1}. {title}</b><span>{copy}</span></div>' for i,(title,copy) in enumerate(next_steps))}</div></div></div></section>
 <section class="section clay-section"><div class="container local-grid"><div><p class="eyebrow">Why request now</p><h2>{bullets[2]}</h2><p>{bullets[3]}</p><a class="btn btn-primary" href="#request-form">Start My Free Assessment</a></div><div class="authority-list"><div><b>Fast next step</b><span>Submit the form or call and Terramorph can review the property, service need, timeline, and photos.</span></div><div><b>Project proof</b><span>Review photos and customer feedback before deciding whether Terramorph fits the project.</span></div><div><b>Local conditions</b><span>Wood and Lucas County soil, drainage, freeze-thaw, and weather are considered before recommending work.</span></div><div><b>Clear estimate</b><span>The goal is a practical scope, clean communication, and a path to getting the work handled.</span></div></div></div></section>
-<section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>See the kind of work this estimate can start.</h2></div><div class="container">{photo_gallery()}</div></section>
+<section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>{gallery_heading_for_page(filename, 'See the kind of work this estimate can start.')}</h2></div><div class="container">{photo_gallery(photos_for_page(filename))}</div></section>
 {review_section()}
 {faq_section(faqs)}
 <section class="section quote-section"><div class="container quote-grid"><div class="phone-direct-card"><p class="eyebrow">Ready for the next step?</p><h2>Send the property details or call Terramorph directly.</h2><p>The secure request form keeps your contact information, service need, location, timeline, and photos together for follow-up.</p><div class="phone-direct-actions"><a class="btn btn-gold" href="#request-form">Open Request Form</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div><div class="cta-proof"><p class="eyebrow">Local customer feedback</p><h2>See why homeowners call Terramorph for the next project.</h2>{review_stack(3, service)}</div></div></section>
@@ -1117,9 +1288,66 @@ def seasonal_cleanups_page():
 seasonal_cleanups_page()
 service_page('snow-removal.html', 'Snow Removal', 'Winter snow and ice service', 'snow-removal-truck.webp?v=3.17', 'Lock in dependable snow removal before the first storm.', 'Seasonal snow removal and ice management for driveways, walkways, and commercial lots in Wood and Lucas County. Winter routes fill in the fall - reserve a spot before the first push.', 'Every storm turns into shoveling before work, a blocked driveway, or a commercial lot that is not safe or open when customers arrive.', 'A property that is cleared, treated, and accessible after every qualifying snowfall, on a contract that runs all winter without another phone call.', 'Reserve Winter Service', True)
 
+def snow_signup_page():
+    """Seasonal snow sign-up page (2026-10-26). Residential + commercial, how it
+    works, no prices or dollar amounts anywhere (Trent's rule). Uses the same
+    lazy Jobber embed + tracking head as every other page."""
+    filename = 'snow-removal-signup.html'
+    title = 'Snow Removal'
+    faqs = SERVICE_FAQS['Snow Removal']
+    body = f'''
+<section class="page-hero premium-page-hero">
+  <div class="page-hero-image"><img src="assets/snow-removal-truck.webp?v=3.17" alt="Terramorph plow truck after a storm"></div>
+  <div class="hero-overlay"></div>
+  <div class="container page-hero-content">
+    <p class="crumb"><a href="index.html">Home</a> / <a href="snow-removal.html">Snow Removal</a> / Winter sign-up</p>
+    <p class="eyebrow light">Seasonal snow and ice service</p>
+    <h1>Sign up before the first storm.</h1>
+    <p>Seasonal snow removal for homes and businesses across Wood and Lucas County. Reserve your spot now and the driveway, walks, or lot are already on the route when the first snow hits.</p>
+    <div class="cta-row"><a class="btn btn-gold" href="#request-form">Reserve My Winter Spot</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
+  </div>
+</section>
+{trust_band()}
+{inline_jobber_quote_form('Reserve Seasonal Snow Service', 'Snow Removal')}
+<section class="section">
+  <div class="container section-heading compact"><p class="eyebrow">Two ways to sign up</p><h2>Residential driveways or commercial lots. One seasonal agreement.</h2></div>
+  <div class="container tm-snow-plans">
+    <div class="tm-snow-plan"><p class="eyebrow">Residential</p><h3>Driveways, walks, and entries</h3><ul><li>Driveway plowed after each qualifying snowfall</li><li>Walkways, steps, and the front entry cleared</li><li>Ice management and salting available for slick walks and drives</li><li>One seasonal agreement that runs all winter, no call needed after each storm</li></ul></div>
+    <div class="tm-snow-plan"><p class="eyebrow">Commercial and industrial</p><h3>Parking lots, access lanes, and entrances</h3><ul><li>Lots and access lanes plowed so the business is open when customers and staff arrive</li><li>Entrances and sidewalks cleared</li><li>Salting for lots, walks, and entries</li><li>A winter response plan for the property, set up before the storms start</li></ul></div>
+  </div>
+</section>
+<section class="tm-sec tm-dark">
+  <div class="tm-wrap"><div class="tm-head-row tm-reveal" style="margin-bottom:28px"><div><p class="tm-label">How it works</p><h2 class="tm-h2">Simple from sign-up to the last storm of the season.</h2></div></div>
+  <div class="tm-snow-steps">
+    <div class="tm-snow-step"><b>1. Send the property</b><span>Use the form or call. Tell us the address, whether it is a home or a business, and what needs to be cleared.</span></div>
+    <div class="tm-snow-step"><b>2. Get a seasonal quote</b><span>Your quote spells out the trigger depth, what is included, ice management, and the terms for the season. Nothing is hidden in fine print.</span></div>
+    <div class="tm-snow-step"><b>3. You are on the route</b><span>Once the agreement is signed, the property is on the winter route before the first storm.</span></div>
+    <div class="tm-snow-step"><b>4. We show up every storm</b><span>Service is triggered by the snowfall depth in your agreement. Routes run so driveways and lots are open when people need to leave for work or open for business.</span></div>
+  </div></div>
+</section>
+<section class="section clay-section">
+  <div class="container local-grid">
+    <div><p class="eyebrow">Why sign up now</p><h2>Winter routes fill in the fall.</h2><p>Once routes are full, new properties can only be added if there is room. Signing up in the fall means your property is covered from the first push, instead of scrambling for a plow the morning of a storm.</p><div class="cta-row"><a class="btn btn-primary" href="#request-form">Reserve My Winter Spot</a><a class="tm-btn tm-btn-line" href="tel:{TEL}">Call {PHONE}</a></div></div>
+    <div class="authority-list">
+      <div><b>Homes and businesses</b><span>Residential driveways and walks, commercial and industrial lots and entrances.</span></div>
+      <div><b>Ice management</b><span>Salting can be included so walks, entries, and lots are safe, not just cleared.</span></div>
+      <div><b>Wood and Lucas County</b><span>Perrysburg, Toledo, Maumee, Sylvania, Rossford, and surrounding communities.</span></div>
+      <div><b>Same local crew</b><span>The Terramorph team that handles patios, drainage, and cleanups runs the winter routes too.</span></div>
+    </div>
+  </div>
+</section>
+{faq_section(faqs)}
+<section class="section quote-section"><div class="container quote-grid"><div class="phone-direct-card"><p class="eyebrow">Ready for winter?</p><h2>Reserve seasonal snow service before the first storm.</h2><p>Send the property details in the secure form above, or call and we will set up the seasonal agreement over the phone.</p><div class="phone-direct-actions"><a class="btn btn-gold" href="#request-form">Open Sign-Up Form</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div><div class="cta-proof"><p class="eyebrow">Why property owners reach out</p><h2>Reviews, proof, and a simple seasonal sign-up.</h2>{review_stack(2, title)}</div></div></section>
+'''
+    desc = 'Seasonal snow removal sign-up for Perrysburg, Toledo, and Wood and Lucas County. Residential driveways and commercial lots, one winter agreement. Reserve now.'
+    schema = schema_for(filename, 'Snow Removal Sign-Up | Terramorph', desc, faqs, title)
+    (root / filename).write_text(page('Seasonal Snow Removal Sign-Up | Wood and Lucas County | Terramorph', desc, body, schema))
+
+snow_signup_page()
+
 meta_landing_page('lp-patios.html', 'Paver Patio Estimate', 'Patio and outdoor living estimate', 'real-patio.webp?v=3.14', 'Paver patios and walkways built for Northwest Ohio.', 'Request a free estimate for paver patios, walkways, seating areas, fire pits, and backyard hardscape upgrades.', ['You want a better place to grill, host, relax, or connect the backyard to the home — but need a real plan and estimate first.', 'Terramorph reviews layout, base conditions, drainage, materials, access, and the finished look before scoping the project.', 'A better patio starts with a better plan.', 'The right patio plan connects daily use, backyard flow, drainage, materials, and budget before work starts.'], 'Paver Patios and Hardscapes', 'Request My Patio Estimate', 'Free Paver Patio + Walkway Estimate', ['No useful place to grill or host', 'Old concrete or uneven walkways', 'Backyard feels disconnected from the house', 'Need drainage considered before hardscape work'], [('Layout', 'How the patio connects to doors, grill zones, walkways, seating, and yard flow.'), ('Base + drainage', 'Soil, grade, water movement, and freeze-thaw risk before a patio is priced.'), ('Scope', 'Materials, access, timeline, and budget range for the finished outdoor living space.')], 'Request My Free Patio Estimate')
 meta_landing_page('lp-drainage.html', 'Drainage Solution Estimate', 'Wet yard and standing water estimate', 'real-drainage.webp', 'Stop standing water after every rain.', 'Request a free drainage assessment for standing water, soggy lawn, runoff, grading, and downspout issues.', ['Standing water, soggy grass, runoff, or drainage near patios and foundations is making the property frustrating after every heavy rain.', 'Terramorph reviews grade, water movement, soil, low spots, downspouts, and practical ways to route water intentionally.', 'Drainage work needs local judgment.', 'Flat lots, clay soil, heavy rain, and freeze-thaw cycles make Northwest Ohio drainage different from a generic landscape job.'], 'Drainage Solutions', 'Request My Drainage Estimate', 'Free Yard Drainage Assessment', ['Standing water after rain', 'Soggy lawn or soft low spots', 'Water near the house, garage, patio, or beds', 'Downspouts dumping into the wrong area'], [('Source', 'Where the water starts: roof, neighbor runoff, driveway, grade, clay soil, or low spots.'), ('Route', 'Where water can move safely without creating a new problem.'), ('Fix', 'Practical options such as grading, downspout routing, swales, drains, or finished landscape solutions.')])
-meta_landing_page('lp-aeration-overseeding.html', 'Fall Aeration And Overseeding Estimate', 'Fall core aeration + overseeding', 'real-striped-lawn-front.webp', 'A thicker lawn starts this fall.', 'Request a free estimate for fall core aeration and overseeding. Early fall is the window that gives new grass time to root before winter.', ['Thin, patchy, or compacted lawns in Northwest Ohio rarely fix themselves, and spring seeding fights heat and weeds.', 'Core aeration pulls plugs from the soil so air, water, and nutrients reach the roots, then overseeding fills thin areas with new grass.', 'Timing matters more than anything.', 'Cool nights, warm soil, and fall rain make late August through October the best seeding window of the year.'], 'Fall Aeration & Overseeding', 'Request My Aeration Estimate', 'Free Fall Aeration & Overseeding Estimate', ['Thin or bare spots that never fill in', 'Hard, compacted soil after summer traffic', 'Water that runs off instead of soaking in', 'A lawn that looked tired all summer'], [('Assess', 'We look at soil, thin areas, shade, and how the lawn has been cut and watered.'), ('Aerate', 'Core aeration across the lawn, plugs left to break down and feed the soil.'), ('Seed', 'Quality seed matched to your sun and shade, spread right after aeration so it lands in the holes.')], cta_label='Get My Free Estimate')
+meta_landing_page('lp-aeration-overseeding.html', 'Fall Aeration And Overseeding Estimate', 'Fall core aeration + overseeding', 'real-stinger-aerator.webp', 'A thicker lawn starts this fall.', 'Request a free estimate for fall core aeration and overseeding. Early fall is the window that gives new grass time to root before winter.', ['Thin, patchy, or compacted lawns in Northwest Ohio rarely fix themselves, and spring seeding fights heat and weeds.', 'Core aeration pulls plugs from the soil so air, water, and nutrients reach the roots, then overseeding fills thin areas with new grass.', 'Timing matters more than anything.', 'Cool nights, warm soil, and fall rain make late August through October the best seeding window of the year.'], 'Fall Aeration & Overseeding', 'Request My Aeration Estimate', 'Free Fall Aeration & Overseeding Estimate', ['Thin or bare spots that never fill in', 'Hard, compacted soil after summer traffic', 'Water that runs off instead of soaking in', 'A lawn that looked tired all summer'], [('Assess', 'We look at soil, thin areas, shade, and how the lawn has been cut and watered.'), ('Aerate', 'Core aeration across the lawn, plugs left to break down and feed the soil.'), ('Seed', 'Quality seed matched to your sun and shade, spread right after aeration so it lands in the holes.')], cta_label='Get My Free Estimate')
 meta_landing_page('lp-fall-cleanup.html', 'Fall Cleanup And Leaf Removal Estimate', 'Fall + seasonal cleanups', 'real-fall-leaf-crew.webp', 'Leave the leaves to us.', 'Request a free estimate for fall cleanup: leaf removal, landscape bed cleanouts, mulch refreshes, and yard debris hauled away. Local crews, one visit, done before winter.', ['Leaves, dead perennials, and summer overgrowth pile up fast in Northwest Ohio, and what sits on the lawn through winter smothers the grass underneath.', 'Terramorph crews blow, rake, and haul the leaves, cut back the beds, edge and refresh mulch, and leave the property clean and ready for the season.', 'One crew, one visit, no weekends lost.', 'Wood and Lucas County homeowners get the whole property handled in a single scheduled stop.'], 'Fall & Seasonal Cleanups', 'Request My Cleanup Estimate', 'Free Fall Cleanup Estimate', ['Leaves covering the lawn or beds', 'Overgrown or dead plants in the landscape beds', 'Mulch faded, thin, or full of debris', 'Sticks, brush, and yard debris that need hauling'], [('Walk', 'We look at the lawn, beds, trees, and what needs to be removed or refreshed.'), ('Clear', 'Leaves blown and hauled, beds cut back and cleaned out, debris gone.'), ('Finish', 'Fresh mulch and clean edges so the property looks sharp until spring.')], cta_label='Get My Free Estimate')
 meta_landing_page('lp-fall-decor.html', 'Fall Porch And Curb Appeal Decorating Estimate', 'Custom fall decorating', 'real-estate-front-bed.webp', 'Fall curb appeal. Done for you.', 'Request a free quote for custom fall decorating: mums, pumpkins, cornstalks, hay bales, wreaths and lanterns delivered, arranged, and ready to enjoy at your front door or business entrance.', ['A great fall porch takes a trip to the nursery, a truck, and a free Saturday most homeowners and business owners do not have.', 'Terramorph designs the arrangement for your entry, delivers everything, sets it up, and can swap it out for the holidays.', 'Delivered. Decorated. Ready to enjoy.', 'Homes, storefronts, and offices across Wood and Lucas County.'], 'Fall Decorating', 'Request My Fall Decor Quote', 'Free Fall Decorating Quote', ['A front porch or entry that needs a seasonal refresh', 'A storefront or office entrance that should look welcoming', 'No time to shop, haul, and arrange it yourself', 'Want it swapped for winter or holiday decor later'], [('Design', 'We size the arrangement to your steps, columns, and entry.'), ('Deliver', 'Mums, pumpkins, cornstalks, hay, wreaths, and lanterns brought to you.'), ('Decorate', 'Arranged and set in place. You just enjoy it.')], cta_label='Get My Free Quote')
 meta_landing_page('lp-landscape-design.html', 'Landscape Design And Installation Estimate', 'Landscape design and installation estimate', 'real-entry.webp?v=3.14', 'Landscape design and installation for Northwest Ohio.', 'Request a free estimate for landscape beds, plantings, mulch, rock, edging, sod, grading-aware installations, and full-yard transformations.', ['The property looks builder-grade, tired, disconnected, or hard to maintain — and you want a clear plan before spending money.', 'Terramorph reviews curb appeal, beds, plantings, grading, access, drainage, maintenance, and how the whole property should feel finished.', 'Design and installation should work together.', 'The right plan connects plants, beds, edges, mulch, lighting, patios, drainage, and upkeep instead of treating them as separate guesses.'], 'Landscape Design', 'Request My Landscape Installation Estimate', 'Free Landscape Design + Installation Estimate', ['Front beds look empty, overgrown, or outdated', 'Not sure what plants/materials fit the house', 'Need mulch, rock, edging, sod, or plant installation', 'Want design, install, and maintenance to connect'], [('Curb appeal', 'What people see from the street, entry, driveway, and outdoor living areas.'), ('Conditions', 'Sun, soil, grade, water movement, maintenance, and existing plant material.'), ('Plan', 'A practical design/install scope that connects budget to the finished look.')], 'Request My Free Landscape Estimate')
@@ -1519,7 +1747,7 @@ thank_you = f"""
 (root/'thank-you.html').write_text(page('Quote Request Received | Terramorph', 'Thank-you page for Terramorph quote requests in Wood and Lucas County.', thank_you, schema_for('thank-you.html', 'Quote Request Received', 'Thank-you page for Terramorph quote requests.')))
 
 def write_static_seo_files():
-    pages = ['index.html','quote.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','snow-removal.html','guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','terms.html']
+    pages = ['index.html','quote.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','snow-removal.html','snow-removal-signup.html','guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','terms.html']
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     priorities = {'index.html':'1.0','quote.html':'0.95','contact.html':'0.9','drainage-solutions.html':'0.9','paver-patios-hardscapes.html':'0.9','landscape-design.html':'0.9'}
     for page_name in pages:
@@ -1726,7 +1954,7 @@ def sitemap_lastmod():
     path.write_text(re.sub(r'<loc>([^<]+)</loc>', add, xml))
     (root / f'{INDEXNOW_KEY}.txt').write_text(INDEXNOW_KEY)
 
-TM_CSS_VERSION = '3.9'
+TM_CSS_VERSION = '3.13'
 
 def apply_v2_design():
     import v2_pages

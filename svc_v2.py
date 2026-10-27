@@ -12,41 +12,14 @@ import re
 from pathlib import Path
 
 SERVICES = {
-    'landscape-design.html': {
-        'name': 'Landscape Design', 'city_prefix': 'landscaping-',
-        'photos': ['real-entry-columns-bed', 'real-curved-bed-new-home', 'real-modern-stone-wall', 'real-front-bed-paver-border',
-                   'real-estate-front-bed', 'real-mature-front-bed', 'real-front-walk-bed', 'real-boxwood-front-bed',
-                   'real-commercial-flower-bed', 'real-bungalow-walkway-beds', 'real-side-yard-stepping-stones', 'real-side-bed-stone-edge', 'real-poolside-bed', 'real-river-rock-bed', 'real-commercial-walkway', 'real-curved-beds-stripes'],
-    },
-    'paver-patios-hardscapes.html': {
-        'name': 'Paver Patios and Hardscapes', 'city_prefix': 'paver-patios-',
-        'photos': ['real-brick-patio-timber-edge', 'real-brick-paver-walkway', 'real-modern-stone-wall', 'real-bungalow-walkway-beds',
-                   'real-retaining-block', 'real-entry-paver-edge', 'real-entry-columns-bed', 'real-front-bed-paver-border', 'real-estate-stone-wall'],
-    },
-    'drainage-solutions.html': {
-        'name': 'Drainage Solutions', 'city_prefix': 'drainage-solutions-',
-        'photos': ['real-drainage', 'real-hydroseed-slope', 'real-shoreline-riprap', 'real-side-yard-stepping-stones', 'real-commercial-rock-beds', 'real-river-rock-bed', 'real-side-bed-stone-edge',
-                   'real-commercial-rock-bed', 'real-curved-bed-new-home', 'real-estate-front-bed', 'real-retaining-block'],
-    },
-    'outdoor-lighting.html': {
-        'name': 'Outdoor Lighting', 'city_prefix': None,
-        'photos': ['real-lighting-night', 'real-lighting-driveway', 'real-navy-home-stripes', 'real-modern-stone-wall', 'real-entry-columns-bed', 'real-estate-front-bed'],
-    },
-    'lawn-maintenance.html': {
-        'name': 'Lawn Maintenance', 'city_prefix': 'lawn-maintenance-',
-        'photos': ['real-navy-home-stripes', 'real-estate-lawn-stripes', 'real-pool-lawn-stripes', 'real-colonial-lawn-stripes',
-                   'real-brick-home-stripes', 'real-curved-beds-stripes', 'real-estate-stone-wall', 'real-mowing-service',
-                   'real-stinger-aerator', 'real-commercial-walkway', 'real-camping-world-bed', 'real-striped-lawn-lot', 'real-striped-lawn-deck', 'real-striped-lawn-front'],
-    },
-    'seasonal-cleanups.html': {
-        'name': 'Seasonal Cleanups', 'city_prefix': 'spring-fall-cleanups-',
-        'photos': ['real-fall-leaf-crew', 'real-fall-windstorm-blower', 'real-fall-cleanup-after', 'real-fall-finished-lawn',
-                   'real-estate-lawn-stripes', 'real-mature-front-bed', 'real-boxwood-front-bed', 'real-curved-beds-stripes'],
-    },
-    'snow-removal.html': {
-        'name': 'Snow Removal', 'city_prefix': 'snow-removal-',
-        'photos': ['snow-removal-truck', 'real-estate-stone-wall', 'real-navy-home-stripes', 'real-commercial-rock-beds', 'real-estate-lawn-stripes'],
-    },
+    # 'photos' key = the SERVICE_PHOTOS set in build_pages.py (one source of truth, 2026-10-26).
+    'landscape-design.html': {'name': 'Landscape Design', 'city_prefix': 'landscaping-', 'photos': 'design'},
+    'paver-patios-hardscapes.html': {'name': 'Paver Patios and Hardscapes', 'city_prefix': 'paver-patios-', 'photos': 'patios'},
+    'drainage-solutions.html': {'name': 'Drainage Solutions', 'city_prefix': 'drainage-solutions-', 'photos': 'drainage'},
+    'outdoor-lighting.html': {'name': 'Outdoor Lighting', 'city_prefix': None, 'photos': 'lighting'},
+    'lawn-maintenance.html': {'name': 'Lawn Maintenance', 'city_prefix': 'lawn-maintenance-', 'photos': 'lawn'},
+    'seasonal-cleanups.html': {'name': 'Seasonal Cleanups', 'city_prefix': 'spring-fall-cleanups-', 'photos': 'fall-cleanup'},
+    'snow-removal.html': {'name': 'Snow Removal', 'city_prefix': 'snow-removal-', 'photos': 'snow'},
 }
 
 
@@ -86,8 +59,9 @@ EXTRA = {
                    ('Ice management', 'Salting for slick walks and drives.'),
                    ('Winter response planning', 'A plan for your property before the storms start.')]},
         {'eyebrow': 'Plan ahead', 'h2': 'Get on the schedule before the first storm.',
-         'paras': '<p>Booking in the fall means the property is already covered when the first snow comes, instead of scrambling for a plow that morning.</p>',
-         'checks': ['Homes and businesses', 'Driveways, walks, and lots', 'Wood and Lucas County']},
+         'paras': '<p>Booking in the fall means the property is already covered when the first snow comes, instead of scrambling for a plow that morning. Residential and commercial seasonal sign-up is open now.</p>',
+         'checks': ['Homes and businesses', 'Driveways, walks, and lots', 'Wood and Lucas County'],
+         'ctas': ['<a class="btn btn-gold" href="snow-removal-signup.html">Sign up for winter service</a>']},
     ],
 }
 
@@ -170,12 +144,20 @@ def rebuild(c, name, t):
         return t
     main = t[m_open + len('<main id="main">'):m_close]
     secs = _sections(main)
-    photos = [p for p in (_photo(c, n) for n in cfg['photos']) if p]
+    photo_set = c['SERVICE_PHOTOS'][cfg['photos']]
+    # Chapters never repeat the hero photo (it is still in the gallery).
+    hero_src = _first(r'<div class="page-hero-image"><img src="assets/([^"?]+)', main)
+    hero_stem = re.sub(r'(-m|-w\d+)?\.(webp|jpg)$', '', hero_src or '')
+    photos = [p for _, p in photo_set if (c['root'] / p).exists() and re.sub(r'\.(webp|jpg)$', '', p.split('/')[-1]) != hero_stem]
     pi = 0
 
     def next_photo():
+        # One service photo per chapter, never repeated. When the set runs out
+        # the chapter renders copy-only instead of showing an unrelated photo.
         nonlocal pi
-        p = photos[pi % len(photos)] if photos else 'assets/real-hero.webp'
+        if pi >= len(photos):
+            return None
+        p = photos[pi]
         pi += 1
         return p
 
@@ -239,7 +221,7 @@ def rebuild(c, name, t):
     if sum(1 for ch in chapters if 'raw' not in ch) < 2:
         for ex in EXTRA.get(name, []):
             chapters.append({'eyebrow': ex['eyebrow'], 'h2': ex['h2'], 'paras': ex['paras'], 'items': ex.get('items', []),
-                             'checks': ex.get('checks', []), 'dark': False, 'ctas': []})
+                             'checks': ex.get('checks', []), 'dark': False, 'ctas': ex.get('ctas', [])})
 
     # reviews: every compact review on the page, de-duplicated, up to 3
     revs, rseen = [], set()
@@ -297,8 +279,10 @@ def rebuild(c, name, t):
         cta = ''.join(x.replace('class="btn btn-primary"', 'class="tm-btn tm-btn-gold tm-btn-sm"').replace('class="btn btn-gold"', 'class="tm-btn tm-btn-gold tm-btn-sm"') for x in ch['ctas'][:1])
         flip = ' tm-ch-flip' if n % 2 == 0 else ''
         dark = ' tm-ch-dark' if ch['dark'] else ''
-        out.append(f'''<section class="tm-sec tm-ch{flip}{dark}"><div class="tm-wrap tm-ch-grid">
-  <figure class="tm-ch-media tm-reveal"><img src="{img}" alt="Terramorph {svc.lower()} work in Northwest Ohio" loading="lazy"><span class="tm-ch-num">0{n}</span></figure>
+        media = f'<figure class="tm-ch-media tm-reveal"><img src="{img}" alt="Terramorph {svc.lower()} work in Northwest Ohio" loading="lazy"><span class="tm-ch-num">0{n}</span></figure>' if img else f'<div class="tm-ch-num tm-ch-num-solo" aria-hidden="true">0{n}</div>'
+        solo = '' if img else ' tm-ch-solo'
+        out.append(f'''<section class="tm-sec tm-ch{flip}{dark}"><div class="tm-wrap tm-ch-grid{solo}">
+  {media}
   <div class="tm-ch-copy">{f'<p class="tm-label">{ch["eyebrow"]}</p>' if ch['eyebrow'] else ''}<h2 class="tm-h2">{ch['h2']}</h2>{ch['paras']}{lst}{f'<div class="tm-cta-row">{cta}</div>' if cta else ''}</div>
 </div></section>''')
         if n == 1 and cfg.get('ba'):
@@ -307,8 +291,9 @@ def rebuild(c, name, t):
 
     if process:
         out.append(process)
-    gal = c['photo_gallery']([(f'{svc} project', p) for p in photos] + [(l, p) for l, p in c['PROJECT_PHOTOS'] if p not in photos][:8])
-    out.append(f'<section class="tm-sec-tight tm-work"><div class="tm-wrap"><div class="tm-head-row tm-reveal"><div><p class="tm-label">Recent work</p><h2 class="tm-h2">Real {svc.lower()} work by our crews.</h2></div><a class="tm-btn tm-btn-line" href="projects.html">All project photos</a></div></div><div class="tm-work-rail">{gal}</div></section>')
+    gal = c['photo_gallery'](photo_set) if len(photo_set) >= 3 else ''
+    if gal:
+        out.append(f'<section class="tm-sec-tight tm-work"><div class="tm-wrap"><div class="tm-head-row tm-reveal"><div><p class="tm-label">Recent work</p><h2 class="tm-h2">Real {svc.lower()} work by our crews.</h2></div><a class="tm-btn tm-btn-line" href="projects.html">All project photos</a></div></div><div class="tm-work-rail">{gal}</div></section>')
     if reviews:
         out.append(f'''<section class="tm-sec tm-dark tm-svc-reviews"><div class="tm-wrap"><div class="tm-head-row tm-reveal"><div><p class="tm-label">Reviews</p><h2 class="tm-h2">Homeowners who hired us.</h2></div>
   <div class="tm-rating-big"><b>4.9</b><div><div class="tm-stars">★★★★★</div><a href="{c['GOOGLE_PROFILE_URL']}" target="_blank" rel="noopener" style="color:#fff">Read all 220+ on Google &rarr;</a></div></div></div><div class="tm-reviews">{reviews}</div></div></section>''')
