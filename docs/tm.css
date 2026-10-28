@@ -101,7 +101,7 @@ body.tm img{max-width:100%;display:block}
 .tm-h3{font-size:clamp(1.35rem,2vw,1.6rem);line-height:1.18;font-weight:450}
 .tm-lead{font-size:1.15rem;color:var(--tm-muted);max-width:60ch;margin:18px 0 0}
 .tm-dark .tm-lead{color:#d6e2d4}
-.tm-foil{background:linear-gradient(100deg,var(--tm-gold-lo) 0%,var(--tm-gold-hi) 30%,var(--tm-gold) 50%,var(--tm-gold-hi) 70%,var(--tm-gold-lo) 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic;animation:tm-foil 7s linear infinite}
+.tm-foil{padding:0 .14em .12em .06em;margin:0 -.1em -.12em -.06em;-webkit-box-decoration-break:clone;box-decoration-break:clone;background:linear-gradient(100deg,var(--tm-gold-lo) 0%,var(--tm-gold) 35%,#e2bb62 50%,var(--tm-gold) 65%,var(--tm-gold-lo) 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic;animation:tm-foil 7s linear infinite}
 @keyframes tm-foil{0%{background-position:0% 0}100%{background-position:220% 0}}
 .tm-head-row{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-bottom:46px}
 

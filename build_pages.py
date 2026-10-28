@@ -1541,6 +1541,23 @@ about = f"""
   <div class="page-hero-image"><img src="assets/real-entry.webp?v=3.14" alt="Terramorph finished landscape entry project"></div><div class="hero-overlay"></div>
   <div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / About</p><p class="eyebrow light">About Terramorph</p><h1>Outdoor work should feel planned, professional, and finished — not patched together.</h1><p>Terramorph is built for homeowners, businesses, and property owners who want one local crew that can diagnose the property, explain the options, and handle the work with clean follow-through.</p><div class="cta-row"><a class="btn btn-gold" href="contact.html">Get a Free Estimate</a><a class="btn btn-outline-light" href="projects.html">See Real Work</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div>
 </section>
+<section class="section"><div class="container">
+    <div class="tm-facts">
+      <div>
+        <p class="tm-label">Terramorph at a glance</p>
+        <h2 class="tm-h2" style="font-size:clamp(1.9rem,3.4vw,2.7rem)">The short version.</h2>
+        <p>Terramorph LLC is a landscape design and build company based in Perrysburg, Ohio, founded by brothers Ty and Trent Lincoln. We design and install paver patios, retaining walls, drainage systems, landscape beds, and outdoor lighting, and we maintain lawns, handle seasonal cleanups, and plow snow for homes and businesses across Wood and Lucas County. We hold a 4.9-star rating from more than 220 Google reviews and are BBB accredited. Estimates are free.</p>
+      </div>
+      <dl class="tm-facts-grid">
+        <div><dt>Based in</dt><dd>Perrysburg, OH</dd></div>
+        <div><dt>Serving</dt><dd>Wood &amp; Lucas County</dd></div>
+        <div><dt>Google rating</dt><dd>4.9 from 220+ reviews</dd></div>
+        <div><dt>Accreditation</dt><dd>BBB Accredited</dd></div>
+        <div><dt>Founders</dt><dd>Ty &amp; Trent Lincoln</dd></div>
+        <div><dt>Phone</dt><dd><a href="tel:{TEL}">{PHONE}</a></dd></div>
+      </dl>
+    </div>
+</div></section>
 {trust_band()}
 <section class="section">
   <div class="container local-grid">
@@ -2054,7 +2071,7 @@ def sitemap_lastmod():
     path.write_text(re.sub(r'<loc>([^<]+)</loc>', add, xml))
     (root / f'{INDEXNOW_KEY}.txt').write_text(INDEXNOW_KEY)
 
-TM_CSS_VERSION = '3.17'
+TM_CSS_VERSION = '3.18'
 
 def apply_v2_design():
     import v2_pages

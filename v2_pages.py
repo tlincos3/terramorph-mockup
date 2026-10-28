@@ -320,26 +320,6 @@ def render_home(c):
   </div>
 </section>
 
-<section class="tm-sec-tight">
-  <div class="tm-wrap">
-    <div class="tm-facts tm-reveal">
-      <div>
-        <p class="tm-label">Terramorph at a glance</p>
-        <h2 class="tm-h2" style="font-size:clamp(1.9rem,3.4vw,2.7rem)">The short version.</h2>
-        <p>Terramorph LLC is a landscape design and build company based in Perrysburg, Ohio, founded by brothers Ty and Trent Lincoln. We design and install paver patios, retaining walls, drainage systems, landscape beds, and outdoor lighting, and we maintain lawns, handle seasonal cleanups, and plow snow for homes and businesses across Wood and Lucas County. We hold a 4.9-star rating from more than 220 Google reviews and are BBB accredited. Estimates are free.</p>
-      </div>
-      <dl class="tm-facts-grid">
-        <div><dt>Based in</dt><dd>Perrysburg, OH</dd></div>
-        <div><dt>Serving</dt><dd>Wood &amp; Lucas County</dd></div>
-        <div><dt>Google rating</dt><dd>4.9 from 220+ reviews</dd></div>
-        <div><dt>Accreditation</dt><dd>BBB Accredited</dd></div>
-        <div><dt>Founders</dt><dd>Ty &amp; Trent Lincoln</dd></div>
-        <div><dt>Phone</dt><dd><a href="tel:{c['TEL']}">{c['PHONE']}</a></dd></div>
-      </dl>
-    </div>
-  </div>
-</section>
-
 <section class="tm-sec tm-paper">
   <div class="tm-wrap">
     <p class="tm-label">Questions</p>
