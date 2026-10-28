@@ -192,8 +192,9 @@ def generate(ctx: dict) -> list[str]:
         'before-after-gallery.html', 'faq.html', 'process.html', 'materials.html', 'warranty.html'
     }
 
+    skip = {'thank-you.html', 'privacy.html', 'review-notes.html'} | set(ctx.get('AUTHORITY_SKIP', ()))
     for path in root.glob('*.html'):
-        if path.name in {'thank-you.html', 'privacy.html', 'review-notes.html'}:
+        if path.name in skip:
             continue
         html = path.read_text()
         city = next((c for c in CITY_CONTEXT if c.lower().replace(' ', '-') in path.name or f'{c}, Ohio' in html[:4000] or f'>{c}<' in html[:3000]), None)

@@ -30,6 +30,7 @@ def nav(c, home=False):
     <a class="tm-brand" href="index.html" aria-label="Terramorph home"><img src="assets/tm-mark.png" alt="" width="40" height="40"><b>Terramorph</b></a>
     <nav class="tm-nav" id="tm-nav" aria-label="Primary navigation">
       <a href="landscape-design.html">Design</a>
+      <a href="permaculture-design-toledo-ohio.html">Sustainable</a>
       <a href="paver-patios-hardscapes.html">Patios</a>
       <a href="drainage-solutions.html">Drainage</a>
       <a href="seasonal-cleanups.html">Cleanups</a>
@@ -73,6 +74,13 @@ def foot(c, home=False):
       <a href="snow-removal-signup.html">Snow removal sign-up</a>
     </div>
     <div>
+      <h2>Sustainable landscapes</h2>
+      <a href="permaculture-design-toledo-ohio.html">Permaculture design</a>
+      <a href="native-landscaping-toledo-ohio.html">Native habitat &amp; pollinator gardens</a>
+      <a href="food-forest-edible-landscaping-toledo-ohio.html">Food forests &amp; edible gardens</a>
+      <a href="natural-swimming-pools-ponds-ohio.html">Natural pools, ponds &amp; water features</a>
+    </div>
+    <div>
       <h2>Learn</h2>
       <a href="projects.html">Project photos</a>
       <a href="guides.html">Guides</a>
@@ -92,7 +100,7 @@ def foot(c, home=False):
     </div>
   </div>
   <div class="tm-footer-base">
-    <span class="tm-promise">Every photo on this site is a real Terramorph project.</span>
+    <span class="tm-promise">Project photos on this site are real Terramorph work. Reference photos are credited where shown.</span>
     <span>&copy; Terramorph LLC &middot; <a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a></span>
   </div>
 </footer>
@@ -258,6 +266,7 @@ def render_home(c):
     <div class="tm-tiles">{tiles_html}</div>
   </div>
 </section>
+{c['sustainable_band']()}
 
 <section class="tm-sec tm-paper">
   <div class="tm-wrap tm-ba-grid">
@@ -375,9 +384,11 @@ def render_quote(c):
       </ol>
       <div style="margin-top:22px;display:grid;gap:14px">{revs}</div>
       <p style="margin-top:22px;color:#d6e2d4">Rather talk it through? <a href="tel:{c['TEL']}" style="color:var(--tm-gold-hi);font-weight:700">Call {c['PHONE']}</a></p>
+      {('<p style="margin-top:14px;color:#d6e2d4">Larger project? ' + c['savings_link']('See the project savings codes').replace('<a ', '<a style="color:var(--tm-gold-hi);font-weight:700" ') + '</p>') if c['SHOW_PROJECT_SAVINGS'] else ''}
     </aside>
   </div>
 </section>
+{c['project_savings_block']('#request-form')}
 '''
 
 NO_GALLERY = {'privacy.html', 'terms.html', 'thank-you.html', 'warranty.html', 'review-notes.html', 'projects.html', 'before-after-gallery.html'}
@@ -463,6 +474,10 @@ def apply(c):
                     break
         if path.name in svc_v2.SERVICES:
             t = svc_v2.rebuild(sc, path.name, t)
+        if path.name == 'services.html':
+            # Sustainable group + project savings on the services hub (2026-10-27).
+            t = t.replace('<section class="section faq-section">', c['sustainable_band']() + '\n<section class="section faq-section">', 1)
+            t = t.replace('<section class="section quote-section">', c['project_savings_block']('#request-form' if 'id="request-form"' in t else 'quote.html') + '\n<section class="section quote-section">', 1)
         # Pages that carry the quote form: header + phone-bar quote buttons jump to it
         # instead of loading quote.html (one less page load for paid visitors).
         if 'id="request-form"' in t:

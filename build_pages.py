@@ -24,6 +24,8 @@ JOBBER_FORM_URL = 'https://clienthub.getjobber.com/client_hubs/e644a784-b214-4a2
 JOBBER_DIRECT_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new'
 AREA_SERVED = [{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"}] + [{"@type":"City","name":t + ", OH"} for t in SERVICE_TOWNS]
 
+import sustainable as _sus  # the 4 sustainable-landscape pages (2026-10-27)
+
 SAME_AS_URLS = [
     GOOGLE_PROFILE_URL,
     BBB_PROFILE_URL,
@@ -54,6 +56,7 @@ NAV = f'''
     </a>
     <nav class="links" aria-label="Primary navigation">
       <a href="landscape-design.html">Design</a>
+      <a href="permaculture-design-toledo-ohio.html">Sustainable</a>
       <a href="paver-patios-hardscapes.html">Patios</a>
       <a href="drainage-solutions.html">Drainage</a>
       <a href="snow-removal.html">Snow</a>
@@ -93,6 +96,10 @@ FOOT = f'''
       <a href="outdoor-lighting.html">Outdoor lighting</a>
       <a href="lawn-maintenance.html">Lawn maintenance</a>
       <a href="seasonal-cleanups.html">Seasonal cleanups</a>
+      <a href="permaculture-design-toledo-ohio.html">Permaculture design</a>
+      <a href="native-landscaping-toledo-ohio.html">Native habitat and pollinator gardens</a>
+      <a href="food-forest-edible-landscaping-toledo-ohio.html">Food forests and edible gardens</a>
+      <a href="natural-swimming-pools-ponds-ohio.html">Natural pools, ponds and water features</a>
       <a href="guides.html">Outdoor project guides</a>
       <a href="faq.html">FAQ hub</a>
       <a href="process.html">Process</a>
@@ -166,7 +173,8 @@ SERVICES = [
     ('Snow Removal', 'Get Winter Service', 'Dependable winter service for homes, businesses, and properties that need safe access when Northwest Ohio weather hits.', ['Driveways', 'Walkways', 'Commercial lots', 'Ice management', 'Winter response'], 'assets/snow-removal-truck.webp?v=3.17', 'snow-removal.html'),
 ]
 SERVICE_GROUPS = [
-    ('Landscape Installation and Design', ['Landscape design', 'Plant installation', 'Mulch and rock beds', 'Sod installation', 'Bed edging', 'Native habitat rehabilitation', 'Spring pruning']),
+    ('Landscape Installation and Design', ['Landscape design', 'Plant installation', 'Mulch and rock beds', 'Sod installation', 'Bed edging', '<a href="native-landscaping-toledo-ohio.html">Native habitat rehabilitation</a>', 'Spring pruning']),
+    ('Sustainable Landscapes', ['<a href="permaculture-design-toledo-ohio.html">Permaculture design and installs</a>', '<a href="native-landscaping-toledo-ohio.html">Native habitat and pollinator gardens</a>', '<a href="native-landscaping-toledo-ohio.html#rain-gardens">Rain gardens</a>', '<a href="food-forest-edible-landscaping-toledo-ohio.html">Food forests and edible gardens</a>', 'Fruit and nut tree planting', '<a href="natural-swimming-pools-ponds-ohio.html">Natural swimming pools and ponds</a>', 'Invasive plant removal and replanting']),
     ('Paver Patios and Walkways', ['Paver patios', 'Paver walkways', 'Retaining walls', 'Fire pits', 'Outdoor kitchens', 'Concrete services', 'Hardscape repairs and upgrades']),
     ('Drainage Solutions', ['Drainage diagnosis', 'Grading', 'Runoff routing', 'Standing water correction', 'Dry creek features', 'Erosion control', 'Downspout and low-spot planning']),
     ('Outdoor Lighting', ['Path lighting', 'Landscape accent lighting', 'Patio and entertainment lighting', 'Entry lighting', 'Security visibility', 'Night curb appeal']),
@@ -335,6 +343,13 @@ SERVICE_PHOTOS = {
     'snow': [
         ('Terramorph plow truck after a storm', 'assets/snow-removal-truck.webp'),
     ],
+    # Sustainable-landscape pages (2026-10-27): no Terramorph job photos exist yet,
+    # so these sets are empty on purpose. Empty = no "our crews built" gallery.
+    # Their credited reference photos live in sustainable.py chapter media.
+    'permaculture': [],
+    'native': [],
+    'edible': [],
+    'water': [],
 }
 
 SERVICE_PHOTO_HEADINGS = {
@@ -353,6 +368,7 @@ SERVICE_PHOTO_HEADINGS = {
 
 # Page filename -> service photo set. Checked in order; first hit wins.
 PAGE_PHOTO_RULES = [
+    ('permaculture', 'permaculture'), ('native-landscaping', 'native'), ('food-forest', 'edible'), ('natural-swimming', 'water'),
     ('snow', 'snow'), ('retaining-wall', 'retaining'),
     ('patio', 'patios'), ('fire-pit', 'patios'), ('outdoor-kitchen', 'patios'), ('outdoor-living', 'patios'),
     ('drainage', 'drainage'), ('standing-water', 'drainage'), ('french-drain', 'drainage'), ('move-water', 'drainage'),
@@ -742,6 +758,46 @@ def full_service_directory():
         groups.append('<div class="service-group"><h3>'+title+'</h3><ul>' + ''.join(f'<li>{item}</li>' for item in items) + '</ul></div>')
     return '<section class="section service-directory"><div class="container section-heading compact"><p class="eyebrow">Full-service property work</p><h2>One crew for the work around the whole property.</h2><p>Start with the problem you want solved. Terramorph can handle the main project and the related work around it, from grading and beds to cleanup, hauling, lighting, and maintenance.</p></div><div class="container service-groups">' + ''.join(groups) + '</div></section>'
 
+# --- Project savings codes (Ty, 2026-10-27). ONE switch: False removes the block
+# and every link/anchor to it from every page. Off until Trent approves the discounts.
+SHOW_PROJECT_SAVINGS = True
+SAVINGS_TIERS = [  # (project total, discount, code). 0O6B2 = zero, capital O.
+    ('$10,000 or more', '10%', 'Y2H1N'),
+    ('$8,000 or more', '8%', '7U5C1'),
+    ('$6,000 or more', '6%', '8B2M3'),
+    ('$5,000 or more', '5%', '0O6B2'),
+]
+SAVINGS_PAGES = set(_sus.FILES) | {'quote.html', 'services.html'}
+
+def project_savings_block(cta_href='#request-form'):
+    """The 'Project savings' block. Codes are real text in monospace (never an
+    image) so 0/O and 1/I read clearly. No Offer schema on purpose."""
+    if not SHOW_PROJECT_SAVINGS:
+        return ''
+    rows = ''.join(f'<tr><td>{total}</td><td><b>{pct}</b></td><td><code>{code}</code></td></tr>' for total, pct, code in SAVINGS_TIERS)
+    return f'''<section class="tm-sec-tight tm-savings" id="project-savings"><div class="tm-wrap">
+  <div class="tm-savings-card tm-reveal">
+    <div class="tm-savings-copy"><p class="tm-label">Project savings</p><h2 class="tm-h2">Save up to 10% on your project</h2>
+      <p class="tm-lead">The bigger the project, the more you save. Mention your code when you request your quote or approve your estimate.</p>
+      <a class="tm-btn tm-btn-gold tm-btn-sm" href="{cta_href}">Request My Quote</a></div>
+    <table class="tm-savings-table"><thead><tr><th scope="col">Your project</th><th scope="col">You save</th><th scope="col">Use code</th></tr></thead><tbody>{rows}</tbody></table>
+    <p class="tm-savings-fine">Applies to all Terramorph services. One code per project, based on the project total before tax. Mention the code when you request your quote or before you approve your estimate. Can't be combined with other offers or applied to work already invoiced.</p>
+  </div>
+</div></section>'''
+
+def savings_link(text='See project savings codes'):
+    return f'<a href="#project-savings">{text}</a>' if SHOW_PROJECT_SAVINGS else ''
+
+def sustainable_band():
+    """Slim homepage/services band: eyebrow, H2, one sentence, 4 text cards. Not a hero."""
+    cards = ''.join(f'<a class="tm-read tm-reveal" href="{f}"><span>{label}<small>{blurb}</small></span><i aria-hidden="true">&rarr;</i></a>' for f, label, blurb in _sus.LINKS)
+    return f'''<section class="tm-sec-tight tm-paper tm-sus" id="sustainable">
+  <div class="tm-wrap">
+    <div class="tm-head-row tm-reveal"><div><p class="tm-label">Sustainable landscapes</p><h2 class="tm-h2">Permaculture, native habitat and food forests, designed and installed for Northwest Ohio.</h2></div><p class="tm-lead">The same crews that build our patios and fix drainage also design yards that grow food, feed pollinators and hold water where it lands.</p></div>
+    <div class="tm-reads tm-reads-4">{cards}</div>
+  </div>
+</section>'''
+
 def photo_gallery(photos=None):
     slides = ''.join(f'<figure class="carousel-slide"><img src="{img}" alt="Terramorph: {label}" title="{label}" loading="lazy"></figure>' for label, img in (photos or PROJECT_PHOTOS))
     return ('<div class="photo-carousel" data-carousel>'
@@ -960,22 +1016,30 @@ home = f'''
 def faq_section(items):
     return '<section class="section faq-section"><div class="container section-heading compact"><p class="eyebrow">Questions homeowners ask</p><h2>Quick answers before you request an estimate.</h2></div><div class="container why-grid">' + ''.join(f'<div><b>{q}</b><span>{a}</span></div>' for q,a in items) + '</div></section>'
 
-def schema_for(page_name, title, desc, faqs=None, service=None):
+KNOWS_ABOUT = ["Landscape design","Paver patios","Drainage solutions","Outdoor lighting","Lawn maintenance","Seasonal cleanups","Snow removal","Hardscaping","Retaining walls","Mulch and rock beds",
+               "Permaculture design","Native landscaping","Pollinator gardens","Rain gardens","Food forests","Edible landscaping","Natural swimming pools","Ponds and water features","Invasive plant removal"]
+
+def schema_for(page_name, title, desc, faqs=None, service=None, extra_services=None, crumb_parent=None, image=None, crumb_name=None):
+    """crumb_parent = (file, name) adds a middle breadcrumb (Home > Services > Page).
+    extra_services = more Service node names for the same page. image = this page's own hero photo."""
     import json
     page_url = BASE_URL + ('/' if page_name == 'index.html' else '/' + page_name)
+    img_url = BASE_URL + '/' + image if image else BASE_URL + '/assets/real-hero.webp'
     base = {
       "@context":"https://schema.org",
       "@graph":[
-        {"@type":["LocalBusiness","LandscapingBusiness","HomeAndConstructionBusiness"],"@id":BASE_URL+"/#business","name":BUSINESS_NAME,"alternateName":["Terramorph","Terramorph Outdoor Transformation Co."],"url":BASE_URL+"/","image":BASE_URL+"/assets/real-hero.webp","logo":BASE_URL+"/assets/logo.png","telephone":PHONE,"address":{"@type":"PostalAddress","streetAddress":BUSINESS_STREET,"addressLocality":BUSINESS_CITY,"addressRegion":BUSINESS_REGION,"postalCode":BUSINESS_POSTAL,"addressCountry":BUSINESS_COUNTRY},"contactPoint":{"@type":"ContactPoint","telephone":PHONE,"contactType":"customer service","areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"availableLanguage":"English"},"sameAs":SAME_AS_URLS,"knowsAbout":["Landscape design","Paver patios","Drainage solutions","Outdoor lighting","Lawn maintenance","Seasonal cleanups","Snow removal","Hardscaping","Retaining walls","Mulch and rock beds"],"areaServed":AREA_SERVED,"geo":{"@type":"GeoCoordinates","latitude":BUSINESS_GEO[0],"longitude":BUSINESS_GEO[1]},"hasMap":GOOGLE_PROFILE_URL,"founder":[{"@type":"Person","name":"Ty Lincoln"},{"@type":"Person","name":"Trent Lincoln"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
+        {"@type":["LocalBusiness","LandscapingBusiness","HomeAndConstructionBusiness"],"@id":BASE_URL+"/#business","name":BUSINESS_NAME,"alternateName":["Terramorph","Terramorph Outdoor Transformation Co."],"url":BASE_URL+"/","image":BASE_URL+"/assets/real-hero.webp","logo":BASE_URL+"/assets/logo.png","telephone":PHONE,"address":{"@type":"PostalAddress","streetAddress":BUSINESS_STREET,"addressLocality":BUSINESS_CITY,"addressRegion":BUSINESS_REGION,"postalCode":BUSINESS_POSTAL,"addressCountry":BUSINESS_COUNTRY},"contactPoint":{"@type":"ContactPoint","telephone":PHONE,"contactType":"customer service","areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"availableLanguage":"English"},"sameAs":SAME_AS_URLS,"knowsAbout":KNOWS_ABOUT,"areaServed":AREA_SERVED,"geo":{"@type":"GeoCoordinates","latitude":BUSINESS_GEO[0],"longitude":BUSINESS_GEO[1]},"hasMap":GOOGLE_PROFILE_URL,"founder":[{"@type":"Person","name":"Ty Lincoln"},{"@type":"Person","name":"Trent Lincoln"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
         {"@type":"WebSite","@id":BASE_URL+"/#website","url":BASE_URL+"/","name":"Terramorph LLC","publisher":{"@id":BASE_URL+"/#business"}},
         {"@type":"Organization","@id":BASE_URL+"/#organization","name":BUSINESS_NAME,"url":BASE_URL+"/","logo":BASE_URL+"/assets/logo.png","sameAs":SAME_AS_URLS},
         {"@type":"WebPage","name":title,"description":desc,"url":page_url,"isPartOf":{"@id":BASE_URL+"/#website"},"primaryImageOfPage":{"@id":page_url+"#primaryimage"}},
-        {"@type":"ImageObject","@id":page_url+"#primaryimage","url":BASE_URL+"/assets/real-hero.webp","contentUrl":BASE_URL+"/assets/real-hero.webp","caption":"Terramorph outdoor transformation project in Northwest Ohio"},
-        {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":BASE_URL+"/"},{"@type":"ListItem","position":2,"name":title,"item":page_url}]}
+        {"@type":"ImageObject","@id":page_url+"#primaryimage","url":img_url,"contentUrl":img_url,"caption":(desc if image else "Terramorph outdoor transformation project in Northwest Ohio")},
+        {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":BASE_URL+"/"}] + ([{"@type":"ListItem","position":2,"name":crumb_parent[1],"item":BASE_URL+"/"+crumb_parent[0]}] if crumb_parent else []) + [{"@type":"ListItem","position":3 if crumb_parent else 2,"name":crumb_name or title,"item":page_url}]}
       ]
     }
     if service:
-        base["@graph"].append({"@type":"Service","name":service,"provider":{"@id":BASE_URL+"/#business"},"areaServed":AREA_SERVED,"url":page_url})
+        base["@graph"].append({"@type":"Service","name":service,"serviceType":service,"provider":{"@id":BASE_URL+"/#business"},"areaServed":AREA_SERVED,"url":page_url})
+    for extra in (extra_services or []):
+        base["@graph"].append({"@type":"Service","name":extra,"serviceType":extra,"provider":{"@id":BASE_URL+"/#business"},"areaServed":AREA_SERVED,"url":page_url})
     if page_name == 'index.html':
         base["@graph"].append({"@type":"OfferCatalog","name":"Terramorph outdoor services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":name,"url":BASE_URL+"/"+href}} for name,_,_,_,_,href in SERVICES if href.endswith('.html')]})
     if faqs:
@@ -1012,21 +1076,54 @@ SERVICE_FAQS = {
         ('Can a cleanup be paired with aeration, overseeding, or snow removal?', 'Yes. Many properties book fall aeration and overseeding, the cleanup, and a seasonal snow removal contract together so the property is covered from fall into winter.'),
     ] + DEFAULT_FAQS[:2],
 }
+SERVICE_FAQS.update(_sus.FAQS)
 
-def service_page(filename, title, eyebrow, image, headline, lead, problem, outcome, cta, embed_jobber=False, depth=''):
+def service_page(filename, title, eyebrow, image, headline, lead, problem, outcome, cta, embed_jobber=False, depth='',
+                 seo_title=None, seo_desc=None, crumb_parent=None, crumb=None, hero_alt=None, hero_credit=None,
+                 service_name=None, extra_services=None, process=None):
+    """Optional keyword args (2026-10-27, sustainable pages): exact title/meta, a
+    Home > Services > Page breadcrumb, an honest hero alt + credit line for
+    reference photos, extra Service schema nodes, and a custom process timeline
+    (h2, lead, [(step, text), ...]) in place of the generic one."""
     hero_cta_href = '#request-form' if embed_jobber else 'quote.html'
     inline_form = ('\n' + inline_jobber_quote_form(f'Request a {title} Quote', title).strip()) if embed_jobber else ''
+    crumb_html = (f'<a href="index.html">Home</a> / <a href="{crumb_parent[0]}">{crumb_parent[1]}</a> / {crumb or title}' if crumb_parent
+                  else f'<a href="index.html">Home</a> / {crumb or title}')
+    credit_html = f'\n  <p class="tm-hero-credit">{hero_credit}</p>' if hero_credit else ''
+    if process:
+        p_h2, p_lead, p_steps = process
+        process_html = f'''<section class="section clay-section" data-process>
+  <div class="container local-grid">
+    <div><p class="eyebrow">How we work</p><h2>{p_h2}</h2><p>{p_lead}</p></div>
+    <div class="authority-list">{''.join(f'<div><b>{b}</b><span>{s}</span></div>' for b, s in p_steps)}</div>
+  </div>
+</section>'''
+    else:
+        process_html = '''<section class="section clay-section">
+  <div class="container local-grid">
+    <div><p class="eyebrow">How we work</p><h2>Clear estimates, professional work, and clean follow-through.</h2><p>Homeowners need to know what happens next: Terramorph reviews the property, talks through the goal, explains practical options, and gives a clear estimate before work begins.</p></div>
+    <div class="authority-list">
+      <div><b>Discovery</b><span>City, goal, frustration, timeline, range, and photos captured quickly.</span></div>
+      <div><b>Site review</b><span>Grade, water flow, access, soil, sun, materials, and maintenance expectations.</span></div>
+      <div><b>Scope</b><span>Clear options that connect budget to property improvement and long-term durability.</span></div>
+      <div><b>Build</b><span>Professional install, cleanup, walkthrough, and follow-up.</span></div>
+    </div>
+  </div>
+</section>'''
+    page_photos = photos_for_page(filename)
+    work_html = (f'<section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>{gallery_heading_for_page(filename, "See Terramorph work across Northwest Ohio properties.")}</h2></div><div class="container">{photo_gallery(page_photos)}</div></section>'
+                 if page_photos else '')
     body = f'''
 <section class="page-hero premium-page-hero">
-  <div class="page-hero-image"><img src="assets/{image}" alt="{title} premium outdoor transformation"></div>
+  <div class="page-hero-image"><img src="assets/{image}" alt="{hero_alt or title + ' premium outdoor transformation'}"></div>
   <div class="hero-overlay"></div>
   <div class="container page-hero-content">
-    <p class="crumb"><a href="index.html">Home</a> / {title}</p>
+    <p class="crumb">{crumb_html}</p>
     <p class="eyebrow light">{eyebrow}</p>
     <h1>{headline}</h1>
     <p>{lead}</p>
     <div class="cta-row"><a class="btn btn-gold" href="{hero_cta_href}">{cta}</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
-  </div>
+  </div>{credit_html}
 </section>
 {trust_band()}
 {priority_fit_strip(title)}{inline_form}
@@ -1037,24 +1134,16 @@ def service_page(filename, title, eyebrow, image, headline, lead, problem, outco
   </div>
 </section>
 {depth}
-<section class="section clay-section">
-  <div class="container local-grid">
-    <div><p class="eyebrow">How we work</p><h2>Clear estimates, professional work, and clean follow-through.</h2><p>Homeowners need to know what happens next: Terramorph reviews the property, talks through the goal, explains practical options, and gives a clear estimate before work begins.</p></div>
-    <div class="authority-list">
-      <div><b>Discovery</b><span>City, goal, frustration, timeline, range, and photos captured quickly.</span></div>
-      <div><b>Site review</b><span>Grade, water flow, access, soil, sun, materials, and maintenance expectations.</span></div>
-      <div><b>Scope</b><span>Clear options that connect budget to property improvement and long-term durability.</span></div>
-      <div><b>Build</b><span>Professional install, cleanup, walkthrough, and follow-up.</span></div>
-    </div>
-  </div>
-</section>
-<section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>{gallery_heading_for_page(filename, 'See Terramorph work across Northwest Ohio properties.')}</h2></div><div class="container">{photo_gallery(photos_for_page(filename))}</div></section>
+{process_html}
+{work_html}
 {faq_section(SERVICE_FAQS.get(title, DEFAULT_FAQS))}
 <section class="section quote-section"><div class="container quote-grid">{quote_form(('Request an Outdoor Lighting Quote' if title == 'Outdoor Lighting' else 'Request a ' + title + ' Quote'))}<div class="cta-proof"><p class="eyebrow">Why homeowners reach out</p><h2>Reviews, proof, and a simple free estimate request.</h2>{review_stack(2, title)}</div></div></section>
 '''
-    desc = f'{title} in Toledo, Wood County, Lucas County, and Northwest Ohio by Terramorph. Free estimates for homeowners and property owners.'
-    schema = schema_for(filename, f'{title} | Terramorph', desc, SERVICE_FAQS.get(title, DEFAULT_FAQS), title)
-    (root / filename).write_text(page(f'{title} in Wood and Lucas County | Terramorph', desc, body, schema))
+    desc = seo_desc or f'{title} in Toledo, Wood County, Lucas County, and Northwest Ohio by Terramorph. Free estimates for homeowners and property owners.'
+    schema = schema_for(filename, seo_title or f'{title} | Terramorph', desc, SERVICE_FAQS.get(title, DEFAULT_FAQS), service_name or title,
+                        extra_services=extra_services, crumb_parent=crumb_parent, image=('assets/' + image.split('?')[0]) if hero_credit else None,
+                        crumb_name=(crumb or title).replace('&amp;', '&'))
+    (root / filename).write_text(page(seo_title or f'{title} in Wood and Lucas County | Terramorph', desc, body, schema))
 
 
 def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, service, form_title, offer, symptoms, next_steps, cta_label='Get My Free Assessment'):
@@ -1079,13 +1168,16 @@ def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, 
     (root/filename).write_text(page(title + ' | Terramorph', desc, body, schema))
 
 
-def _depth_section(eyebrow, heading, lead, cards, links=None):
+def _depth_section(eyebrow, heading, lead, cards, links=None, id=None):
+    """lead may be one paragraph or a list of paragraphs. id= gives the section an anchor."""
     card_html = ''.join(f'<div><b>{b}</b><span>{t}</span></div>' for b, t in cards)
+    lead_html = ''.join(f'<p>{p}</p>' for p in (lead if isinstance(lead, (list, tuple)) else [lead]))
     link_html = ''
     if links:
         link_items = ' &middot; '.join(f'<a href="{href}">{label}</a>' for href, label in links)
         link_html = f'<p class="depth-links"><b>Keep reading:</b> {link_items}</p>'
-    return f'<section class="section"><div class="container local-grid"><div><p class="eyebrow">{eyebrow}</p><h2>{heading}</h2><p>{lead}</p>{link_html}</div><div class="authority-list">{card_html}</div></div></section>'
+    id_attr = f' id="{id}"' if id else ''
+    return f'<section class="section"{id_attr}><div class="container local-grid"><div><p class="eyebrow">{eyebrow}</p><h2>{heading}</h2>{lead_html}{link_html}</div><div class="authority-list">{card_html}</div></div></section>'
 
 DESIGN_DEPTH = _depth_section(
     'What a design includes',
@@ -1097,7 +1189,11 @@ DESIGN_DEPTH = _depth_section(
      ('Phasing and budget', 'Start with front curb appeal, then add the patio, lighting, or backyard beds later without redoing earlier work.')],
     [('landscape-design-process-northwest-ohio.html', 'What to expect from a design consultation'),
      ('best-plants-for-ohio-clay-soil.html', 'Best plants for Ohio clay soil'),
-     ('mulch-vs-rock-landscape-beds.html', 'Mulch vs. rock beds')]
+     ('mulch-vs-rock-landscape-beds.html', 'Mulch vs. rock beds'),
+     ('permaculture-design-toledo-ohio.html', 'Permaculture design'),
+     ('native-landscaping-toledo-ohio.html', 'Native habitat and pollinator gardens'),
+     ('food-forest-edible-landscaping-toledo-ohio.html', 'Food forests and edible landscaping'),
+     ('natural-swimming-pools-ponds-ohio.html', 'Natural swimming pools and ponds')]
 ) + _depth_section(
     'Built for Northwest Ohio',
     'Clay soil, flat lots, and freeze-thaw shape every bed and plant decision.',
@@ -1143,7 +1239,7 @@ DRAINAGE_DEPTH = _depth_section(
 ) + _depth_section(
     'Common fixes explained',
     'Every wet yard is not a French drain job.',
-    'These are the tools Terramorph reaches for most in Wood and Lucas County - and none of them is the right answer for every yard.',
+    'These are the tools Terramorph reaches for most in Wood and Lucas County - and none of them is the right answer for every yard. For roof and driveway runoff on a yard you want planted, a <a href="native-landscaping-toledo-ohio.html#rain-gardens">rain garden</a> can be the fix instead of a pipe.',
     [('French drains', 'A gravel-and-pipe trench that collects water along a wet zone and carries it to a safe outlet.'),
      ('Buried downspouts', 'Roof water piped underground to a pop-up emitter instead of dumping at the foundation.'),
      ('Grading and swales', 'Reshaping the ground so water flows where it should - often the simplest, most durable fix.'),
@@ -1155,6 +1251,10 @@ service_page('paver-patios-hardscapes.html', 'Paver Patios and Hardscapes', 'Pre
 service_page('drainage-solutions.html', 'Drainage Solutions', 'Drainage expertise for clay soil and flat lots', 'real-drainage.webp', 'Stop fighting standing water and start using your yard again.', 'Practical drainage solutions for wet yards, pooling water, soggy lawns, and water moving toward patios or foundations in Northwest Ohio conditions.', 'Flat lots, clay soil, poor grading, or runoff make the yard frustrating and sometimes unusable.', 'A drier, more functional landscape with water routed intentionally and finished beautifully.', 'Fix My Drainage', depth=DRAINAGE_DEPTH)
 service_page('outdoor-lighting.html', 'Outdoor Lighting', 'Outdoor lighting for paths, patios, and entries', 'real-lighting.webp?v=3.14', 'Make the property safer, warmer, and better looking at night.', 'Low-voltage outdoor lighting for walkways, patios, entries, landscape beds, feature areas, safety, security, and nighttime curb appeal.', 'The property disappears after dark, paths feel unsafe, and the finished landscape or patio loses impact at night.', 'A cleaner nighttime look with better visibility, safer movement, and outdoor spaces that feel usable after sunset.', 'Light My Property')
 service_page('lawn-maintenance.html', 'Lawn Maintenance', 'Recurring lawn and property upkeep', 'real-lawn.webp', 'Professional lawn maintenance for Northwest Ohio properties.', 'Request recurring residential or commercial mowing, edging, trimming, bed upkeep, brush control, and seasonal property maintenance. Terramorph maintains properties; we do not repair mowers or equipment.', 'The property starts looking overgrown, uneven, or neglected because mowing, edging, beds, weeds, and trimming are not handled consistently.', 'A cleaner, better-maintained property with dependable upkeep and less weekend work for the owner.', 'Request Lawn Maintenance', True)
+_sus.build(globals())  # 4 sustainable-landscape pages (sustainable.py)
+CHAPTER_MEDIA = _sus.chapter_media()          # svc_v2: credited reference photos per chapter
+EXTRA_IMAGE_SITEMAP = _sus.image_sitemap_entries()
+AUTHORITY_SKIP = set(_sus.FILES)              # they carry their own answer card and FAQ schema
 CLEANUP_PHOTOS = [
     ('Fall leaf cleanup crew at work', 'assets/real-fall-leaf-crew.webp'),
     ('Commercial walk-behind leaf blower on a finished lawn', 'assets/real-fall-windstorm-blower.webp'),
@@ -1360,8 +1460,8 @@ GUIDES = [
     {'file':'northwest-ohio-yard-drainage-problems.html','title':'Why Your Yard Holds Water After It Rains in Northwest Ohio','short':'Standing water, soggy grass, and soft spots usually come from grading, clay soil, downspouts, or runoff with nowhere smart to go.','category':'Drainage guide','service':'Drainage Solutions','image':'real-drainage.webp','cta':'Request a Drainage Assessment','sections':[('Why Northwest Ohio yards stay wet','Many Wood and Lucas County lots are flat, clay-heavy, and slow to drain. When downspouts, neighboring runoff, compacted soil, or low spots add more water than the yard can absorb, the result is standing water after normal rain.'),('Common causes Terramorph checks first','The first review should look at grade, where water enters the property, where roof water exits, low areas near patios or walkways, soil compaction, erosion paths, and whether water is moving toward structures.'),('When it becomes more than an annoyance','Persistent wet areas can damage lawns, make patios harder to use, create muddy access routes, wash mulch out of beds, stress plants, and push water toward foundations or garages if it is not routed intentionally.'),('What a practical fix can include','Depending on the property, the answer may involve grading, downspout routing, a swale, French drain, catch basin, dry creek feature, soil correction, or a finished landscape solution that moves water without making the yard look patched together.')],'faqs':[('Can Terramorph fix standing water in my yard?','Terramorph evaluates grading, runoff, downspouts, soil, and low spots to recommend practical drainage options for Northwest Ohio properties.'),('Is every wet yard a French drain job?','No. Some yards need grading, downspout routing, swales, soil correction, or a combination instead of one default drain.'),('Do you serve Toledo and Wood County for drainage?','Yes. Terramorph serves Wood and Lucas County with drainage and outdoor property work.')]},
     {'file':'french-drains-vs-pop-up-emitters.html','title':'French Drains vs. Pop-Up Emitters: Which Drainage Solution Do You Need?','short':'Both can move water, but they solve different problems. The right answer depends on where the water starts, where it can safely discharge, and how the property is graded.','category':'Drainage guide','service':'Drainage Solutions','image':'real-shoreline-riprap.webp','cta':'Compare Drainage Options','sections':[('What a French drain is for','A French drain is generally used to collect subsurface or surface water along a trench and move it away through pipe and stone. It can help in consistently wet areas, but it must be placed and discharged correctly.'),('What a pop-up emitter is for','A pop-up emitter is often used at the end of a buried downspout or drainage line so water can discharge at a safer location. It is not a magic fix if the discharge area is still too low or saturated.'),('The real decision point','The question is not which product sounds better. The question is where water is coming from, whether it needs collection or just routing, and where it can exit without creating a new problem.'),('Why local review matters','Flat Northwest Ohio lots and clay soil make discharge planning important. If the outlet is wrong, the system may simply move the puddle to a different part of the yard.')],'faqs':[('Is a French drain better than a pop-up emitter?','Not always. A French drain collects and moves water; a pop-up emitter usually discharges water from a line. The right choice depends on the property.'),('Can downspouts be connected to buried drainage?','Often yes, if the route and outlet make sense for the property and local conditions.'),('Will Terramorph tell me which option fits?','Yes. Terramorph reviews grade, water movement, soil, and discharge options before recommending a drainage approach.')]},
     {'file':'move-water-away-from-house.html','title':'How to Move Water Away From Your House, Garage, Patio, or Building','short':'Water should be routed intentionally before it sits near foundations, washes out beds, undermines hardscapes, or creates muddy access areas.','category':'Drainage guide','service':'Drainage Solutions','image':'real-hardscape.webp?v=3.14','cta':'Fix Water Near Structures','sections':[('Start with where the water comes from','Roof water, driveway runoff, neighbor runoff, patio slope, compacted soil, and low lawn areas can all push water toward a structure. A good fix starts by identifying the source.'),('Grade matters before products','If the land slopes toward the house, a drain alone may not solve the issue. Grading, swales, downspout routing, or hardscape corrections may need to work together.'),('Patios and walkways need water planning too','Hard surfaces shed water quickly. If patios, walks, or drive areas do not move water correctly, runoff can pool at edges, soften base material, or create freeze-thaw issues.'),('The goal is controlled discharge','The best solution moves water to a safer area where it can drain, disperse, or exit without flooding a neighbor, damaging landscaping, or creating a new wet spot.')],'faqs':[('What if water is pooling near my foundation?','Have the grading, downspouts, soil, and runoff path reviewed so water can be routed away from the structure.'),('Can patios cause drainage problems?','Yes. Hardscapes can change water movement, so drainage should be reviewed before and after patio or walkway work.'),('Does Terramorph handle drainage and landscaping together?','Yes. Drainage can be scoped with landscape, patio, bed, and property improvement work.')]},
-    {'file':'native-prairie-landscaping-ohio.html','title':'Native Prairie Landscaping in Ohio: Low-Maintenance, Wildlife-Friendly, and Built for Local Conditions','short':'Native prairie landscaping can reduce mowing, support pollinators, improve habitat, and give larger properties a more intentional low-maintenance look.','category':'Native landscaping guide','service':'Landscape Design','image':'real-arborvitae-row.webp','cta':'Plan Native Landscaping','sections':[('Why native prairie landscaping is different','Native prairie-style areas use plants adapted to the region rather than treating every open area like a traditional lawn. The result can be more habitat value and less weekly mowing once established.'),('Good fits for Ohio properties','Prairie and native habitat areas can work well along property edges, open acreage, drainage transitions, commercial properties, retention areas, and homeowners who want a more natural but still intentional landscape.'),('Maintenance is lower, not zero','Native areas still need planning, establishment, weed control, edge definition, and seasonal management. The goal is not neglect; it is a designed landscape that matures into lower routine input.'),('Tax and incentive note','Some property types or conservation programs may offer potential incentives, but Terramorph does not provide tax advice. Ask a qualified tax professional or local program administrator before relying on any deduction, credit, or incentive.')],'faqs':[('Is native prairie landscaping maintenance-free?','No. It can become lower-maintenance than turf, but it still needs planning, establishment, weed control, and seasonal management.'),('Can native landscaping help pollinators?','Yes. Properly selected native plants can support pollinators, wildlife, and healthier habitat.'),('Can native prairie landscaping qualify for tax benefits?','It may depend on property type, use, and programs. Ask a tax professional; Terramorph does not promise tax benefits.')]},
-    {'file':'native-plants-vs-lawn-ohio.html','title':'Native Plants vs. Traditional Lawn: What Works Better in Northwest Ohio?','short':'Traditional lawn is clean and usable. Native planting can lower mowing and improve habitat. The best properties often use both in the right places.','category':'Native landscaping guide','service':'Landscape Design','image':'real-striped-lawn-lot.webp','cta':'Design the Right Mix','sections':[('Where lawn still makes sense','Turf is useful for play areas, clean front presentation, pets, paths, and places where people actually walk or gather. A good property plan keeps lawn where lawn has a job.'),('Where native plants can outperform turf','Native beds, prairie edges, habitat zones, and low-use areas can reduce mowing demands, add seasonal interest, support pollinators, and make larger properties feel more intentional.'),('The best answer is usually a mix','For many Northwest Ohio properties, the strongest design combines clean lawn areas, defined bed edges, native planting zones, drainage-aware grading, and maintenance access.'),('Make it look intentional','Native landscaping needs clean borders, clear transitions, smart plant selection, and seasonal management so it reads as designed instead of overgrown.')],'faqs':[('Should I replace my whole lawn with native plants?','Usually not. Most properties work best with lawn where it is useful and native planting where it reduces maintenance or adds habitat value.'),('Will native plants look messy?','They can if poorly planned. Defined edges, plant selection, and seasonal management make the difference.'),('Can Terramorph design native and traditional landscaping together?','Yes. Terramorph can plan lawn, beds, native areas, drainage, and maintenance as one property strategy.')]},
+    {'file':'native-prairie-landscaping-ohio.html','no_service_node':True,'title':'Native Prairie Landscaping in Ohio: Low-Maintenance, Wildlife-Friendly, and Built for Local Conditions','short':'Native prairie landscaping can reduce mowing, support pollinators, improve habitat, and give larger properties a more intentional low-maintenance look.','category':'Native landscaping guide','service':'Landscape Design','image':'real-arborvitae-row.webp','cta':'Plan Native Landscaping','sections':[('Why native prairie landscaping is different','Native prairie-style areas use plants adapted to the region rather than treating every open area like a traditional lawn. The result can be more habitat value and less weekly mowing once established.'),('Good fits for Ohio properties','Prairie and native habitat areas can work well along property edges, open acreage, drainage transitions, commercial properties, retention areas, and homeowners who want a more natural but still intentional landscape. For a designed, installed version on a home lot, see <a href="native-landscaping-toledo-ohio.html">native landscaping design and installation in Toledo</a>.'),('Maintenance is lower, not zero','Native areas still need planning, establishment, weed control, edge definition, and seasonal management. The goal is not neglect; it is a designed landscape that matures into lower routine input.'),('Tax and incentive note','Some property types or conservation programs may offer potential incentives, but Terramorph does not provide tax advice. Ask a qualified tax professional or local program administrator before relying on any deduction, credit, or incentive.')],'faqs':[('Is native prairie landscaping maintenance-free?','No. It can become lower-maintenance than turf, but it still needs planning, establishment, weed control, and seasonal management.'),('Can native landscaping help pollinators?','Yes. Properly selected native plants can support pollinators, wildlife, and healthier habitat.'),('Can native prairie landscaping qualify for tax benefits?','It may depend on property type, use, and programs. Ask a tax professional; Terramorph does not promise tax benefits.')]},
+    {'file':'native-plants-vs-lawn-ohio.html','title':'Native Plants vs. Traditional Lawn: What Works Better in Northwest Ohio?','short':'Traditional lawn is clean and usable. Native planting can lower mowing and improve habitat. The best properties often use both in the right places.','category':'Native landscaping guide','service':'Landscape Design','image':'real-striped-lawn-lot.webp','cta':'Design the Right Mix','sections':[('Where lawn still makes sense','Turf is useful for play areas, clean front presentation, pets, paths, and places where people actually walk or gather. A good property plan keeps lawn where lawn has a job.'),('Where native plants can outperform turf','Native beds, prairie edges, habitat zones, and low-use areas can reduce mowing demands, add seasonal interest, support pollinators, and make larger properties feel more intentional. Terramorph plans and installs them: see <a href="native-landscaping-toledo-ohio.html">native landscaping design and installation in Toledo</a>.'),('The best answer is usually a mix','For many Northwest Ohio properties, the strongest design combines clean lawn areas, defined bed edges, native planting zones, drainage-aware grading, and maintenance access.'),('Make it look intentional','Native landscaping needs clean borders, clear transitions, smart plant selection, and seasonal management so it reads as designed instead of overgrown.')],'faqs':[('Should I replace my whole lawn with native plants?','Usually not. Most properties work best with lawn where it is useful and native planting where it reduces maintenance or adds habitat value.'),('Will native plants look messy?','They can if poorly planned. Defined edges, plant selection, and seasonal management make the difference.'),('Can Terramorph design native and traditional landscaping together?','Yes. Terramorph can plan lawn, beds, native areas, drainage, and maintenance as one property strategy.')]},
     {'file':'paver-patio-northwest-ohio-weather.html','title':'What Makes a Paver Patio Last in Northwest Ohio Weather?','short':'Freeze-thaw cycles, drainage, base prep, edge restraint, and water movement matter more than the surface paver people notice first.','category':'Patio guide','service':'Paver Patios and Hardscapes','image':'real-patio.webp?v=3.14','cta':'Plan a Durable Patio','sections':[('The base does the heavy lifting','A patio is only as good as the preparation beneath it. Excavation, base depth, compaction, and leveling affect whether the surface stays clean and stable.'),('Drainage protects the patio','Water should move away from the house and off the patio surface. Poor drainage can soften edges, create pooling, and make freeze-thaw movement worse.'),('Edges and transitions matter','Steps, walkways, lawn edges, beds, walls, and door thresholds all affect how the patio performs and feels. These details should be planned before installation.'),('Northwest Ohio weather is the test','Heavy rain, clay soil, winter freezing, and spring thaw make planning more important than choosing a nice-looking paver alone.')],'faqs':[('Why do patios sink or shift?','Common causes include poor base preparation, drainage problems, weak edge restraint, soil movement, or freeze-thaw stress.'),('Should drainage be planned before a patio?','Yes. Drainage and grading should be reviewed before patio work starts.'),('Does Terramorph build patios and walkways?','Yes. Terramorph handles paver patios, walkways, outdoor living areas, and related hardscape planning.')]},
     {'file':'spring-cleanup-northwest-ohio.html','title':'Spring Cleanup Checklist for Northwest Ohio Properties','short':'A proper spring reset clears winter debris, refreshes beds, catches damage early, and gets the property ready for mowing, mulch, planting, and outdoor use.','category':'Seasonal guide','service':'Seasonal Cleanups','image':'real-mulch.webp','cta':'Schedule Spring Cleanup','sections':[('Clear winter debris first','Leaves, sticks, dead plant material, trash, and storm debris should be removed before beds and lawn areas are refreshed.'),('Reset beds and edges','Spring is a good time to define bed edges, clean old mulch, identify weeds, prune appropriate material, and prepare for mulch, rock, or plant installation.'),('Look for drainage and turf issues','Soft areas, washouts, standing water, dead spots, and compacted paths are easier to spot after winter and early spring rain.'),('Set up the maintenance season','A cleanup can pair with mowing, bed maintenance, mulch, plant work, trimming, or other property services so the yard starts the season under control.')],'faqs':[('When should I schedule spring cleanup?','Early spring is ideal once winter debris is visible and before the property gets too far into the growing season.'),('Can cleanup include mulch or trimming?','Yes. Cleanups can be paired with mulch, bed resets, pruning, trimming, and lawn maintenance.'),('Does Terramorph handle commercial cleanups?','Yes. Terramorph can help residential, commercial, and property-owner cleanup needs in Wood and Lucas County.')]},
     {'file':'mulch-vs-rock-landscape-beds.html','title':'Mulch vs. Rock Beds: Which Is Better for Low-Maintenance Landscaping?','short':'Mulch and rock both work, but they create different looks, costs, maintenance needs, and heat conditions around plants.','category':'Landscape guide','service':'Landscape Design','image':'real-block-border-bed.webp','cta':'Choose Better Beds','sections':[('Why homeowners choose mulch','Mulch gives beds a clean fresh look, helps retain soil moisture, can improve soil over time, and is easier to change as plants grow or designs evolve.'),('Why homeowners choose rock','Rock can last longer visually, reduce annual refreshing, and work well in certain foundation beds or commercial areas, but it may hold heat and collect debris.'),('Plant health matters','Some plants prefer cooler, more organic bed conditions. Others can tolerate rock. The right choice depends on sunlight, irrigation, drainage, and the plant palette.'),('Low-maintenance still needs upkeep','Neither mulch nor rock eliminates weeds forever. Clean edges, proper fabric decisions, bed depth, drainage, and regular maintenance all affect how beds age.')],'faqs':[('Is rock lower-maintenance than mulch?','Sometimes, but not always. Rock may need less refreshing but can collect debris, hold heat, and still allow weeds if the bed is not built well.'),('Is mulch better for plants?','Often mulch is more forgiving for plant health because it moderates soil temperature and moisture, but the right answer depends on the bed.'),('Can Terramorph install mulch and rock beds?','Yes. Terramorph handles mulch, rock, edging, bed shaping, plant installation, and maintenance planning.')]},
@@ -1374,7 +1474,7 @@ GUIDES = [
 def guide_schema(g):
     import json
     url = BASE_URL + '/' + g['file']
-    data = json.loads(schema_for(g['file'], g['title'] + ' | Terramorph', g['short'], g['faqs'], g['service']))
+    data = json.loads(schema_for(g['file'], g['title'] + ' | Terramorph', g['short'], g['faqs'], None if g.get('no_service_node') else g['service']))
     data['@graph'].append({'@type':'Article','headline':g['title'],'description':g['short'],'author':{'@type':'Organization','name':'Terramorph LLC'},'publisher':{'@id':BASE_URL+'/#business'},'mainEntityOfPage':url,'image':BASE_URL + '/assets/' + g['image'].split('?')[0]})
     return json.dumps(data, separators=(',',':'))
 
@@ -1747,7 +1847,7 @@ thank_you = f"""
 (root/'thank-you.html').write_text(page('Quote Request Received | Terramorph', 'Thank-you page for Terramorph quote requests in Wood and Lucas County.', thank_you, schema_for('thank-you.html', 'Quote Request Received', 'Thank-you page for Terramorph quote requests.')))
 
 def write_static_seo_files():
-    pages = ['index.html','quote.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','snow-removal.html','snow-removal-signup.html','guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','terms.html']
+    pages = ['index.html','quote.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','snow-removal.html','snow-removal-signup.html'] + _sus.FILES + ['guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','terms.html']
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     priorities = {'index.html':'1.0','quote.html':'0.95','contact.html':'0.9','drainage-solutions.html':'0.9','paver-patios-hardscapes.html':'0.9','landscape-design.html':'0.9'}
     for page_name in pages:
@@ -1954,7 +2054,7 @@ def sitemap_lastmod():
     path.write_text(re.sub(r'<loc>([^<]+)</loc>', add, xml))
     (root / f'{INDEXNOW_KEY}.txt').write_text(INDEXNOW_KEY)
 
-TM_CSS_VERSION = '3.13'
+TM_CSS_VERSION = '3.17'
 
 def apply_v2_design():
     import v2_pages

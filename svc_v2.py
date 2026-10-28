@@ -20,6 +20,13 @@ SERVICES = {
     'lawn-maintenance.html': {'name': 'Lawn Maintenance', 'city_prefix': 'lawn-maintenance-', 'photos': 'lawn'},
     'seasonal-cleanups.html': {'name': 'Seasonal Cleanups', 'city_prefix': 'spring-fall-cleanups-', 'photos': 'fall-cleanup'},
     'snow-removal.html': {'name': 'Snow Removal', 'city_prefix': 'snow-removal-', 'photos': 'snow'},
+    # Sustainable-landscape pages (2026-10-27). Empty photo sets: no Terramorph job
+    # photos yet, so no "our crews built" gallery. Chapter photos are credited
+    # reference photos from sustainable.py (CHAPTER_MEDIA), never shown as our work.
+    'permaculture-design-toledo-ohio.html': {'name': 'Permaculture Design', 'city_prefix': None, 'photos': 'permaculture'},
+    'native-landscaping-toledo-ohio.html': {'name': 'Native Landscaping', 'city_prefix': None, 'photos': 'native'},
+    'food-forest-edible-landscaping-toledo-ohio.html': {'name': 'Food Forests and Edible Landscaping', 'city_prefix': None, 'photos': 'edible'},
+    'natural-swimming-pools-ponds-ohio.html': {'name': 'Natural Swimming Pools and Ponds', 'city_prefix': None, 'photos': 'water'},
 }
 
 
@@ -76,6 +83,8 @@ ANSWERS = {
     'seasonal-cleanups.html': 'Terramorph does fall and spring cleanups across Wood and Lucas County, Ohio. A fall cleanup clears leaves from the lawn, beds, and fence lines and hauls them away, cuts back perennials, shapes shrubs, cleans up bed edges, and finishes the lawn before winter. Commercial blowers and full crews handle big wooded lots. Estimates are free.',
     'snow-removal.html': 'Terramorph provides snow removal for homes and businesses in Perrysburg, Toledo, and across Wood and Lucas County, Ohio: plowed driveways, cleared walkways and entries, commercial lots, and salting for ice. Booking before the first storm gets the property covered for the season. Estimates are free.',
 }
+import sustainable as _sus
+ANSWERS.update(_sus.ANSWERS)
 
 ICONS = {
     'walk': '<path d="M12 21s-6-5.6-6-10.5A6 6 0 0 1 18 10.5C18 15.4 12 21 12 21z"/><circle cx="12" cy="10.5" r="2.2"/>',
@@ -150,6 +159,8 @@ def rebuild(c, name, t):
     hero_stem = re.sub(r'(-m|-w\d+)?\.(webp|jpg)$', '', hero_src or '')
     photos = [p for _, p in photo_set if (c['root'] / p).exists() and re.sub(r'\.(webp|jpg)$', '', p.split('/')[-1]) != hero_stem]
     pi = 0
+    # Credited reference photos keyed by chapter eyebrow (sustainable pages only).
+    ch_media = c.get('CHAPTER_MEDIA', {}).get(name, {})
 
     def next_photo():
         # One service photo per chapter, never repeated. When the set runs out
@@ -164,6 +175,7 @@ def rebuild(c, name, t):
     hero = glance = trust = chips = problem = outcome = process = faq = reviews = quote_title = ''
     chapters, raw_after, links = [], [], []
     for cls, html in secs:
+        sec_id = _first(r'^<section\b[^>]*\bid="([^"]*)"', html)
         if 'page-hero' in cls:
             hero = html
         elif 'ai-answer-section' in cls:
@@ -191,7 +203,7 @@ def rebuild(c, name, t):
         elif 'problem-grid' in html and not problem:
             problem = _first(r'problem-card dark">.*?<h2>(.*?)</h2>', html)
             outcome = _first(r'light-card">.*?<h2>(.*?)</h2>', html)
-        elif 'clay-section' in cls and 'Clear estimates' in html and not process:
+        elif 'clay-section' in cls and ('Clear estimates' in html or 'data-process' in html) and not process:
             steps = _items(html)
             lead = _first(r'<h2>.*?</h2>\s*<p>(.*?)</p>', html)
             h2 = _first(r'<h2>(.*?)</h2>', html)
@@ -211,7 +223,7 @@ def rebuild(c, name, t):
             checks = re.findall(r'<li>(.*?)</li>', _first(r'<ul class="check-list">(.*?)</ul>', html))
             ctas = re.findall(r'(<a class="btn[^"]*" href="[^"]+">.*?</a>)', html, re.S)
             chapters.append({'eyebrow': eyebrow, 'h2': h2, 'paras': paras, 'items': items, 'checks': checks,
-                             'dark': 'clay-section' in cls, 'ctas': ctas})
+                             'dark': 'clay-section' in cls, 'ctas': ctas, 'id': sec_id})
         else:
             # unknown block (timeline, comparison table, cleanup before/after...): keep it, in order
             chapters.append({'raw': html})
@@ -270,7 +282,8 @@ def rebuild(c, name, t):
             out.append(ch['raw'])
             continue
         n += 1
-        img = next_photo()
+        ref = ch_media.get(_txt(ch['eyebrow']))
+        img = None if ref else next_photo()
         lst = ''
         if ch['items']:
             lst = '<ol class="tm-ch-list">' + ''.join(f'<li class="tm-reveal"><b>{b}</b><span>{s}</span></li>' for b, s in ch['items']) + '</ol>'
@@ -279,9 +292,14 @@ def rebuild(c, name, t):
         cta = ''.join(x.replace('class="btn btn-primary"', 'class="tm-btn tm-btn-gold tm-btn-sm"').replace('class="btn btn-gold"', 'class="tm-btn tm-btn-gold tm-btn-sm"') for x in ch['ctas'][:1])
         flip = ' tm-ch-flip' if n % 2 == 0 else ''
         dark = ' tm-ch-dark' if ch['dark'] else ''
-        media = f'<figure class="tm-ch-media tm-reveal"><img src="{img}" alt="Terramorph {svc.lower()} work in Northwest Ohio" loading="lazy"><span class="tm-ch-num">0{n}</span></figure>' if img else f'<div class="tm-ch-num tm-ch-num-solo" aria-hidden="true">0{n}</div>'
-        solo = '' if img else ' tm-ch-solo'
-        out.append(f'''<section class="tm-sec tm-ch{flip}{dark}"><div class="tm-wrap tm-ch-grid{solo}">
+        if ref:
+            r_src, r_alt, r_cap = ref
+            media = f'<figure class="tm-ch-media tm-reveal"><img src="{r_src}" alt="{r_alt}" loading="lazy"><span class="tm-ch-num">0{n}</span><figcaption class="tm-photo-credit">{r_cap}</figcaption></figure>'
+        else:
+            media = f'<figure class="tm-ch-media tm-reveal"><img src="{img}" alt="Terramorph {svc.lower()} work in Northwest Ohio" loading="lazy"><span class="tm-ch-num">0{n}</span></figure>' if img else f'<div class="tm-ch-num tm-ch-num-solo" aria-hidden="true">0{n}</div>'
+        solo = '' if (img or ref) else ' tm-ch-solo'
+        id_attr = f' id="{ch["id"]}"' if ch.get('id') else ''
+        out.append(f'''<section class="tm-sec tm-ch{flip}{dark}"{id_attr}><div class="tm-wrap tm-ch-grid{solo}">
   {media}
   <div class="tm-ch-copy">{f'<p class="tm-label">{ch["eyebrow"]}</p>' if ch['eyebrow'] else ''}<h2 class="tm-h2">{ch['h2']}</h2>{ch['paras']}{lst}{f'<div class="tm-cta-row">{cta}</div>' if cta else ''}</div>
 </div></section>''')
@@ -323,6 +341,9 @@ def rebuild(c, name, t):
                 return fn[len(cfg['city_prefix']):-len('-ohio.html')].replace('-', ' ').title()
             chips_html = ''.join(f'<a href="{fn}">{town(fn)}</a>' for fn in towns)
             out.append(f'<section class="tm-sec-tight tm-paper tm-svc-towns"><div class="tm-wrap"><p class="tm-label">Near you</p><h2 class="tm-h2" style="margin-bottom:22px">{svc} by town.</h2><div class="tm-town-list">{chips_html}</div></div></section>')
+
+    if name in c.get('SAVINGS_PAGES', set()):
+        out.append(c['project_savings_block']('#request-form'))
 
     out.append(f'''<section class="tm-sec tm-quote tm-dark">
   <div class="tm-quote-bg"><img src="{photos[0] if photos else 'assets/real-hero.webp'}" alt="" loading="lazy"></div>

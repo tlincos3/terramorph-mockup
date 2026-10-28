@@ -328,6 +328,8 @@ def generate(ctx):
     image_sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n'
     for image_path, caption in image_entries:
         image_sitemap += f'  <url><loc>{BASE_URL}/</loc><image:image><image:loc>{BASE_URL}/{image_path}</image:loc><image:caption>{caption}</image:caption></image:image></url>\n'
+    for page_file, image_path, caption in ctx.get('EXTRA_IMAGE_SITEMAP', []):  # sustainable pages' credited reference photos
+        image_sitemap += f'  <url><loc>{BASE_URL}/{page_file}</loc><image:image><image:loc>{BASE_URL}/{image_path}</image:loc><image:caption>{caption.replace("&", "&amp;").replace("<", "&lt;")}</image:caption></image:image></url>\n'
     image_sitemap += '</urlset>\n'
     (root / 'image-sitemap.xml').write_text(image_sitemap)
 
