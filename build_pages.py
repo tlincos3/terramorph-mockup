@@ -1772,7 +1772,8 @@ privacy = f'''
     <h2>Your choices</h2>
     <p>You can request updates, corrections, or removal of your contact information from active marketing lists by contacting Terramorph. Some records may be retained when needed for business, legal, accounting, or project-history purposes.</p>
     <h2>Text messages (SMS)</h2>
-    <p>Terramorph LLC sends work-related text alerts only to its own owners and employees who have agreed to receive them, from the company line (419) 540-4529. Mobile numbers and SMS opt-in data are used only to send those alerts. We do not sell or share your SMS opt-in data or personal information with third parties for marketing purposes. Message frequency varies and message and data rates may apply. Reply STOP to opt out or HELP for help at any time.</p>
+    <p>Terramorph LLC texts its clients about the work they asked for: links to their quotes, invoices and receipts, visit reminders and schedule changes, and replies to questions they text us. We only text clients who agreed to it, by ticking the optional box on our request form or quote approval page, or by telling our office. Consent to texts is never a condition of buying anything. Terramorph also sends work-related text alerts to its own owners and employees who have agreed to receive them, from the company line (419) 540-4529.</p>
+    <p>Mobile numbers and SMS consent are never shared or sold to third parties or affiliates for marketing purposes. Text messaging originator opt-in data and consent are not shared with any third parties, except the service providers that deliver our texts. Message frequency varies and message and data rates may apply. Reply STOP to opt out or HELP for help at any time.</p>
     <h2>Contact</h2>
     <p>For privacy questions, call <a href="tel:{TEL}">{PHONE}</a>.</p>
   </div>
@@ -1807,7 +1808,9 @@ terms = f'''
     <h2>No guarantee from website content alone</h2>
     <p>Terramorph aims to keep the website accurate, but final recommendations require property-specific review and direct communication with the team.</p>
     <h2>SMS Terms</h2>
-    <p>Terramorph LLC staff text alerts: Terramorph LLC sends work-related text alerts about customer calls from (419) 540-4529 only to its own owners and employees who agree to receive them. Message frequency varies. Message and data rates may apply. Reply STOP to opt out at any time and you will receive one confirmation message. Reply HELP for help, or contact contact@terramorphllc.com or 419-873-6801. Carriers are not liable for delayed or undelivered messages. See our <a href="privacy.html">Privacy Policy</a> for how mobile numbers are handled.</p>
+    <p><b>Client texts.</b> When you agree to texts from Terramorph LLC (on our request form, our quote approval page, or by telling our office), we text you about your own quotes, visits and invoices: links to your quote, invoice or receipt, visit reminders, schedule changes, and replies to your questions. We don't send marketing texts unless you separately agree to them. Consent is never a condition of purchase. Message frequency varies, usually 1 to 6 texts a month during the season. Message and data rates may apply.</p>
+    <p><b>Staff text alerts.</b> Terramorph LLC sends work-related text alerts about customer calls from (419) 540-4529 only to its own owners and employees who agree to receive them.</p>
+    <p>Reply STOP to any text to opt out, and you will receive one confirmation message and no more texts. Reply START to opt back in. Reply HELP for help, or contact contact@terramorphllc.com or 419-873-6801. Carriers are not liable for delayed or undelivered messages. See our <a href="privacy.html">Privacy Policy</a> for how mobile numbers are handled.</p>
     <h2>Contact</h2>
     <p>Questions about these terms can be handled by phone at <a href="tel:{TEL}">{PHONE}</a> or through the <a href="contact.html">Terramorph quote request page</a>.</p>
   </div>
