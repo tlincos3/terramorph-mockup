@@ -1026,9 +1026,10 @@ def faq_section(items):
 KNOWS_ABOUT = ["Landscape design","Paver patios","Drainage solutions","Outdoor lighting","Lawn maintenance","Seasonal cleanups","Snow removal","Hardscaping","Retaining walls","Mulch and rock beds",
                "Permaculture design","Native landscaping","Pollinator gardens","Rain gardens","Food forests","Edible landscaping","Natural swimming pools","Ponds and water features","Invasive plant removal"]
 
-def schema_for(page_name, title, desc, faqs=None, service=None, extra_services=None, crumb_parent=None, image=None, crumb_name=None):
+def schema_for(page_name, title, desc, faqs=None, service=None, extra_services=None, crumb_parent=None, image=None, crumb_name=None, service_desc=None):
     """crumb_parent = (file, name) adds a middle breadcrumb (Home > Services > Page).
-    extra_services = more Service node names for the same page. image = this page's own hero photo."""
+    extra_services = more Service node names for the same page. image = this page's own hero photo.
+    service_desc = optional plain-text description for the main Service node (snow pages, 2026-11-04)."""
     import json
     page_url = BASE_URL + ('/' if page_name == 'index.html' else '/' + page_name)
     img_url = BASE_URL + '/' + image if image else BASE_URL + '/assets/real-hero.webp'
@@ -1044,7 +1045,10 @@ def schema_for(page_name, title, desc, faqs=None, service=None, extra_services=N
       ]
     }
     if service:
-        base["@graph"].append({"@type":"Service","name":service,"serviceType":service,"provider":{"@id":BASE_URL+"/#business"},"areaServed":AREA_SERVED,"url":page_url})
+        node = {"@type":"Service","name":service,"serviceType":service,"provider":{"@id":BASE_URL+"/#business"},"areaServed":AREA_SERVED,"url":page_url}
+        if service_desc:
+            node["description"] = service_desc
+        base["@graph"].append(node)
     for extra in (extra_services or []):
         base["@graph"].append({"@type":"Service","name":extra,"serviceType":extra,"provider":{"@id":BASE_URL+"/#business"},"areaServed":AREA_SERVED,"url":page_url})
     if page_name == 'index.html':
@@ -1052,6 +1056,10 @@ def schema_for(page_name, title, desc, faqs=None, service=None, extra_services=N
     if faqs:
         base["@graph"].append({"@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in faqs]})
     return json.dumps(base, separators=(',',':'))
+
+# Service schema description shared by every snow page (owner-confirmed scope, 2026-11-04).
+# No prices, no response-time or trigger-depth promises here.
+SNOW_SERVICE_DESC = 'Seasonal snow removal for homes and businesses in Wood and Lucas County, Ohio: snow plowing, sidewalk and walkway shoveling, snow blowing, salting, and de-icing for driveways, walkways, entries, and commercial lots.'
 
 DEFAULT_FAQS = [
     ('Do you offer free estimates?', 'Yes. Terramorph offers free estimates for landscape design, patios, drainage, lighting, lawn maintenance, seasonal cleanups, and related outdoor property work.'),
@@ -1087,7 +1095,7 @@ SERVICE_FAQS.update(_sus.FAQS)
 
 def service_page(filename, title, eyebrow, image, headline, lead, problem, outcome, cta, embed_jobber=False, depth='',
                  seo_title=None, seo_desc=None, crumb_parent=None, crumb=None, hero_alt=None, hero_credit=None,
-                 service_name=None, extra_services=None, process=None):
+                 service_name=None, extra_services=None, process=None, service_desc=None):
     """Optional keyword args (2026-10-27, sustainable pages): exact title/meta, a
     Home > Services > Page breadcrumb, an honest hero alt + credit line for
     reference photos, extra Service schema nodes, and a custom process timeline
@@ -1149,7 +1157,7 @@ def service_page(filename, title, eyebrow, image, headline, lead, problem, outco
     desc = seo_desc or f'{title} in Toledo, Wood County, Lucas County, and Northwest Ohio by Terramorph. Free estimates for homeowners and property owners.'
     schema = schema_for(filename, seo_title or f'{title} | Terramorph', desc, SERVICE_FAQS.get(title, DEFAULT_FAQS), service_name or title,
                         extra_services=extra_services, crumb_parent=crumb_parent, image=('assets/' + image.split('?')[0]) if hero_credit else None,
-                        crumb_name=(crumb or title).replace('&amp;', '&'))
+                        crumb_name=(crumb or title).replace('&amp;', '&'), service_desc=service_desc)
     (root / filename).write_text(page(seo_title or f'{title} in Wood and Lucas County | Terramorph', desc, body, schema))
 
 
@@ -1393,10 +1401,10 @@ def seasonal_cleanups_page():
     (root / filename).write_text(page(title, desc, body, schema))
 
 seasonal_cleanups_page()
-service_page('snow-removal.html', 'Snow Removal', 'Winter snow plowing and ice service', 'snow-removal-truck.webp?v=3.17', 'Snow removal and snow plowing, locked in before the first storm.', 'Seasonal snow plowing and ice management for driveways, walkways, and commercial lots in Perrysburg, Toledo, Maumee, and the rest of Wood and Lucas County. Winter routes fill in the fall - reserve a spot before the first push.', 'Every storm turns into shoveling before work, a blocked driveway, or a commercial lot that is not safe or open when customers arrive.', 'A property that is plowed, treated, and accessible after every qualifying snowfall, on a contract that runs all winter without another phone call.', 'Reserve Winter Service', True,
+service_page('snow-removal.html', 'Snow Removal', 'Winter snow plowing and ice service', 'snow-removal-truck.webp?v=3.17', 'Snow removal and snow plowing, locked in before the first storm.', 'Seasonal snow plowing, sidewalk and walkway shoveling, snow blowing, salting, and de-icing for driveways, walkways, and commercial lots in Perrysburg, Toledo, Maumee, and the rest of Wood and Lucas County. Winter routes fill in the fall - reserve a spot before the first push.', 'Every storm turns into shoveling before work, a blocked driveway, or a commercial lot that is not safe or open when customers arrive.', 'A property that is plowed, treated, and accessible after every qualifying snowfall, on a contract that runs all winter without another phone call.', 'Reserve Winter Service', True,
              seo_title='Snow Removal & Plowing in Perrysburg, Toledo & Maumee, OH | Terramorph',
-             seo_desc='Snow removal and plowing for Perrysburg, Toledo, Maumee, and Wood and Lucas County: driveways, walks, commercial lots, and salting. Reserve before the first storm.',
-             extra_services=['Snow Plowing'])
+             seo_desc='Snow plowing, shoveling, snow blowing, salting, and de-icing for Perrysburg, Toledo, Maumee, and Wood and Lucas County driveways, walks, and lots. Reserve before the first storm.',
+             extra_services=['Snow Plowing'], service_desc=SNOW_SERVICE_DESC)
 
 def snow_signup_page():
     """Seasonal snow sign-up page (2026-10-26). Residential + commercial, how it
@@ -1413,7 +1421,7 @@ def snow_signup_page():
     <p class="crumb"><a href="index.html">Home</a> / <a href="snow-removal.html">Snow Removal</a> / Winter sign-up</p>
     <p class="eyebrow light">Seasonal snow and ice service</p>
     <h1>Sign up before the first storm.</h1>
-    <p>Seasonal snow removal for homes and businesses across Wood and Lucas County. Reserve your spot now and the driveway, walks, or lot are already on the route when the first snow hits.</p>
+    <p>Seasonal snow removal for homes and businesses across Wood and Lucas County: plowing, sidewalk and walkway shoveling, snow blowing, salting, and de-icing. Reserve your spot now and the driveway, walks, or lot are already on the route when the first snow hits.</p>
     <div class="cta-row"><a class="btn btn-gold" href="#request-form">Reserve My Winter Spot</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
   </div>
 </section>
@@ -1422,7 +1430,7 @@ def snow_signup_page():
 <section class="section">
   <div class="container section-heading compact"><p class="eyebrow">Two ways to sign up</p><h2>Residential driveways or commercial lots. One seasonal agreement.</h2></div>
   <div class="container tm-snow-plans">
-    <div class="tm-snow-plan"><p class="eyebrow">Residential</p><h3>Driveways, walks, and entries</h3><ul><li>Driveway plowed after each qualifying snowfall</li><li>Walkways, steps, and the front entry cleared</li><li>Ice management and salting available for slick walks and drives</li><li>One seasonal agreement that runs all winter, no call needed after each storm</li></ul></div>
+    <div class="tm-snow-plan"><p class="eyebrow">Residential</p><h3>Driveways, walks, and entries</h3><ul><li>Driveway plowed after each qualifying snowfall</li><li>Walkways, steps, and the front entry shoveled or snow-blown clear</li><li>Salting and de-icing available for slick walks and drives</li><li>One seasonal agreement that runs all winter, no call needed after each storm</li></ul></div>
     <div class="tm-snow-plan"><p class="eyebrow">Commercial and industrial</p><h3>Parking lots, access lanes, and entrances</h3><ul><li>Lots and access lanes plowed so the business is open when customers and staff arrive</li><li>Entrances and sidewalks cleared</li><li>Salting for lots, walks, and entries</li><li>A winter response plan for the property, set up before the storms start</li></ul></div>
   </div>
 </section>
@@ -1449,8 +1457,8 @@ def snow_signup_page():
 {faq_section(faqs)}
 <section class="section quote-section"><div class="container quote-grid"><div class="phone-direct-card"><p class="eyebrow">Ready for winter?</p><h2>Reserve seasonal snow service before the first storm.</h2><p>Send the property details in the secure form above, or call and we will set up the seasonal agreement over the phone.</p><div class="phone-direct-actions"><a class="btn btn-gold" href="#request-form">Open Sign-Up Form</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div><div class="cta-proof"><p class="eyebrow">Why property owners reach out</p><h2>Reviews, proof, and a simple seasonal sign-up.</h2>{review_stack(2, title)}</div></div></section>
 '''
-    desc = 'Seasonal snow removal sign-up for Perrysburg, Toledo, and Wood and Lucas County. Residential driveways and commercial lots, one winter agreement. Reserve now.'
-    schema = schema_for(filename, 'Snow Removal Sign-Up | Terramorph', desc, faqs, title)
+    desc = 'Seasonal snow removal sign-up for Perrysburg, Toledo, and Wood and Lucas County: plowing, shoveling, snow blowing, salting, and de-icing on one winter agreement. Reserve now.'
+    schema = schema_for(filename, 'Snow Removal Sign-Up | Terramorph', desc, faqs, title, service_desc=SNOW_SERVICE_DESC)
     (root / filename).write_text(page('Seasonal Snow Removal Sign-Up | Wood and Lucas County | Terramorph', desc, body, schema))
 
 snow_signup_page()
