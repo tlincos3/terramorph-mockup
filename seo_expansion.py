@@ -43,13 +43,56 @@ def generate(ctx):
          ['real-striped-lawn-pool.webp', 'real-striped-lawn-lot.webp', 'real-mowing-service.webp', 'real-striped-lawn-deck.webp', 'real-estate-stone-wall.webp', 'real-lawn.webp', 'real-striped-lawn-front.webp']),
     ]
 
+    # Per-service, per-city H1 + meta (2026-11-04). Every line uses only the
+    # property facts already on the site (notes above / authority_pass CITY_CONTEXT).
+    # Lawn pages deliberately do not sell mowing sign-ups: mowing is not being sold right now.
+    CITY_SERVICE_COPY = {
+        'Landscape Design': {
+            'Sylvania': ("Landscape design for Sylvania's shaded, tree-lined lots.", 'Landscape design and bed refreshes in Sylvania, OH: shade-tolerant plantings, root-aware bed work, and clean curb appeal for established homes. Free estimates from Terramorph.'),
+            'Bowling Green': ('Landscaping in Bowling Green for open, wind-exposed lots and rental properties.', 'Landscape design and bed installation in Bowling Green, OH for homes, rentals, and commercial frontage, planned around flat lots and wind exposure. Free estimates.'),
+            'Holland': ('Landscaping in Holland: bed refreshes for homes and busy commercial frontage.', 'Landscape design, bed refreshes, and mulch for Holland and Springfield Township homes and businesses along Airport Highway and McCord Road. Free estimates.'),
+            'Waterville': ("Landscape design for Waterville's wooded, river-side properties.", 'Landscape design in Waterville, OH planned around wooded lots, river-area moisture, and larger yards, from front beds to outdoor living. Free estimates from Terramorph.'),
+            'Whitehouse': ('New-home landscaping in Whitehouse, from builder-grade lot to finished beds.', 'Landscape design and installation in Whitehouse, OH: front beds, plantings, mulch, and sod edges for new-construction and larger lots. Free estimates from Terramorph.'),
+            'Oregon': ('Landscaping in Oregon, Ohio built for flat lots and open, wind-exposed yards.', 'Landscape design and bed installation in Oregon, OH for homes and commercial frontage along Navarre Avenue, with drainage checked first on flat lots. Free estimates.'),
+            'Rossford': ("Landscaping for Rossford's compact yards and older front beds.", 'Landscape design and front-bed curb appeal in Rossford, OH, sized for compact lots and older homes near Dixie Highway and the Maumee River. Free estimates.'),
+        },
+        'Paver Patios and Hardscapes': {
+            'Sylvania': ('Paver patios and walkways for Sylvania homes under mature trees.', 'Paver patios, walkways, and seat walls in Sylvania, OH, planned around mature trees, roots, and drainage on established lots. Free estimates from Terramorph.'),
+            'Bowling Green': ('Paver patios in Bowling Green built on a base that handles flat, wet ground.', 'Paver patios and walkways in Bowling Green, OH with base prep and drainage planned for flat lots. Homes, rentals, and commercial properties. Free estimates.'),
+            'Holland': ('Paver patios and walkways for Holland backyards.', 'Paver patios, walkways, and fire pit areas in Holland and Springfield Township, OH, with runoff around drives and patios handled first. Free estimates from Terramorph.'),
+            'Waterville': ("Paver patios for Waterville's wooded lots and outdoor living upgrades.", 'Paver patios, seating areas, and walkways in Waterville, OH, planned around larger wooded yards, river-area moisture, and erosion. Free estimates from Terramorph.'),
+            'Whitehouse': ("Paver patios for Whitehouse's new homes and large open lots.", 'Paver patios and walkways in Whitehouse, OH for new-construction and larger lots, with builder grading and drainage checked before the base goes in. Free estimates.'),
+            'Oregon': ('Paver patios in Oregon, Ohio built for flat lots and winter exposure.', 'Paver patios and walkways in Oregon, OH with drainage and freeze-thaw planned for flat, wind-exposed lots. Homes and businesses. Free estimates from Terramorph.'),
+            'Rossford': ("Paver walkways and patios that fit Rossford's compact yards.", 'Paver patios, walkways, and step transitions in Rossford, OH sized for compact lots and older homes, with driveway runoff handled. Free estimates from Terramorph.'),
+        },
+        'Drainage Solutions': {
+            'Sylvania': ("Drainage solutions for Sylvania's shaded, mature lots.", 'Yard drainage in Sylvania, OH: standing water, downspout routing, and grading review around drives, patios, and mature trees. Free estimates from Terramorph.'),
+            'Bowling Green': ("Drainage solutions for Bowling Green's flat lots and standing water.", 'Yard drainage in Bowling Green, OH for flat lots that hold water: diagnosis, grading, downspout routing, and low-spot fixes. Free estimates from Terramorph.'),
+            'Holland': ("Drainage for Holland's wet lawn pockets and driveway runoff.", 'Yard drainage in Holland and Springfield Township, OH: wet lawn pockets, driveway runoff, and water around patios diagnosed and routed. Free estimates.'),
+            'Waterville': ("Drainage and erosion fixes for Waterville's river-side and wooded lots.", 'Yard drainage in Waterville, OH planned for river-area moisture, wooded lots, and erosion on larger yards. Free estimates from Terramorph.'),
+            'Whitehouse': ("Drainage for Whitehouse's new-construction lots and builder grading.", 'Yard drainage in Whitehouse, OH: builder-grade grading, standing water on larger lots, and downspout routing fixed before beds or patios go in. Free estimates.'),
+            'Oregon': ("Drainage solutions for Oregon's flat lots and wet yards.", 'Yard drainage in Oregon, OH for flat lots and wet yards: diagnosis first, then grading, downspout routing, or drains. Homes and commercial frontage. Free estimates.'),
+            'Rossford': ("Drainage fixes for Rossford's garages, driveways, and compact yards.", 'Yard drainage in Rossford, OH: runoff around drives and garages, older grades, and compact yards that hold water. Free estimates from Terramorph.'),
+        },
+        'Lawn Maintenance': {
+            'Sylvania': ("Lawn and bed maintenance for Sylvania's shaded, established properties.", 'Lawn maintenance in Sylvania, OH: trimming, edging, and bed upkeep for shaded lawns and established beds. Free estimates from Terramorph.'),
+            'Bowling Green': ('Lawn maintenance for Bowling Green rentals, homes, and commercial frontage.', 'Lawn maintenance in Bowling Green, OH for owner-occupied homes, rentals, campus-area properties, and commercial frontage. Free estimates from Terramorph.'),
+            'Holland': ('Lawn maintenance for Holland homes and commercial corridors.', 'Lawn maintenance in Holland and Springfield Township, OH: trimming, edging, bed upkeep, and commercial frontage along Airport Highway. Free estimates.'),
+            'Waterville': ("Lawn maintenance for Waterville's larger, wooded yards.", 'Lawn maintenance in Waterville, OH: trimming, edging, and bed upkeep for larger wooded lots and established neighborhoods. Free estimates from Terramorph.'),
+            'Whitehouse': ("Lawn maintenance for Whitehouse's larger lots and new homes.", 'Lawn maintenance in Whitehouse, OH for larger lots and new-construction homes: trimming, edging, sod edges, and bed upkeep. Free estimates from Terramorph.'),
+            'Oregon': ('Lawn maintenance for Oregon, Ohio homes and commercial frontage.', 'Lawn maintenance in Oregon, OH: trimming, edging, bed upkeep, and seasonal cleanup after wind and storms for homes and commercial frontage. Free estimates.'),
+            'Rossford': ("Lawn maintenance for Rossford's compact yards and front beds.", 'Lawn maintenance in Rossford, OH: trimming, edging, and front-bed upkeep for compact yards and older lots. Free estimates from Terramorph.'),
+        },
+    }
+
     extra_city_pages = []
+    city_page_meta = {}  # filename -> (city, service, headline, desc) for hub cards
     for city_index, city in enumerate(cities):
         city_slug = city.lower().replace(' ', '-')
         for service, service_slug, keyword_service, service_copy, image_pool in service_defs:
             image = image_pool[city_index % len(image_pool)]
             filename = f'{service_slug}-{city_slug}-ohio.html'
-            headline = f'{service} in {city}, Ohio for properties that need a clearer outdoor plan.'
+            headline, desc = CITY_SERVICE_COPY[service][city]
             lead = f'Terramorph helps {city} homeowners and property owners with {service_copy.lower()} backed by free estimates and phone-first follow-up.'
             angle = f'{city} projects often involve {notes[city]}. Terramorph reviews grade, access, water movement, materials, photos, and timeline before recommending a scope.'
             faqs = [
@@ -57,7 +100,7 @@ def generate(ctx):
                 ('Can I request a free estimate by phone?', f'Yes. Call Terramorph at {PHONE} with the service need, property details, photos if available, and timeline.'),
                 ('Can photos be included with the request?', 'Yes. Photos are helpful because they show access, grade, existing conditions, water movement, beds, lawn areas, or hardscape details before follow-up.'),
             ]
-            desc = f'Terramorph provides {keyword_service} in {city}, Ohio with free estimates for homeowners, businesses, and property owners.'
+            city_page_meta[filename] = (city, service, headline, desc)
             body = f'''
 <section class="page-hero premium-page-hero city-service-hero">
   <div class="page-hero-image"><img src="assets/{image}" alt="Terramorph {service} in {city}, Ohio"></div><div class="hero-overlay"></div>
@@ -71,6 +114,235 @@ def generate(ctx):
             short_title = f'{service.replace(" and Hardscapes", "")} in {city}, OH | Terramorph'
             (root / filename).write_text(page(short_title, desc, body, schema_for(filename, headline, desc, faqs, service)))
             extra_city_pages.append(filename)
+
+    # ---- Leaf removal + snow removal city pages (2026-11-04) ----------------
+    # Same template family as spring-fall-cleanups-toledo-ohio / snow-removal-toledo-ohio
+    # (hero, answer-first block, local details, FAQ, related reading, quote), with a
+    # real local section per town. Facts come only from this repo and
+    # ~/projects/ads-research-2026-10/06-climate-calendar.md (NOAA Toledo Express
+    # normals, city leaf-pickup programs). NO prices anywhere on a snow page.
+    LEAF_WEATHER = [
+        ('First frost: late October', 'Toledo Express Airport sees its first 32°F night around October 24 in a typical year. Annuals finish and perennials start going dormant.'),
+        ('Hard freeze: early November', 'The first 28°F freeze typically lands November 4, with the first 24°F night around November 16. Hard freezes knock the last leaves down.'),
+        ('Peak leaf drop: mid to late November', "Terramorph's own leaf jobs ramp up the last week of October and peak the third and fourth weeks of November, so that is when the main visit happens."),
+        ('First snow: late November', 'The first measurable snow typically arrives around November 22. Wet leaves that freeze to the lawn under it stay there until spring.'),
+        ('Leaves past two inches come off', 'Ohio State University Extension recommends removing leaves once they build up past about two inches, before they mat and smother the lawn.'),
+    ]
+    SNOW_WEATHER = [
+        ('First plowable storm: mid-December', 'In 31 winters of Toledo Express Airport records, the first 2-inch snow day lands around December 12 in a typical year, and as early as November 11.'),
+        ('Last plowable storm: early March', 'The last 2-inch day typically falls around March 7, and has come as late as late April.'),
+        ('About four plowable storms a winter', 'The last ten winters averaged about four plowable storms. Big winters bring ten or more, which is why routes are built with room to run every storm.'),
+        ('Storm systems, not lake effect', 'Northwest Ohio is not in the snowbelt. The lake-effect snow here is usually under an inch; the plowable storms come from large systems moving through.'),
+        ('March is the worst for ice', 'March averages the most freeze-thaw days of any month (about 17), so walks and entries keep refreezing after the plowing is done.'),
+    ]
+    LEAF_CITIES = [
+        # city, slug, hero photo, H1, meta, local heading, local paragraphs, city FAQ
+        ('Perrysburg', 'perrysburg', 'real-fall-leaf-crew.webp',
+         'Leaf removal in Perrysburg, hauled away instead of bagged at the curb.',
+         'Leaf removal and fall cleanup in Perrysburg, OH. Leaves blown out of lawns, beds, and fence lines and hauled off, no bags or tags. Perrysburg-based crew. Free estimates.',
+         'Perrysburg leaves go out as tagged bags, or they go with us.',
+         ["Perrysburg's yard-waste program takes leaves as tagged bags or toters on the weekly route through November 30, then by request only on Wednesdays from December through March. Bagging a wooded Perrysburg lot is a weekend of work before the tags are even paid for.",
+          'Terramorph is based in Perrysburg. Our crews blow the leaves out of the lawn, the beds, the fence lines, and from under the shrubs, load them, and haul them away. Nothing sits at the curb.',
+          'Newer subdivisions near Levis Commons, Fort Meigs, River Road, and Roachton Road have flat lots and HOA curb-appeal expectations, so the cleanup also includes bed edges and a final mow when it is part of the plan.'],
+         [('Does Perrysburg pick up leaves at the curb?', "Perrysburg's yard-waste program takes leaves as tagged bags or toters on the weekly route through November 30, then by request only on Wednesdays in December through March. Terramorph hauls leaves away instead, so there is no bagging or tagging."),
+          ('When should a Perrysburg leaf cleanup be scheduled?', 'Book in September or October. The main visit happens in the second half of November, after the first hard freezes (typically November 4 and November 16) have brought down most of the leaves. Wooded lots often get one more pass.')]),
+        ('Maumee', 'maumee', 'real-fall-windstorm-blower.webp',
+         'Leaf removal in Maumee for shaded lots, rentals, and the properties the city truck skips.',
+         'Leaf removal in Maumee, OH. City curbside pickup is owner-occupied homes only; Terramorph hauls leaves for any property, rentals and businesses included. Free estimates.',
+         "Maumee's leaf truck only serves owner-occupied homes.",
+         ["Maumee's fall leaf collection usually starts in October and runs by district, one set week each. It is for owner-occupied homes only, and anyone paid to remove yard waste is not allowed to use it. Rentals, condos, and commercial properties get no city pickup at all.",
+          'Terramorph hauls everything it clears, so a Maumee rental, condo, or storefront is handled the same as a house, and an owner-occupied home does not have to wait for its district week.',
+          'Uptown Maumee, River Road, and the neighborhoods near Side Cut Metropark are mature and heavily shaded, with tight access between houses. Backpack blowers reach the side yards and fence lines a walk-behind cannot.'],
+         [('Does Maumee collect leaves at the curb?', "Maumee's fall leaf collection is for owner-occupied homes only, by district and set week, and contractors may not use it. Rentals, condos, and commercial properties need private removal, which is what Terramorph provides. Leaves are hauled away with the crew."),
+          ('Can you do leaf removal for a Maumee rental or business?', 'Yes. Because Terramorph hauls the leaves, rentals, condos, and commercial properties in Maumee are handled the same way as owner-occupied homes.')]),
+        ('Sylvania', 'sylvania', 'real-fall-cleanup-after.webp',
+         "Leaf removal in Sylvania for big trees, shaded lawns, and established beds.",
+         'Leaf removal and fall cleanup in Sylvania, OH. Mature-tree lots cleared, beds cut back, leaves hauled away. Downtown Sylvania, Olander Park, and nearby. Free estimates.',
+         'Sylvania leaf loads come from mature trees, and they come late.',
+         ['Sylvania properties have mature trees, shaded lawns, larger homes, and established beds with root competition. That means heavy leaf loads, and the last leaves often come down after the hard freezes in early and mid November.',
+          'A thick layer left under the first snow blocks light and can leave matted, thin patches and snow mold by spring. Terramorph clears the lawn, the beds, and under the shrubs, and hauls the leaves away, so there is no city schedule to track.',
+          'Crews work neighborhoods around Downtown Sylvania, Olander Park, Centennial Road, Main Street, and Sylvania Avenue.'],
+         [('Do Sylvania leaf cleanups need a second visit?', 'Often, yes. Mature-tree lots drop the last leaves after the hard freezes in early and mid November, so heavily wooded Sylvania properties frequently book one more pass before the first lasting snow.'),
+          ('Do you work around established beds and roots?', 'Yes. Leaves are blown out of the beds and from under shrubs, spent perennials are cut back, and spring-flowering shrubs are left alone so next year\'s buds stay on.')]),
+        ('Bowling Green', 'bowling-green', 'real-fall-finished-lawn.webp',
+         'Leaf removal in Bowling Green for open lots, rentals, and campus-area properties.',
+         'Leaf removal and fall cleanup in Bowling Green, OH. Leaves cleared and hauled away for homes, rentals, and storefronts near BGSU, no waiting on city rounds. Free estimates.',
+         "Bowling Green's city leaf rounds start late.",
+         ["In 2025, Bowling Green's first round of curbside leaf collection began November 10 and the final round began December 8, with loose leaves set at the curb. On an open, wind-exposed lot, a pile at the curb does not stay a pile for long.",
+          'Terramorph clears and hauls in one scheduled visit, so homes, rentals with tenant turnover, and commercial frontage near BGSU, Wooster Street, Poe Road, and downtown are done without raking to the street and waiting.',
+          'Flat drainage is common here, so the cleanup also clears leaves out of the low spots and swales where they would otherwise hold water against the lawn.'],
+         [('When does Bowling Green pick up leaves?', 'In 2025 the first round of curbside leaf collection began November 10 and the final round began December 8. Terramorph hauls leaves away on its own schedule, so there is nothing to rake to the curb.'),
+          ('Do you handle rentals and commercial properties in Bowling Green?', 'Yes. Rental turnover, campus-area properties, and commercial frontage are common Bowling Green cleanups. Terramorph can scope a one-time cleanup or pair it with recurring maintenance.')]),
+        ('Holland', 'holland', 'real-fall-skidsteer-leaves.webp',
+         'Leaf removal in Holland and Springfield Township, homes and commercial frontage.',
+         'Leaf removal and fall cleanup in Holland, OH. Suburban yards and commercial frontage along Airport Highway and McCord Road, leaves hauled away. Free estimates.',
+         'Holland cleanups cover the yard and the frontage.',
+         ['Holland and Springfield Township mix suburban yards with high-visibility commercial corridors along Airport Highway, McCord Road, and Angola Road. A storefront or office bed full of leaves reads as neglected fast.',
+          'Terramorph clears lawns, beds, and fence lines and hauls the leaves off, for homes in Strawberry Acres and near Homecoming Park as well as business frontage that needs to look kept.',
+          'Wet lawn pockets and driveway runoff are common here. Leaves left in those low spots hold water and mat down, so the cleanup gets them out before the ground freezes.'],
+         [('Do you do leaf removal for Holland businesses?', 'Yes. Commercial frontage along Airport Highway and McCord Road can be scoped alongside residential cleanups, and the leaves are hauled away with the crew.'),
+          ('Why clear leaves out of the wet spots?', 'Leaves that settle in wet lawn pockets hold water, mat down, and smother the grass under them. Clearing them before the ground freezes keeps those spots from coming back thin in spring.')]),
+        ('Waterville', 'waterville', 'real-fall-haul-trailer.webp',
+         'Leaf removal in Waterville for wooded, river-side lots.',
+         'Leaf removal and fall cleanup in Waterville, OH. Wooded lots and larger yards near the Maumee River cleared with commercial blowers and hauled away. Free estimates.',
+         'Waterville lots drop a lot of leaves, and the river keeps them wet.',
+         ['Waterville properties are often wooded, with larger yards, established neighborhoods, and river-area moisture around Farnsworth Metropark, River Road, and the Anthony Wayne Trail. Wet leaves on a big lot are heavy, slow work by hand.',
+          'Terramorph brings commercial walk-behind blowers, backpack crews, and the equipment to load and haul, so a full acre of leaves is cleared in one scheduled visit instead of a string of weekends.',
+          'Erosion-prone slopes and drainage-sensitive areas are cleared without stripping the ground, and ornamental grasses or seed heads can stay standing for winter if you want them.'],
+         [('Can you clear a large wooded lot in Waterville?', 'Yes. Commercial walk-behind blowers, backpack crews, and haul-off equipment are built for big leaf loads. Heavily wooded lots often book a main visit in the second half of November and one more pass after the last leaves fall.'),
+          ('Do you haul the leaves away in Waterville?', 'Yes. Leaves and debris leave with the crew. Nothing is piled at the curb or along the river.')]),
+        ('Rossford', 'rossford', 'real-fall-leaf-crew.webp',
+         "Leaf removal in Rossford for compact yards and older front beds.",
+         'Leaf removal and fall cleanup in Rossford, OH. Compact yards and front beds near Dixie Highway, Eagle Point Colony, and the river cleared and hauled away. Free estimates.',
+         'Rossford yards are compact, so the cleanup is about the details.',
+         ['Rossford lots are older and compact, with front-bed curb appeal and runoff around drives and garages. Leaves collect against the garage, in the side yard, and in the beds along the front walk.',
+          'Terramorph clears the lawn, the beds, and the fence lines, cuts back spent perennials, and hauls everything away. Crews work neighborhoods near Dixie Highway, Eagle Point Colony, Lime City Road, and the Maumee River.',
+          'A fall cleanup here often pairs with a bed edge cleanup and a mulch refresh so the front of the house looks finished through winter.'],
+         [('Is a small Rossford yard worth a professional cleanup?', 'Yes. Compact yards collect leaves in the beds, side yards, and against the garage where they are slowest to clear by hand. One visit clears, cuts back, and hauls everything.'),
+          ('Can the cleanup include the front beds?', 'Yes. Front-bed cleanouts, edge cleanup, and a mulch refresh are common Rossford add-ons so the house looks finished from the street.')]),
+        ('Oregon', 'oregon', 'real-fall-windstorm-blower.webp',
+         'Leaf removal in Oregon, Ohio after the wind has moved the leaves around.',
+         'Leaf removal and fall cleanup in Oregon, OH. Flat, wind-exposed lots and Navarre Avenue frontage cleared and hauled away, storm debris included. Free estimates.',
+         'Oregon lots are flat and open, and the wind does not respect property lines.',
+         ['Oregon properties are flat, exposed to wind off the open ground and Maumee Bay, and prone to wet yards. Leaves pile against fences and buildings, and storm debris comes with them.',
+          'Terramorph clears leaves, sticks, and wind-blown debris from lawns, beds, and fence lines and hauls it all away, for homes near Coy Road, Dustin Road, and Pearson Metropark and for commercial frontage along Navarre Avenue.',
+          'On flat lots, leaves settle in the low spots that already hold water. Getting them out before the ground freezes keeps the lawn from going into winter matted and wet.'],
+         [('Do you clear storm debris with the leaves in Oregon?', 'Yes. Sticks, fallen branches, and wind-blown debris are cleared and hauled with the leaves.'),
+          ('Do you handle commercial frontage in Oregon, Ohio?', 'Yes. Commercial frontage along Navarre Avenue and other Oregon corridors can be scoped alongside residential cleanups.')]),
+        ('Ottawa Hills', 'ottawa-hills', 'real-fall-cleanup-after.webp',
+         'Leaf removal in Ottawa Hills, cleared and hauled in one visit.',
+         'Leaf removal and fall cleanup in Ottawa Hills, OH. Lawns, beds, and fence lines cleared, perennials cut back, leaves hauled away. Free estimates from Terramorph.',
+         'Ottawa Hills is inside our core Lucas County route.',
+         ['Ottawa Hills borders West Toledo and sits inside the Lucas County area Terramorph covers every week in the fall, alongside Sylvania, Maumee, and Holland.',
+          'Terramorph clears the lawn, the beds, the fence lines, and under the shrubs, cuts back spent perennials, leaves spring-flowering shrubs alone, and hauls everything away, so there is no curb schedule to track.',
+          'The main visit happens in the second half of November, after the hard freezes in early and mid November bring down most of the leaves. Properties with a lot of trees often book one more pass before the first lasting snow.'],
+         [('Does Terramorph serve Ottawa Hills?', 'Yes. Ottawa Hills is one of Terramorph\'s priority service areas in Lucas County, alongside Sylvania, Maumee, Holland, and Toledo.'),
+          ('Do you haul the leaves away in Ottawa Hills?', 'Yes. Leaves and debris leave with the crew in the same visit.')]),
+    ]
+    SNOW_CITIES = [
+        # city, slug, H1, meta, local heading, local paragraphs, city FAQ (no prices anywhere)
+        ('Perrysburg', 'perrysburg',
+         'Snow removal and snow plowing in Perrysburg, from the crew based here.',
+         'Snow removal and plowing in Perrysburg, OH: driveways, walks, and commercial lots, plus salting. Perrysburg-based crew. Reserve before the first storm.',
+         'Perrysburg is home base for the winter route.',
+         ['Terramorph is based in Perrysburg, and Perrysburg driveways, walks, and lots are the core of the winter route, from the newer subdivisions near Levis Commons, Fort Meigs, and Roachton Road to River Road and Five Point Road.',
+          'Seasonal snow service covers residential driveways, walkways, steps, and entries, and commercial parking lots, access lanes, and entrances. Salting can be included so walks and entries are safe, not just cleared.',
+          'HOA neighborhoods expect a clean drive and walk after every qualifying snowfall. Service is triggered by the depth in your agreement, and routes run so the driveway is open when you need to leave.'],
+         [('Do you plow residential driveways in Perrysburg?', 'Yes. Residential driveways, walks, steps, and entries across Perrysburg, plus commercial lots and entrances. One seasonal agreement runs all winter.'),
+          ('When does the first plowable snow usually hit Perrysburg?', 'The first 2-inch snow day at Toledo Express Airport typically lands around December 12, and has come as early as November 11. Routes fill in the fall, so sign up before then.')]),
+        ('Maumee', 'maumee',
+         'Snow removal and snow plowing in Maumee for tight drives and mature neighborhoods.',
+         'Snow removal and plowing in Maumee, OH: driveways, walks, and entries in Uptown and river-side neighborhoods, plus commercial lots and salting. Seasonal sign-up.',
+         'Maumee driveways are tight, so the plow has to be careful.',
+         ['Uptown Maumee, River Road, Ford Street, and the neighborhoods near Side Cut Metropark are mature, with tight access between houses and little room to push snow. The crew plans where the snow goes before the first storm.',
+          'Residential service covers the driveway, walks, steps, and entry. Commercial service covers lots, access lanes, and entrances along Monclova Road and the Maumee corridors, with salting available for both.',
+          'Service is triggered by the snowfall depth in your agreement, and routes run so driveways are open before work and lots are open before business.'],
+         [('Can you plow a narrow Maumee driveway?', 'Yes. Tight access is common in Maumee\'s mature neighborhoods. The crew plans where snow is pushed before the season so drives, walks, and entries are cleared without piling snow where it blocks access.'),
+          ('Do you salt walks and entries in Maumee?', 'Yes. Ice management and salting can be included in the seasonal agreement for walks, steps, entries, and commercial lots.')]),
+        ('Sylvania', 'sylvania',
+         'Snow removal and snow plowing in Sylvania for larger homes and long winters.',
+         'Snow removal and plowing in Sylvania, OH: driveways, walks, and entries plus commercial lots and salting near Downtown Sylvania and Centennial Road. Seasonal sign-up.',
+         'Sylvania winters run from the first December storm into March.',
+         ['Sylvania properties include larger homes with mature trees around Downtown Sylvania, Olander Park, Centennial Road, Main Street, and Sylvania Avenue. A seasonal agreement covers every qualifying snowfall from the first storm to the last.',
+          'The last 2-inch snow day at Toledo Express Airport typically falls around March 7, and March averages the most freeze-thaw days of any month, so walks and entries refreeze after the plowing is done. Salting can be part of the plan.',
+          'Residential service covers driveways, walks, steps, and entries. Commercial service covers lots, access lanes, and entrances.'],
+         [('How late into spring does Sylvania snow service run?', 'The seasonal agreement runs the full winter. The last 2-inch snow day typically falls around March 7 and has come as late as April, so service continues through the end of the season.'),
+          ('Do you handle ice on Sylvania walks and drives?', 'Yes. March has the most freeze-thaw days of the year, so salting for walks, steps, entries, and lots can be included so surfaces are safe, not just cleared.')]),
+        ('Bowling Green', 'bowling-green',
+         'Snow removal and snow plowing in Bowling Green for open lots, rentals, and storefronts.',
+         'Snow removal and plowing in Bowling Green, OH: driveways, rentals, campus-area lots, and storefronts near BGSU and downtown, plus salting. Seasonal sign-up.',
+         'Bowling Green is flat and open, so the wind keeps working after the storm.',
+         ['Bowling Green lots are open and wind-exposed, with flat drainage, rental turnover, campus-area properties, and commercial frontage along Wooster Street, Poe Road, and downtown. Wind moves snow back onto cleared drives and lots.',
+          'Seasonal service covers residential driveways, walks, and entries, and commercial lots, access lanes, and entrances. Salting is available so walks and lots stay safe for tenants, customers, and staff.',
+          'Service is triggered by the snowfall depth in your agreement, and routes run so lots are open before business and driveways before work.'],
+         [('Do you plow rental properties in Bowling Green?', 'Yes. Rentals, campus-area properties, and commercial frontage near BGSU and downtown are common Bowling Green accounts. One seasonal agreement covers the property all winter.'),
+          ('Does wind exposure change snow service in Bowling Green?', 'Open, flat lots let wind push snow back onto cleared areas. The crew plans where snow is piled before the season so it is less likely to drift back across the drive or lot.')]),
+        ('Holland', 'holland',
+         'Snow removal and snow plowing in Holland for homes and commercial corridors.',
+         'Snow removal and plowing in Holland, OH: driveways and walks for homes, lots and entrances for businesses along Airport Highway and McCord Road. Seasonal sign-up.',
+         'Holland frontage needs to be open before the customers arrive.',
+         ['Holland and Springfield Township mix suburban neighborhoods like Strawberry Acres and Homecoming Park with busy commercial corridors along Airport Highway, McCord Road, and Angola Road. A storefront lot that is not open on time loses the morning.',
+          'Commercial service covers lots, access lanes, entrances, and sidewalks, with salting. Residential service covers driveways, walks, steps, and entries.',
+          'Service is triggered by the snowfall depth in your agreement. Routes run so lots are open before business and driveways before work.'],
+         [('Do you plow commercial lots in Holland?', 'Yes. Lots, access lanes, entrances, and sidewalks along Airport Highway, McCord Road, and other Holland corridors, with salting available.'),
+          ('Can a Holland home and business be on the same agreement?', 'Each property gets its own seasonal quote with its own trigger depth and scope. Call and the team will set up both.')]),
+        ('Rossford', 'rossford',
+         'Snow removal and snow plowing in Rossford for compact drives and garages.',
+         'Snow removal and plowing in Rossford, OH: compact driveways, garage approaches, and walks near Dixie Highway, plus lots along Crossroads Parkway. Seasonal sign-up.',
+         'Rossford drives are short, so the snow has to go somewhere smart.',
+         ['Rossford lots are older and compact, with short drives, garage approaches, and little room between houses to pile snow. The crew plans where snow goes before the first storm so the drive, walk, and entry stay clear.',
+          'Residential service covers driveways, walks, steps, and entries in neighborhoods near Dixie Highway, Eagle Point Colony, Lime City Road, and the Maumee River. Commercial service covers lots and entrances along Crossroads Parkway.',
+          'Service is triggered by the snowfall depth in your agreement, and salting can be included for slick walks and drives.'],
+         [('Can you plow a short Rossford driveway without blocking the garage?', 'Yes. Compact lots are common in Rossford. The crew plans where snow is pushed so the garage approach, walk, and entry stay open.'),
+          ('Do you serve commercial properties along Crossroads Parkway?', 'Yes. Commercial lots, access lanes, and entrances in Rossford are covered under a seasonal agreement with salting available.')]),
+        ('Oregon', 'oregon',
+         'Snow removal and snow plowing in Oregon, Ohio for flat, exposed lots.',
+         'Snow removal and plowing in Oregon, OH: driveways, walks, and entries for homes near Maumee Bay, plus commercial lots along Navarre Avenue with salting. Seasonal sign-up.',
+         'Oregon lots are flat and exposed to winter weather off the bay.',
+         ['Oregon properties sit on flat lots exposed to wind and winter weather near Maumee Bay, with commercial frontage along Navarre Avenue and neighborhoods around Coy Road, Dustin Road, and Pearson Metropark.',
+          'Residential service covers driveways, walks, steps, and entries. Commercial service covers lots, access lanes, and entrances, with salting so surfaces are safe, not just cleared.',
+          'Service is triggered by the snowfall depth in your agreement, and routes run so lots are open before business and driveways before work.'],
+         [('Do you plow commercial lots along Navarre Avenue?', 'Yes. Commercial frontage in Oregon, Ohio is covered under a seasonal agreement for lots, access lanes, entrances, and sidewalks, with salting available.'),
+          ('When should Oregon homeowners sign up for snow service?', 'Before the first storm. Routes fill in the fall, and the first 2-inch snow day typically lands around December 12, as early as November 11.')]),
+    ]
+    LEAF_WEATHER_HTML = ''.join(f'<div><b>{b}</b><span>{t}</span></div>' for b, t in LEAF_WEATHER)
+    SNOW_WEATHER_HTML = ''.join(f'<div><b>{b}</b><span>{t}</span></div>' for b, t in SNOW_WEATHER)
+    leaf_files = [f'leaf-removal-{slug}-ohio.html' for _, slug, *_ in LEAF_CITIES]
+    snow_files = [f'snow-removal-{slug}-ohio.html' for _, slug, *_ in SNOW_CITIES]
+    seasonal_city_meta = {}  # filename -> (city, kind, h1, desc)
+    SEASONAL_FAQS = ctx['SERVICE_FAQS']
+
+    def related_cards(items):
+        return ''.join(f'<a class="guide-card" href="{href}"><span>{cat}</span><h3>{t}</h3><p>{d}</p><b>Open page &rarr;</b></a>' for href, cat, t, d in items)
+
+    for city, slug, hero, h1, desc, local_h2, local_paras, city_faq in LEAF_CITIES:
+        filename = f'leaf-removal-{slug}-ohio.html'
+        title = f'Leaf Removal & Fall Cleanup in {city}, OH | Terramorph'
+        faqs = city_faq + [SEASONAL_FAQS['Seasonal Cleanups'][0], SEASONAL_FAQS['Seasonal Cleanups'][3], SEASONAL_FAQS['Seasonal Cleanups'][4]]
+        paras_html = ''.join(f'<p>{p}</p>' for p in local_paras)
+        others = [(f'leaf-removal-{s}-ohio.html', f'{c} leaf removal', f'Leaf Removal & Fall Cleanup in {c}', d2) for c, s, _, _, d2, *_ in LEAF_CITIES if s != slug][:3]
+        related = related_cards([
+            ('seasonal-cleanups.html', 'Service page', 'Leaf Removal & Fall Cleanup', 'What a Terramorph fall cleanup includes, the Northwest Ohio timeline, and what a good cleanup leaves alone.'),
+            ('fall-cleanup-checklist-northwest-ohio.html', 'Seasonal guide', 'Fall Cleanup Checklist for Northwest Ohio', 'What to clear, cut back, and leave standing before winter.'),
+            (f'snow-removal-{slug}-ohio.html' if f'snow-removal-{slug}-ohio.html' in snow_files else 'snow-removal-signup.html', 'Winter service', f'Snow Removal in {city}' if f'snow-removal-{slug}-ohio.html' in snow_files else 'Seasonal Snow Removal Sign-Up', 'Book winter service at the same time so the property is covered from leaf season into snow.'),
+        ] + others)
+        body = f'''
+<section class="page-hero premium-page-hero authority-page-hero"><div class="page-hero-image"><img src="assets/{hero}" alt="Terramorph fall leaf cleanup crew, serving {city}, Ohio"></div><div class="hero-overlay"></div><div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / <a href="seasonal-cleanups.html">Leaf Removal &amp; Fall Cleanup</a> / {city}</p><p class="eyebrow light">Leaf removal in {city}, Ohio</p><h1>{h1}</h1><p>Leaves blown out of the lawn, beds, fence lines, and from under the shrubs, then loaded and hauled away. Spent perennials cut back, debris gone, and the property ready for winter. Free estimates for {city} homes and businesses.</p><div class="cta-row"><a class="btn btn-gold" href="#quote">Request a {city} Leaf Removal Estimate</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div></section>
+{trust_band()}
+<section class="section"><div class="container local-grid"><div><p class="eyebrow">Answer first</p><h2>Terramorph does leaf removal and fall cleanup in {city}, and the leaves leave with the crew.</h2><p>A fall cleanup clears leaves from the lawn, the beds, the fence lines, and under the shrubs, cuts back spent perennials, lightly shapes shrubs, cleans up bed edges, and hauls all of it away. Commercial walk-behind blowers and backpack crews handle big wooded lots in one scheduled visit.</p></div><div class="authority-list"><div><b>Leaves hauled away</b><span>No bagging, no tagging, no waiting on a city truck. Leaves and debris leave with the crew.</span></div><div><b>Beds cut back the right way</b><span>Spent and diseased perennials come out. Lilac, forsythia, and azalea are left alone so next spring's buds stay on.</span></div><div><b>Whole property, one visit</b><span>Lawn, beds, fence lines, under shrubs, sticks and storm debris, and final mows when they are part of the plan.</span></div><div><b>Pairs with winter service</b><span>Many {city} properties book the cleanup and a seasonal snow agreement together.</span></div></div></div></section>
+<section class="section clay-section" id="local"><div class="container local-grid"><div><p class="eyebrow">{city} details</p><h2>{local_h2}</h2>{paras_html}</div><div class="authority-list">{LEAF_WEATHER_HTML}</div></div></section>
+{faq_section(faqs)}
+<section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">Keep reading</p><h2>Leaf removal and winter service nearby.</h2></div><div class="container guide-grid">{related}</div></section>
+<section class="section quote-section"><div class="container quote-grid">{quote_form(f'Request a {city} Leaf Removal Estimate', service='Seasonal Cleanups')}<div class="cta-proof"><p class="eyebrow">Why homeowners reach out</p><h2>Crews that show up, clean up, and haul it all away.</h2>{review_stack(2, 'Seasonal Cleanups')}</div></div></section>
+'''
+        schema = schema_for(filename, title, desc, faqs, 'Leaf Removal', extra_services=['Fall Cleanup'], crumb_parent=('seasonal-cleanups.html', 'Leaf Removal & Fall Cleanup'), crumb_name=f'Leaf Removal in {city}')
+        (root / filename).write_text(page(title, desc, body, schema))
+        seasonal_city_meta[filename] = (city, 'leaf', h1, desc)
+
+    for city, slug, h1, desc, local_h2, local_paras, city_faq in SNOW_CITIES:
+        filename = f'snow-removal-{slug}-ohio.html'
+        title = f'Snow Removal & Plowing in {city}, OH | Terramorph'
+        faqs = city_faq + [SEASONAL_FAQS['Snow Removal'][0], SEASONAL_FAQS['Snow Removal'][2], SEASONAL_FAQS['Snow Removal'][3]]
+        paras_html = ''.join(f'<p>{p}</p>' for p in local_paras)
+        others = [(f'snow-removal-{s}-ohio.html', f'{c} snow removal', f'Snow Removal & Plowing in {c}', d2) for c, s, _, d2, *_ in SNOW_CITIES if s != slug][:3]
+        leaf_link = f'leaf-removal-{slug}-ohio.html' if f'leaf-removal-{slug}-ohio.html' in leaf_files else 'seasonal-cleanups.html'
+        related = related_cards([
+            ('snow-removal-signup.html', 'Winter sign-up', 'Seasonal Snow Removal Sign-Up', 'Residential driveways and commercial lots, one winter agreement. Reserve before the first storm.'),
+            ('snow-removal.html', 'Service page', 'Snow Removal & Plowing', 'What seasonal snow service covers across Perrysburg, Toledo, Maumee, and Wood and Lucas County.'),
+            (leaf_link, 'Fall cleanup', f'Leaf Removal in {city}', 'Book the fall cleanup and winter service together so the property is covered from leaf season into snow.'),
+        ] + others)
+        body = f'''
+<section class="page-hero premium-page-hero authority-page-hero"><div class="page-hero-image"><img src="assets/snow-removal-truck.webp?v=3.17" alt="Terramorph plow truck after a storm, serving {city}, Ohio"></div><div class="hero-overlay"></div><div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / <a href="snow-removal.html">Snow Removal</a> / {city}</p><p class="eyebrow light">Snow removal in {city}, Ohio</p><h1>{h1}</h1><p>Seasonal snow plowing and ice management for {city} driveways, walkways, entries, and commercial lots. One agreement runs all winter, service is triggered by the snowfall depth you agree to, and routes run so you can get out in the morning. Free estimates.</p><div class="cta-row"><a class="btn btn-gold" href="#quote">Reserve {city} Winter Service</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div></section>
+{trust_band()}
+<section class="section"><div class="container local-grid"><div><p class="eyebrow">Answer first</p><h2>Terramorph plows driveways, walks, and lots in {city} on a seasonal agreement.</h2><p>Residential service covers the driveway, walkways, steps, and entry. Commercial service covers parking lots, access lanes, entrances, and sidewalks. Salting and ice management can be included for both. Winter routes fill in the fall, so reserve a spot before the first storm.</p></div><div class="authority-list"><div><b>Homes and businesses</b><span>Residential driveways and walks, commercial and industrial lots and entrances.</span></div><div><b>Triggered by depth</b><span>Service is triggered by the snowfall depth in your agreement, no call needed after each storm.</span></div><div><b>Ice management</b><span>Salting for walks, entries, drives, and lots so surfaces are safe, not just cleared.</span></div><div><b>Same local crew</b><span>The Terramorph team that handles patios, drainage, and cleanups runs the winter routes too.</span></div></div></div></section>
+<section class="section clay-section" id="local"><div class="container local-grid"><div><p class="eyebrow">{city} details</p><h2>{local_h2}</h2>{paras_html}</div><div class="authority-list">{SNOW_WEATHER_HTML}</div></div></section>
+{faq_section(faqs)}
+<section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">Keep reading</p><h2>Winter service and fall cleanup nearby.</h2></div><div class="container guide-grid">{related}</div></section>
+<section class="section quote-section"><div class="container quote-grid">{quote_form(f'Reserve {city} Winter Service', service='Snow Removal')}<div class="cta-proof"><p class="eyebrow">Why property owners reach out</p><h2>Reviews, proof, and a simple seasonal sign-up.</h2>{review_stack(2, 'Snow Removal')}</div></div></section>
+'''
+        schema = schema_for(filename, title, desc, faqs, 'Snow Removal', extra_services=['Snow Plowing'], crumb_parent=('snow-removal.html', 'Snow Removal'), crumb_name=f'Snow Removal in {city}')
+        (root / filename).write_text(page(title, desc, body, schema))
+        seasonal_city_meta[filename] = (city, 'snow', h1, desc)
 
     case_studies = [
         ('perrysburg-paver-patio-case-study.html','Perrysburg','Paver Patios and Hardscapes','Perrysburg Paver Patio Planning Example','The backyard needed a better place to grill, sit, and connect the house to the lawn without creating drainage or freeze-thaw problems.','Terramorph reviews door transitions, base prep, water movement, access, seating layout, edge restraint, lighting options, and how the patio should tie into beds and lawn.','A clearer patio scope gives the homeowner a usable outdoor living area, cleaner flow, and fewer surprises before installation.','real-patio.webp?v=3.14'),
@@ -189,9 +461,24 @@ def generate(ctx):
         guides_page.write_text(guides_html)
 
     city_cards = ''.join(
-        f'<a class="guide-card city-service-card" href="{name}"><span>Local service area</span><h3>{name.replace("-", " ").replace(".html", "").title()}</h3><p>Terramorph service information for this city and outdoor project type.</p><b>Open local page &rarr;</b></a>'
+        f'<a class="guide-card city-service-card" href="{name}"><span>{city_page_meta[name][0]} &middot; {city_page_meta[name][1]}</span><h3>{city_page_meta[name][2]}</h3><p>{city_page_meta[name][3]}</p><b>Open local page &rarr;</b></a>'
         for name in extra_city_pages
     )
+    # Leaf removal + snow removal by town, and the Toledo service pages that had no hub link (2026-11-04).
+    TOLEDO_SERVICE_PAGES = [
+        ('spring-fall-cleanups-toledo-ohio.html', 'Toledo &middot; Seasonal cleanups', 'Spring & Fall Cleanups in Toledo', 'Leaves, sticks, bed resets, pruning, debris removal, and mulch for Toledo properties.'),
+        ('snow-removal-toledo-ohio.html', 'Toledo &middot; Snow removal', 'Snow Removal in Toledo', 'Winter plowing and access for Toledo homes, businesses, driveways, walkways, and commercial lots.'),
+        ('tree-care-northwest-ohio.html', 'Northwest Ohio &middot; Tree and shrub care', 'Tree Trimming & Shrub Care', 'Tree and shrub trimming, pruning, overgrowth control, and bed cleanup across Northwest Ohio.'),
+        ('mulch-installation-toledo-ohio.html', 'Toledo &middot; Mulch', 'Mulch Installation in Toledo', 'Mulch installation, bed edging, shrub trimming, cleanup, and rock conversion for Toledo beds.'),
+        ('landscape-lighting-toledo-ohio.html', 'Toledo &middot; Lighting', 'Landscape Lighting in Toledo', 'Low-voltage lighting for Toledo patios, walkways, entries, beds, and nighttime curb appeal.'),
+    ]
+    seasonal_cards = ''.join(
+        f'<a class="guide-card city-service-card" href="{name}"><span>{seasonal_city_meta[name][0]} &middot; {"Leaf removal" if seasonal_city_meta[name][1] == "leaf" else "Snow removal"}</span><h3>{seasonal_city_meta[name][2]}</h3><p>{seasonal_city_meta[name][3]}</p><b>Open local page &rarr;</b></a>'
+        for name in leaf_files + snow_files
+    )
+    toledo_cards = ''.join(f'<a class="guide-card" href="{f}"><span>{cat}</span><h3>{t}</h3><p>{d}</p><b>Open page &rarr;</b></a>' for f, cat, t, d in TOLEDO_SERVICE_PAGES)
+    seasonal_hub = (f'<section class="section guide-index-section v2026-seasonal-towns" id="seasonal-towns"><div class="container section-heading compact"><p class="eyebrow">Leaf removal and snow removal by town</p><h2>Fall cleanup and winter plowing pages for the towns we serve.</h2><p>Each page covers that town\'s leaf-pickup rules or winter conditions, what the visit includes, and how to book. Leaves are hauled away; snow service runs on one seasonal agreement.</p></div><div class="container guide-grid">{seasonal_cards}</div></section>'
+                    f'<section class="section guide-index-section v2026-toledo-services"><div class="container section-heading compact"><p class="eyebrow">Toledo and Northwest Ohio service pages</p><h2>Cleanups, snow, tree care, mulch, and lighting.</h2></div><div class="container guide-grid">{toledo_cards}</div></section>')
     case_cards = ''.join(
         f'<a class="guide-card planning-example-card" href="{filename}"><span>Hypothetical &middot; {city} &middot; {service}</span><h3>{title}</h3><p>{problem}</p><b>View planning example &rarr;</b></a>'
         for filename, city, service, title, problem, solution, outcome, image in case_studies
@@ -204,7 +491,7 @@ def generate(ctx):
     service_html = service_areas.read_text()
     if 'V3.45 expanded service area pages' not in service_html:
         section = f'<section class="section guide-index-section v345-expanded-service-pages"><div class="container section-heading compact"><p class="eyebrow">More service areas</p><h2>Local service information by city and project type.</h2><p>Homeowners in Sylvania, Bowling Green, Holland, Waterville, Whitehouse, Oregon, and Rossford can review the most relevant Terramorph services before requesting an estimate.</p></div><div class="container guide-grid">{city_cards}</div></section>'
-        service_html = service_html.replace('<section class="section quote-section">', section + '\n<section class="section quote-section">')
+        service_html = service_html.replace('<section class="section quote-section">', section + '\n' + seasonal_hub + '\n<section class="section quote-section">')
         service_areas.write_text(service_html)
     projects_page = root / 'projects.html'
     projects_html = projects_page.read_text()
@@ -227,14 +514,16 @@ def generate(ctx):
         ('team.html', 'Terramorph Team & Standards', 'Meet the Terramorph standard for communication, jobsite care, reviews, local knowledge, and premium outdoor work in Northwest Ohio.', 'Team standards', 'Trust starts with who shows up and how the work is handled.', 'Terramorph’s service standard centers on communication, property respect, clean work, and practical local judgment.', 'real-lawn.webp', [('Who leads Terramorph projects?', 'Terramorph is a local Northwest Ohio outdoor services company led by Ty and the Terramorph crew.'), ('What standards matter on the job?', 'Communication, punctuality, property care, clean edges, correct materials, cleanup, and follow-through all matter.'), ('Why do team standards matter?', 'Homeowners need clear evidence of trust, process, service fit, and local reputation before choosing a contractor.'), ('How can customers help the team quote faster?', 'Send photos, city, access notes, desired outcome, and timeline in the request form.')]),
         ('community.html', 'Terramorph in Northwest Ohio', 'Terramorph service-area commitment, local property knowledge, neighborhoods served, and outdoor project priorities across Wood and Lucas County.', 'Community and service area', 'Built for Perrysburg, Toledo, Wood County, and Lucas County properties.', 'This page reinforces where Terramorph works, what local conditions matter, and why neighborhood-specific judgment improves outdoor results.', 'real-hero.webp', [('What communities does Terramorph serve?', 'Terramorph serves Perrysburg, Toledo, Maumee, Sylvania, Rossford, Oregon, Waterville, Whitehouse, Bowling Green, Wood County, Lucas County, and nearby Northwest Ohio areas.'), ('Why does local geography matter?', 'Flat lots, clay soil, mature trees, new construction grading, river-area moisture, and lake-effect weather can all affect outdoor work.'), ('Does Terramorph work on both homes and businesses?', 'Yes. Terramorph can review residential, commercial, and property-owner outdoor service needs.'), ('How should I choose a local landscaper?', 'Look for real reviews, project photos, clear services, local explanations, direct estimate paths, and evidence they understand the property conditions.')]),
         ('before-after-gallery.html', 'Terramorph Project Photo Gallery', 'Terramorph field-photo gallery for lawn maintenance, retaining walls, drainage, landscape installation, lighting, and outdoor property work in Northwest Ohio.', 'Project photo gallery', 'Field photos make completed work easier to evaluate.', 'Use this gallery as a visual proof hub for documented Terramorph field work, clearly separated from hypothetical project-planning examples.', 'real-hero.webp', [('Why does project proof matter?', 'Field photos show visible service fit, property context, and the type of outdoor work Terramorph handles.'), ('Can I request similar work?', 'Yes. Use the quote form and mention the photo or project type that matches your property goal.'), ('Should I send photos of my property?', 'Yes. Current property photos help Terramorph understand existing conditions and recommend a better next step.'), ('Are these before-and-after pairs?', 'No. This page is a field-photo gallery. Terramorph does not label photos as before-and-after pairs unless both stages are documented.')]),
-        ('tree-care-northwest-ohio.html', 'Tree & Shrub Care in Northwest Ohio', 'Tree and shrub trimming, pruning, bed cleanup, overgrowth control, plant health observations, and seasonal landscape care considerations in Northwest Ohio.', 'Tree and shrub care', 'Clean pruning and trimming can change the whole property.', 'Terramorph can review trimming, pruning, overgrowth, bed resets, cleanup, and related landscape maintenance needs as part of a broader property plan.', 'real-mulch.webp', [('Does Terramorph trim shrubs and bushes?', 'Yes. Shrub trimming, spring pruning, overgrowth cleanup, and bed reset work can be scoped with seasonal cleanup or maintenance.'), ('Do you diagnose tree diseases?', 'Terramorph can observe visible issues and recommend next steps, but specialized arborist diagnosis may be needed for complex tree health problems.'), ('When should shrubs be trimmed?', 'Timing depends on plant type, bloom cycle, property goals, and whether the work is part of spring or fall cleanup.'), ('Can trimming be combined with mulch?', 'Yes. Trimming, bed edging, debris removal, and mulch often make sense together.')]),
+        ('tree-care-northwest-ohio.html', 'Tree Trimming & Shrub Care in Northwest Ohio', 'Tree and shrub trimming, pruning, bed cleanup, overgrowth control, plant health observations, and seasonal landscape care considerations in Northwest Ohio.', 'Tree and shrub care', 'Clean pruning and trimming can change the whole property.', 'Terramorph can review trimming, pruning, overgrowth, bed resets, cleanup, and related landscape maintenance needs as part of a broader property plan.', 'real-mulch.webp', [('Does Terramorph trim shrubs and bushes?', 'Yes. Shrub trimming, spring pruning, overgrowth cleanup, and bed reset work can be scoped with seasonal cleanup or maintenance.'), ('Do you diagnose tree diseases?', 'Terramorph can observe visible issues and recommend next steps, but specialized arborist diagnosis may be needed for complex tree health problems.'), ('When should shrubs be trimmed?', 'Timing depends on plant type, bloom cycle, property goals, and whether the work is part of spring or fall cleanup.'), ('Can trimming be combined with mulch?', 'Yes. Trimming, bed edging, debris removal, and mulch often make sense together.')]),
         ('holiday-lighting.html', 'Holiday Lighting in Northwest Ohio', 'Holiday lighting planning, installation considerations, safety, property access, and seasonal outdoor service requests from Terramorph in Northwest Ohio.', 'Holiday lighting', 'Seasonal lighting should look clean and be handled safely.', 'Terramorph can review holiday lighting requests alongside outdoor lighting, cleanup, maintenance, and seasonal property needs.', 'real-lighting.webp?v=3.14', [('Does Terramorph offer holiday lighting?', 'Holiday lighting can be requested through Terramorph for review based on schedule, property fit, access, and service availability.'), ('What details should I send?', 'Send property photos, roofline or landscape areas, timeline, address, and whether removal/storage support is needed.'), ('Can holiday lighting pair with outdoor lighting?', 'Yes. Permanent outdoor lighting and seasonal holiday lighting can be discussed together when planning nighttime curb appeal.'), ('When should I request holiday lighting?', 'Request early before seasonal schedules fill, especially for larger homes or commercial properties.')]),
     ]
     support_files = []
+    # Support pages that are really a service get a Service schema node (2026-11-04).
+    support_service = {'tree-care-northwest-ohio.html': 'Tree and Shrub Trimming', 'holiday-lighting.html': 'Holiday Lighting'}
     for filename, title, desc, eyebrow, headline, intro, image, faqs in support_pages:
         detail_cards = ''.join(f'<div><b>{q}</b><span>{a}</span></div>' for q, a in faqs[:4])
         body = f'''\n<section class="page-hero premium-page-hero support-page-hero"><div class="page-hero-image"><img src="assets/{image}" alt="{title} by Terramorph"></div><div class="hero-overlay"></div><div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / {eyebrow}</p><p class="eyebrow light">{eyebrow}</p><h1>{headline}</h1><p>{intro}</p><div class="cta-row"><a class="btn btn-gold" href="#quote">Request a Free Estimate</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div></section>\n{trust_band()}\n<section class="section"><div class="container local-grid"><div><p class="eyebrow">Why this matters</p><h2>{desc}</h2><p>These details help homeowners compare outdoor service options and choose a clear next step near Perrysburg, Toledo, and Northwest Ohio.</p></div><div class="authority-list">{detail_cards}</div></div></section>\n{faq_section(faqs)}\n<section class="section quote-section"><div class="container quote-grid">{quote_form('Request a Free Terramorph Estimate')}<div class="cta-proof"><p class="eyebrow">Trust signal</p><h2>Clear information before the call helps homeowners choose with confidence.</h2>{review_stack(3)}</div></div></section>\n'''
-        (root / filename).write_text(page(title + ' | Terramorph', desc, body, schema_for(filename, title, desc, faqs)))
+        (root / filename).write_text(page(title + ' | Terramorph', desc, body, schema_for(filename, title, desc, faqs, service=support_service.get(filename))))
         support_files.append(filename)
 
     support_cards = ''.join(f'<a class="guide-card support-card" href="{filename}"><span>Trust resource</span><h3>{title}</h3><p>{desc}</p><b>Open resource &rarr;</b></a>' for filename, title, desc, eyebrow, headline, intro, image, faqs in support_pages)
@@ -278,6 +567,20 @@ def generate(ctx):
         (root / filename).write_text(page(title + ' | Terramorph', desc, body, schema_for(filename, title, desc, faqs, service)))
         authority_files.append(filename)
 
+    # services.html: the hub was generated with an empty "Related resources" grid.
+    # Fill it with the seasonal pages, the Toledo service pages, and the snow/leaf town pages (2026-11-04).
+    services_path = root / 'services.html'
+    services_html = services_path.read_text()
+    if 'v2026-seasonal-towns' not in services_html:
+        core_cards = ''.join(f'<a class="guide-card" href="{f}"><span>{cat}</span><h3>{t}</h3><p>{d}</p><b>Open page &rarr;</b></a>' for f, cat, t, d in [
+            ('seasonal-cleanups.html', 'Seasonal', 'Leaf Removal & Fall Cleanup', 'Leaves hauled away, beds cut back the right way, debris gone, and spring cleanups when the snow melts.'),
+            ('snow-removal.html', 'Winter', 'Snow Removal & Plowing', 'Seasonal plowing and salting for driveways, walks, and commercial lots. Reserve before the first storm.'),
+            ('snow-removal-signup.html', 'Winter', 'Snow Removal Sign-Up', 'Residential and commercial seasonal snow service, one winter agreement.'),
+        ])
+        services_html = services_html.replace('<section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">Related resources</p><h2>Keep planning the right scope.</h2></div><div class="container guide-grid"></div></section>',
+                                              f'<section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">Seasonal and winter service</p><h2>Cleanups and snow, plus the Toledo service pages.</h2></div><div class="container guide-grid">{core_cards}{toledo_cards}</div></section>\n{seasonal_hub}', 1)
+        services_path.write_text(services_html)
+
     # Link service and proof hubs into key discovery pages.
     for target, label in [('service-areas.html','v347-services-proof-links'),('projects.html','v347-services-proof-links'),('guides.html','v347-services-proof-links')]:
         path = root / target
@@ -293,7 +596,7 @@ def generate(ctx):
     sitemap_path = root / 'sitemap.xml'
     sitemap = sitemap_path.read_text()
     organic_authority_files = [name for name in authority_files if name != 'case-studies.html']
-    extra_pages = extra_city_pages + faq_files + support_files + completed_files + organic_authority_files + ['reviews.html']
+    extra_pages = extra_city_pages + leaf_files + snow_files + faq_files + support_files + completed_files + organic_authority_files + ['reviews.html']
     additions = ''
     for name in extra_pages:
         loc = BASE_URL + '/' + name
@@ -361,6 +664,7 @@ def generate(ctx):
     # Final metadata normalization keeps generated titles SERP-safe after all pages are written.
     import re, html
     title_overrides = {
+        'services.html':'Landscaping Services: Cleanups, Snow, Patios & Drainage | Terramorph',
         'landscaping-toledo-ohio.html':'Landscaping in Toledo, OH | Terramorph',
         'landscaping-perrysburg-ohio.html':'Landscaping in Perrysburg, OH | Terramorph',
         'landscaping-maumee-ohio.html':'Landscaping in Maumee, OH | Terramorph',

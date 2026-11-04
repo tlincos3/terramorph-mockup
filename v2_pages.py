@@ -72,6 +72,9 @@ def foot(c, home=False):
       <a href="seasonal-cleanups.html">Seasonal cleanups</a>
       <a href="snow-removal.html">Snow removal</a>
       <a href="snow-removal-signup.html">Snow removal sign-up</a>
+      <a href="tree-care-northwest-ohio.html">Tree &amp; shrub trimming</a>
+      <a href="mulch-installation-toledo-ohio.html">Mulch installation</a>
+      <a href="service-areas.html#seasonal-towns">Leaf removal &amp; snow by town</a>
     </div>
     <div>
       <h2>Sustainable landscapes</h2>
@@ -372,6 +375,57 @@ def render_quote(c):
 '''
 
 NO_GALLERY = {'privacy.html', 'terms.html', 'thank-you.html', 'warranty.html', 'review-notes.html', 'projects.html', 'before-after-gallery.html'}
+
+# Indexed city and service pages get the lazy Jobber form (2026-11-04). Same
+# markup as every other page ([data-jobber-lazy] + app.js initLazyJobber), so
+# nothing loads until the form nears the screen. Guides, cost pages, legal pages
+# and the noindex lp- pages are left alone.
+FORM_PREFIXES = ('landscaping-', 'drainage-solutions-', 'paver-patios-', 'lawn-maintenance-', 'leaf-removal-', 'snow-removal-',
+                 'spring-fall-cleanups-', 'retaining-walls', 'commercial-landscaping-', 'sod-installation-', 'mulch-installation-',
+                 'landscape-lighting-', 'outdoor-kitchens-', 'fire-pit-installation-', 'new-construction-landscaping-',
+                 'low-maintenance-landscaping-', 'landscape-maintenance-packages-', 'tree-care-', 'holiday-lighting', 'outdoor-living')
+FORM_PAGES = {'services.html'}
+
+def wants_form(name, t):
+    if 'data-jobber-lazy' in t or 'noindex' in t[:3000] or name in svc_v2.SERVICES:
+        return False
+    if name.startswith('lp-') or '-cost-' in name or name.endswith('-case-study.html'):
+        return False
+    return name in FORM_PAGES or name.startswith(FORM_PREFIXES)
+
+def inject_form(c, name, t):
+    """Replace the legacy phone-only quote section with the v2 quote section that
+    carries the lazy Jobber embed. Keeps the page's reviews. Hero CTA jumps to it."""
+    m_open = t.find('<main id="main">')
+    m_close = t.find('</main>', m_open)
+    if m_open < 0 or m_close < 0:
+        return t
+    main = t[m_open + len('<main id="main">'):m_close]
+    target = next((html for cls, html in svc_v2._sections(main) if 'quote-section' in cls.split()), None)
+    if not target:
+        return t
+    svc = svc_v2._first(r'data-service="([^"]+)"', target) or 'Outdoor Transformation'
+    title = svc_v2._txt(svc_v2._first(r'<h2 id="quote-title">(.*?)</h2>', target)) or f'Request a free {svc} quote'
+    revs = re.findall(r'<blockquote class="compact-review">.*?<p>(.*?)</p>\s*<cite>(.*?)</cite>', target, re.S)
+    reviews = ''.join(f'<article class="tm-review tm-reveal"><div class="tm-stars" aria-label="5 stars">★★★★★</div><blockquote>{q}</blockquote><cite>{svc_v2._txt(n).lstrip("— ").strip()}</cite></article>' for q, n in revs[:2])
+    hero_img = svc_v2._first(r'<div class="page-hero-image"><img src="(assets/[^"]+)"', t) or 'assets/real-hero.webp'
+    new = f'''<section class="tm-sec tm-quote tm-dark">
+  <div class="tm-quote-bg"><img src="{hero_img}" alt="" loading="lazy"></div>
+  <div class="tm-wrap tm-quote-grid">
+    <div>
+      <p class="tm-label">Free estimate</p>
+      <h2 class="tm-h2">{title}</h2>
+      <ul class="tm-quote-points"><li>Tell us what you want built, fixed, or cleaned up</li><li>Add photos if you have them, they help</li><li>We follow up to set up a visit and a written quote</li></ul>
+      <a class="tm-btn tm-btn-ghost" href="tel:{c['TEL']}">Rather talk? Call {c['PHONE']}</a>
+      {f'<div class="tm-reviews" style="margin-top:28px;grid-template-columns:1fr;max-width:460px">{reviews}</div>' if reviews else ''}
+    </div>
+    {form_panel(c, title, svc)}
+  </div>
+</section>'''
+    t = t.replace(target, new, 1)
+    # Hero "Request ..." button jumps to the form on this page instead of quote.html.
+    t = re.sub(r'(<div class="cta-row"><a class="btn btn-gold" href=")quote\.html(")', r'\1#request-form\2', t, count=1)
+    return t
 LEGACY_NAV = re.compile(r'<a class="skip-link" href="#main">Skip to content</a>\s*<div class="topbar".*?</header>\s*', re.S)
 LEGACY_FOOT = re.compile(r'<div class="sticky-mobile".*?</footer>\s*', re.S)
 
@@ -413,7 +467,7 @@ def apply(c):
     # 1) Homepage + quote page: full v2 pages.
     for name, title, desc, body_fn, body_cls in [
         ('index.html', 'Landscape Design, Patios & Drainage | Terramorph Perrysburg',
-         'Paver patios, drainage, landscape design, and lawn care across Wood and Lucas County, Ohio. 4.9 stars from 220+ Google reviews. Free estimates.',
+         'Paver patios, drainage, landscape design, and seasonal cleanups across Wood and Lucas County, Ohio. 4.9 stars from 220+ Google reviews. Free estimates.',
          render_home, 'tm tm-home'),
         ('quote.html', 'Get a Free Quote | Terramorph LLC',
          'Request a free Terramorph quote for landscape design, patios, drainage, lighting, cleanups, maintenance, or snow removal in Wood and Lucas County, Ohio.',
@@ -454,6 +508,8 @@ def apply(c):
                     break
         if path.name in svc_v2.SERVICES:
             t = svc_v2.rebuild(sc, path.name, t)
+        if wants_form(path.name, t):
+            t = inject_form(c, path.name, t)
         if path.name == 'services.html':
             # Sustainable group + project savings on the services hub (2026-10-27).
             t = t.replace('<section class="section faq-section">', c['sustainable_band']() + '\n<section class="section faq-section">', 1)

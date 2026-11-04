@@ -18,7 +18,7 @@ SERVICES = {
     'drainage-solutions.html': {'name': 'Drainage Solutions', 'city_prefix': 'drainage-solutions-', 'photos': 'drainage'},
     'outdoor-lighting.html': {'name': 'Outdoor Lighting', 'city_prefix': None, 'photos': 'lighting'},
     'lawn-maintenance.html': {'name': 'Lawn Maintenance', 'city_prefix': 'lawn-maintenance-', 'photos': 'lawn'},
-    'seasonal-cleanups.html': {'name': 'Seasonal Cleanups', 'city_prefix': 'spring-fall-cleanups-', 'photos': 'fall-cleanup'},
+    'seasonal-cleanups.html': {'name': 'Seasonal Cleanups', 'city_prefix': ('spring-fall-cleanups-', 'leaf-removal-'), 'photos': 'fall-cleanup'},
     'snow-removal.html': {'name': 'Snow Removal', 'city_prefix': 'snow-removal-', 'photos': 'snow'},
     # Sustainable-landscape pages (2026-10-27). Empty photo sets: no Terramorph job
     # photos yet, so no "our crews built" gallery. Chapter photos are credited
@@ -335,11 +335,13 @@ def rebuild(c, name, t):
         out.append(f'<section class="tm-sec-tight"><div class="tm-wrap"><p class="tm-label">Keep reading</p><h2 class="tm-h2" style="margin-bottom:26px">Plan your {svc.lower()} project.</h2><div class="tm-reads">{"".join(link_cards[:12])}</div></div></section>')
 
     if cfg['city_prefix']:
-        towns = sorted(p.name for p in c['root'].glob(cfg['city_prefix'] + '*-ohio.html'))
+        prefixes = cfg['city_prefix'] if isinstance(cfg['city_prefix'], (tuple, list)) else (cfg['city_prefix'],)
+        # Town pages only: cost guides like snow-removal-cost-northwest-ohio.html are not towns.
+        towns = sorted(((p.name[len(pre):-len('-ohio.html')].replace('-', ' ').title(), p.name)
+                        for pre in prefixes for p in c['root'].glob(pre + '*-ohio.html')
+                        if '-cost-' not in p.name and 'northwest' not in p.name))
         if towns:
-            def town(fn):
-                return fn[len(cfg['city_prefix']):-len('-ohio.html')].replace('-', ' ').title()
-            chips_html = ''.join(f'<a href="{fn}">{town(fn)}</a>' for fn in towns)
+            chips_html = ''.join(f'<a href="{fn}">{town}</a>' for town, fn in towns)
             out.append(f'<section class="tm-sec-tight tm-paper tm-svc-towns"><div class="tm-wrap"><p class="tm-label">Near you</p><h2 class="tm-h2" style="margin-bottom:22px">{svc} by town.</h2><div class="tm-town-list">{chips_html}</div></div></section>')
 
     if name in c.get('SAVINGS_PAGES', set()):

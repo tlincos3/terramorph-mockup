@@ -8,7 +8,14 @@ BASE_URL = 'https://terramorphllc.com'
 GOOGLE_PROFILE_URL = 'https://www.google.com/maps?cid=8318909328903785238'  # verified 2026-10-13: opens the real Terramorph LLC profile
 BUSINESS_STREET = '23090 N Dixie Hwy'
 BUSINESS_GEO = (41.4861736, -83.6442511)
-SERVICE_TOWNS = ['Perrysburg', 'Toledo', 'Maumee', 'Sylvania', 'Bowling Green', 'Rossford', 'Oregon', 'Waterville', 'Whitehouse', 'Holland', 'Monclova', 'Ottawa Hills']
+SERVICE_TOWNS = ['Perrysburg', 'Toledo', 'Maumee', 'Sylvania', 'Bowling Green', 'Rossford', 'Oregon', 'Waterville', 'Whitehouse', 'Holland', 'Monclova', 'Ottawa Hills', 'Northwood']
+# Just over the state line from Sylvania/Toledo (added 2026-11-04).
+SERVICE_TOWNS_MI = ['Lambertville', 'Temperance']
+# Office hours (Trent, 2026-11-04): Mon-Fri 7-5, Sat 8-3. Phone hours differ (7 a.m.-8 p.m. in the copy).
+OPENING_HOURS = [
+    {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "07:00", "closes": "17:00"},
+    {"@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "08:00", "closes": "15:00"},
+]
 BBB_PROFILE_URL = 'https://www.bbb.org/us/oh/perrysburg/profile/landscape-contractors/terramorph-llc-0422-211013048'
 FACEBOOK_URL = 'https://facebook.com/p/Terramorph-100089790245208/'
 INSTAGRAM_URL = 'https://instagram.com/terramorphllc/'
@@ -22,7 +29,7 @@ OFFICIAL_NAP_NOTE = 'Terramorph LLC | Perrysburg, OH 43551 | 419-873-6801 | terr
 JOBBER_CLIENTHUB_ID = 'e644a784-b214-4a2b-93df-ace28dbb2a70-1578803'
 JOBBER_FORM_URL = 'https://clienthub.getjobber.com/client_hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/work_request/embedded_work_request_form?form_id=1578803'
 JOBBER_DIRECT_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new'
-AREA_SERVED = [{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"}] + [{"@type":"City","name":t + ", OH"} for t in SERVICE_TOWNS]
+AREA_SERVED = [{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"}] + [{"@type":"City","name":t + ", OH"} for t in SERVICE_TOWNS] + [{"@type":"City","name":t + ", MI"} for t in SERVICE_TOWNS_MI]
 
 import sustainable as _sus  # the 4 sustainable-landscape pages (2026-10-27)
 
@@ -373,7 +380,7 @@ PAGE_PHOTO_RULES = [
     ('patio', 'patios'), ('fire-pit', 'patios'), ('outdoor-kitchen', 'patios'), ('outdoor-living', 'patios'),
     ('drainage', 'drainage'), ('standing-water', 'drainage'), ('french-drain', 'drainage'), ('move-water', 'drainage'),
     ('lighting', 'lighting'),
-    ('fall-cleanup', 'fall-cleanup'), ('seasonal-cleanup', 'fall-cleanup'), ('spring-fall-cleanups', 'fall-cleanup'),
+    ('fall-cleanup', 'fall-cleanup'), ('seasonal-cleanup', 'fall-cleanup'), ('spring-fall-cleanups', 'fall-cleanup'), ('leaf-removal', 'fall-cleanup'),
     ('spring-cleanup', 'spring-cleanup'),
     ('aeration', 'aeration'), ('sod-installation', 'aeration'),
     ('fall-decor', 'fall-decor'),
@@ -1028,7 +1035,7 @@ def schema_for(page_name, title, desc, faqs=None, service=None, extra_services=N
     base = {
       "@context":"https://schema.org",
       "@graph":[
-        {"@type":["LocalBusiness","LandscapingBusiness","HomeAndConstructionBusiness"],"@id":BASE_URL+"/#business","name":BUSINESS_NAME,"alternateName":["Terramorph","Terramorph Outdoor Transformation Co."],"url":BASE_URL+"/","image":BASE_URL+"/assets/real-hero.webp","logo":BASE_URL+"/assets/logo.png","telephone":PHONE,"address":{"@type":"PostalAddress","streetAddress":BUSINESS_STREET,"addressLocality":BUSINESS_CITY,"addressRegion":BUSINESS_REGION,"postalCode":BUSINESS_POSTAL,"addressCountry":BUSINESS_COUNTRY},"contactPoint":{"@type":"ContactPoint","telephone":PHONE,"contactType":"customer service","areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"availableLanguage":"English"},"sameAs":SAME_AS_URLS,"knowsAbout":KNOWS_ABOUT,"areaServed":AREA_SERVED,"geo":{"@type":"GeoCoordinates","latitude":BUSINESS_GEO[0],"longitude":BUSINESS_GEO[1]},"hasMap":GOOGLE_PROFILE_URL,"founder":[{"@type":"Person","name":"Ty Lincoln"},{"@type":"Person","name":"Trent Lincoln"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
+        {"@type":["LocalBusiness","LandscapingBusiness","HomeAndConstructionBusiness"],"@id":BASE_URL+"/#business","name":BUSINESS_NAME,"alternateName":["Terramorph","Terramorph Outdoor Transformation Co."],"url":BASE_URL+"/","image":BASE_URL+"/assets/real-hero.webp","logo":BASE_URL+"/assets/logo.png","telephone":PHONE,"address":{"@type":"PostalAddress","streetAddress":BUSINESS_STREET,"addressLocality":BUSINESS_CITY,"addressRegion":BUSINESS_REGION,"postalCode":BUSINESS_POSTAL,"addressCountry":BUSINESS_COUNTRY},"contactPoint":{"@type":"ContactPoint","telephone":PHONE,"contactType":"customer service","areaServed":["Wood County OH","Lucas County OH","Northwest Ohio"],"availableLanguage":"English"},"sameAs":SAME_AS_URLS,"knowsAbout":KNOWS_ABOUT,"areaServed":AREA_SERVED,"geo":{"@type":"GeoCoordinates","latitude":BUSINESS_GEO[0],"longitude":BUSINESS_GEO[1]},"hasMap":GOOGLE_PROFILE_URL,"openingHoursSpecification":OPENING_HOURS,"founder":[{"@type":"Person","name":"Ty Lincoln"},{"@type":"Person","name":"Trent Lincoln"}],"description":"Landscape design, patios, drainage, outdoor lighting, lawn maintenance, seasonal cleanups, snow removal, and outdoor property work in Wood and Lucas County."},
         {"@type":"WebSite","@id":BASE_URL+"/#website","url":BASE_URL+"/","name":"Terramorph LLC","publisher":{"@id":BASE_URL+"/#business"}},
         {"@type":"Organization","@id":BASE_URL+"/#organization","name":BUSINESS_NAME,"url":BASE_URL+"/","logo":BASE_URL+"/assets/logo.png","sameAs":SAME_AS_URLS},
         {"@type":"WebPage","name":title,"description":desc,"url":page_url,"isPartOf":{"@id":BASE_URL+"/#website"},"primaryImageOfPage":{"@id":page_url+"#primaryimage"}},
@@ -1317,8 +1324,8 @@ def seasonal_cleanups_page():
   <div class="hero-overlay"></div>
   <div class="container page-hero-content">
     <p class="crumb"><a href="index.html">Home</a> / Fall and Seasonal Cleanups</p>
-    <p class="eyebrow light">Fall + seasonal cleanups</p>
-    <h1>Fall cleanups that get the whole property ready for winter.</h1>
+    <p class="eyebrow light">Leaf removal + fall cleanups</p>
+    <h1>Leaf removal and fall cleanup, leaves hauled away.</h1>
     <p>Leaves cleared and hauled away, beds cut back the right way, shrubs shaped, and debris gone. Local crews for Toledo, Perrysburg, and Wood and Lucas County, with spring cleanups when the snow melts.</p>
     <div class="cta-row"><a class="btn btn-gold" href="#request-form">Get a Free Cleanup Estimate</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
   </div>
@@ -1354,7 +1361,7 @@ def seasonal_cleanups_page():
       <p class="eyebrow">Northwest Ohio fall timeline</p>
       <h2>When each part of a fall cleanup should happen around Toledo.</h2>
       <p>Timing matters. Clean up too early and the trees drop another layer; wait too long and wet leaves freeze to the lawn under the first snow.</p>
-      <p class="depth-links"><b>City leaf pickup has deadlines.</b> Perrysburg's curbside leaf program ran October 20 to December 1 last year, and piles set out after the final pass were not collected. Terramorph hauls leaves away, so you are not racing a city schedule.</p>
+      <p class="depth-links"><b>City leaf pickup has deadlines.</b> Toledo's curbside leaf collection runs about six weeks starting November 2, 2026, one set week per ZIP code, and leaves cannot go in the street once your week has passed. Maumee's curbside pickup is for owner-occupied homes only. Terramorph hauls leaves away, so you are not racing a city schedule.</p>
     </div>
     <div class="process-timeline large season-timeline">{timeline_html}</div>
   </div>
@@ -1380,13 +1387,16 @@ def seasonal_cleanups_page():
 <section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">Keep reading</p><h2>Seasonal guides for Northwest Ohio properties.</h2></div><div class="container guide-grid">{related_html}</div></section>
 <section class="section quote-section"><div class="container quote-grid">{quote_form('Request a Seasonal Cleanup Quote')}<div class="cta-proof"><p class="eyebrow">Why homeowners reach out</p><h2>Crews that show up, clean up, and haul it all away.</h2>{review_stack(3, service)}</div></div></section>
 """
-    title = 'Fall and Seasonal Cleanups in Wood and Lucas County | Terramorph'
-    desc = 'Fall cleanups, leaf removal, bed cleanouts, and spring cleanups for Toledo, Perrysburg, and Wood and Lucas County. Leaves hauled away. Free estimates.'
-    schema = schema_for(filename, 'Fall and Seasonal Cleanups | Terramorph', desc, faqs, service)
+    title = 'Leaf Removal & Fall Cleanup in Perrysburg & Toledo, OH | Terramorph'
+    desc = 'Leaf removal and fall cleanup for Perrysburg, Toledo, and Wood and Lucas County: leaves hauled away, beds cut back, debris gone. Spring cleanups too. Free estimates.'
+    schema = schema_for(filename, 'Leaf Removal & Fall Cleanup | Terramorph', desc, faqs, service, extra_services=['Leaf Removal'])
     (root / filename).write_text(page(title, desc, body, schema))
 
 seasonal_cleanups_page()
-service_page('snow-removal.html', 'Snow Removal', 'Winter snow and ice service', 'snow-removal-truck.webp?v=3.17', 'Lock in dependable snow removal before the first storm.', 'Seasonal snow removal and ice management for driveways, walkways, and commercial lots in Wood and Lucas County. Winter routes fill in the fall - reserve a spot before the first push.', 'Every storm turns into shoveling before work, a blocked driveway, or a commercial lot that is not safe or open when customers arrive.', 'A property that is cleared, treated, and accessible after every qualifying snowfall, on a contract that runs all winter without another phone call.', 'Reserve Winter Service', True)
+service_page('snow-removal.html', 'Snow Removal', 'Winter snow plowing and ice service', 'snow-removal-truck.webp?v=3.17', 'Snow removal and snow plowing, locked in before the first storm.', 'Seasonal snow plowing and ice management for driveways, walkways, and commercial lots in Perrysburg, Toledo, Maumee, and the rest of Wood and Lucas County. Winter routes fill in the fall - reserve a spot before the first push.', 'Every storm turns into shoveling before work, a blocked driveway, or a commercial lot that is not safe or open when customers arrive.', 'A property that is plowed, treated, and accessible after every qualifying snowfall, on a contract that runs all winter without another phone call.', 'Reserve Winter Service', True,
+             seo_title='Snow Removal & Plowing in Perrysburg, Toledo & Maumee, OH | Terramorph',
+             seo_desc='Snow removal and plowing for Perrysburg, Toledo, Maumee, and Wood and Lucas County: driveways, walks, commercial lots, and salting. Reserve before the first storm.',
+             extra_services=['Snow Plowing'])
 
 def snow_signup_page():
     """Seasonal snow sign-up page (2026-10-26). Residential + commercial, how it
@@ -1678,7 +1688,7 @@ areas = f'''
 {local_authority()}
 {official_business_info()}
 <section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">Local service pages</p><h2>Estimate information by city and project type.</h2><p>Use these pages to review the most relevant Terramorph services for your city, then call Terramorph for a free estimate.</p></div><div class="container guide-grid">{''.join(city_service_card(x) for x in CITY_SERVICE_PAGES)}</div></section>
-<section class="section"><div class="container section-heading compact"><p class="eyebrow">Priority service areas</p><h2>Focused on Northwest Ohio.</h2></div><div class="container areas">{''.join(f'<a class="area" href="{CITY_LINKS.get(x, "contact.html")}">{x}<span>Design • patios • drainage • lighting</span></a>' for x in ['Perrysburg','Toledo','Maumee','Sylvania','Rossford','Oregon','Waterville','Whitehouse','Monclova','Ottawa Hills','Bowling Green','Wood County','Lucas County','Northwest Ohio'])}</div></section>
+<section class="section"><div class="container section-heading compact"><p class="eyebrow">Priority service areas</p><h2>Focused on Northwest Ohio.</h2></div><div class="container areas">{''.join(f'<a class="area" href="{CITY_LINKS.get(x, "contact.html")}">{x}<span>Design • patios • drainage • lighting</span></a>' for x in ['Perrysburg','Toledo','Maumee','Sylvania','Rossford','Oregon','Waterville','Whitehouse','Monclova','Ottawa Hills','Bowling Green','Northwood','Lambertville, MI','Temperance, MI','Wood County','Lucas County','Northwest Ohio'])}</div></section>
 <section class="section quote-section"><div class="container quote-grid">{quote_form('Get a Local Property Estimate')}<div class="cta-proof"><p class="eyebrow">Local estimates</p><h2>Tell us where you are and what you need done.</h2><p>Whether it is drainage, design, a patio, cleanup, mowing, mulch, trimming, or bed maintenance, Terramorph can point you toward the right next step.</p></div></div></section>
 '''
 areas_desc = 'Terramorph serves Wood and Lucas County with Northwest Ohio-specific expertise for landscaping, patios, drainage, lighting, cleanups, lawn maintenance, and property work.'

@@ -119,7 +119,8 @@ SERVICE_LINKS = {
     'lighting': '<a href="outdoor-lighting.html">Outdoor Lighting</a> · <a href="outdoor-lighting-cost-ohio.html">Lighting Cost</a> · <a href="landscape-lighting-toledo-ohio.html">Lighting in Toledo</a>',
     'maintenance': '<a href="lawn-maintenance.html">Lawn Maintenance</a> · <a href="landscape-maintenance-packages-northwest-ohio.html">Maintenance Packages</a> · <a href="spring-cleanup-cost-toledo-ohio.html">Cleanup Cost</a>',
     'mulch': '<a href="mulch-installation-toledo-ohio.html">Mulch Installation</a> · <a href="mulch-vs-rock-landscape-beds.html">Mulch vs Rock</a> · <a href="seasonal-cleanups.html">Seasonal Cleanups</a>',
-    'snow': '<a href="snow-removal.html">Snow Removal</a> · <a href="commercial-landscaping-toledo-ohio.html">Commercial Landscaping</a> · <a href="service-areas.html">Service Areas</a>',
+    'snow': '<a href="snow-removal.html">Snow Removal</a> · <a href="snow-removal-signup.html">Winter Sign-Up</a> · <a href="commercial-landscaping-toledo-ohio.html">Commercial Landscaping</a>',
+    'cleanup': '<a href="seasonal-cleanups.html">Leaf Removal &amp; Fall Cleanup</a> · <a href="fall-cleanup-checklist-northwest-ohio.html">Fall Cleanup Checklist</a> · <a href="snow-removal-signup.html">Winter Sign-Up</a>',
 }
 
 DECISION_PAGES = [
@@ -141,7 +142,9 @@ def service_for_file(name: str) -> str:
         return 'patio'
     if 'lighting' in n:
         return 'lighting'
-    if 'maintenance' in n or 'lawn' in n or 'cleanup' in n:
+    if 'leaf' in n or 'cleanup' in n:
+        return 'cleanup'
+    if 'maintenance' in n or 'lawn' in n:
         return 'maintenance'
     if 'mulch' in n or 'bed' in n:
         return 'mulch'
@@ -199,7 +202,7 @@ def generate(ctx: dict) -> list[str]:
         html = path.read_text()
         city = next((c for c in CITY_CONTEXT if c.lower().replace(' ', '-') in path.name or f'{c}, Ohio' in html[:4000] or f'>{c}<' in html[:3000]), None)
         is_major = path.name in major_pages or path.name.startswith('lp-')
-        is_local = city is not None and ('landscaping-' in path.name or any(term in path.name for term in ['drainage', 'paver', 'lighting', 'lawn', 'cleanup', 'maintenance', 'commercial', 'snow', 'mulch', 'sod', 'tree', 'landscape']))
+        is_local = city is not None and ('landscaping-' in path.name or any(term in path.name for term in ['drainage', 'paver', 'lighting', 'lawn', 'cleanup', 'leaf', 'maintenance', 'commercial', 'snow', 'mulch', 'sod', 'tree', 'landscape']))
         if (is_major or is_local) and 'ai-answer-section' not in html:
             heading = f'Why homeowners in {city or "Perrysburg"} choose Terramorph' if (city or path.name in {'index.html', 'services.html'}) else 'Quick answer: where Terramorph fits'
             answer = ai_answer_block(heading, city or 'Northwest Ohio')
