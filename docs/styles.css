@@ -296,13 +296,13 @@ html,body{max-width:100%;overflow-x:hidden}.conversion-hero,.meta-landing-hero,.
 .quote-request-form .fine-print{grid-column:1/-1;color:#5a654f!important;margin:0}.quote-request-form .fine-print a{text-decoration:underline;color:var(--forest);font-weight:900}
 @media (max-width:980px){.quote-request-layout,.quote-request-card{grid-template-columns:1fr}.quote-request-copy{order:2}.quote-request-form{grid-template-columns:1fr}}
 
-/* V3.52 desktop quote embed fix: give Jobber form real width instead of squeezing it beside proof cards */
+/* V3.52 desktop quote embed fix: give the request form real width instead of squeezing it beside proof cards */
 .quote-section .quote-grid{grid-template-columns:1fr!important;gap:30px!important}
 .quote-section .quote-panel{padding:0!important;background:transparent!important;box-shadow:none!important}
 .quote-section .quote-request-card{grid-template-columns:minmax(280px,.78fr) minmax(520px,1.22fr)!important;align-items:start!important}
 .quote-section .quick-lead-copy{min-width:0!important}
-.jobber-embed-wrap{width:100%!important;max-width:100%!important;overflow:hidden;border-radius:22px;background:#f8f3e8;box-shadow:inset 0 0 0 1px rgba(23,32,21,.08)}
-.jobber-embed-wrap iframe{width:100%!important;max-width:100%!important;border:0!important;display:block!important}
+.request-embed-wrap{width:100%!important;max-width:100%!important;overflow:hidden;border-radius:22px;background:#f8f3e8;box-shadow:inset 0 0 0 1px rgba(23,32,21,.08)}
+.request-embed-wrap iframe{width:100%!important;max-width:100%!important;border:0!important;display:block!important}
 .quote-section .cta-proof{padding:0!important}
 .quote-section .cta-proof .review-stack{grid-template-columns:repeat(2,minmax(0,1fr));display:grid}
 @media(max-width:980px){
@@ -311,18 +311,18 @@ html,body{max-width:100%;overflow-x:hidden}.conversion-hero,.meta-landing-hero,.
 }
 
 
-/* V3.54 dedicated quote page embed fix: keep quote.html single-column with the Jobber form first and helper copy below. */
+/* V3.54 dedicated quote page embed fix: keep quote.html single-column with the request form first and helper copy below. */
 .quote-page .quote-request-section .quote-request-layout{grid-template-columns:1fr!important;max-width:1200px}
 .quote-page .quote-request-section .quote-request-card{grid-template-columns:1fr!important;align-items:start!important}
-.quote-page .quote-request-section .jobber-embed-wrap{order:1}
+.quote-page .quote-request-section .request-embed-wrap{order:1}
 .quote-page .quote-request-section .quick-lead-copy{order:2;min-width:0!important}
-.quote-page .quote-request-section .jobber-fallback{order:3;display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid rgba(255,255,255,.14);padding-top:16px}
-.quote-page .quote-request-section .jobber-fallback p{flex:1 1 260px;margin:0;color:rgba(255,255,255,.78)}
+.quote-page .quote-request-section .request-fallback{order:3;display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid rgba(255,255,255,.14);padding-top:16px}
+.quote-page .quote-request-section .request-fallback p{flex:1 1 260px;margin:0;color:rgba(255,255,255,.78)}
 .quote-page .quote-request-section .quote-request-copy h2{color:var(--ink)!important}
 .quote-page .quote-request-section .quote-request-copy .eyebrow{color:var(--readable-green)!important}
 @media(max-width:980px){
   .quote-page .quote-request-section .quote-request-copy{order:2}
-  .quote-page .quote-request-section .jobber-fallback{display:grid;grid-template-columns:1fr}
+  .quote-page .quote-request-section .request-fallback{display:grid;grid-template-columns:1fr}
 }
 
 @media(max-width:760px){
@@ -374,8 +374,7 @@ html,body{max-width:100%;overflow-x:hidden}.conversion-hero,.meta-landing-hero,.
 @media(max-width:1050px){.cleanup-grid,.cleanup-grid.cleanup-grid-3{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:760px){.ba-pair,.cleanup-grid,.cleanup-grid.cleanup-grid-3{grid-template-columns:1fr}.season-timeline div{grid-template-columns:1fr}}
 
-/* Paid-traffic request route: the Jobber HOSTED form replaces the embed so a
-   submission redirects to /thank-you.html and fires one exact conversion. */
+/* Button-style request card (kept for any panel that links out to the hosted request page). */
 .hosted-request-action{display:flex;flex-direction:column;gap:14px;background:#f8f3e8;border-radius:22px;padding:26px 24px;box-shadow:inset 0 0 0 1px rgba(23,32,21,.08)}
 .hosted-request-action .eyebrow{margin:0;color:#7a6326!important}
 .hosted-request-list{list-style:none;margin:0;padding:0;display:grid;gap:9px}
@@ -390,9 +389,21 @@ html,body{max-width:100%;overflow-x:hidden}.conversion-hero,.meta-landing-hero,.
   .hosted-request-action{padding:22px 18px}
   .hosted-request-action .btn-request-primary{font-size:.98rem;padding:16px 18px}
 }
-/* Jobber form placeholder until the embed loads (scroll-near or tap). Sits on
-   the light .jobber-embed-wrap, so text is dark. */
-.jobber-load-card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;min-height:180px;justify-content:center;padding:26px 24px;border:1px dashed var(--gold);background:#fffdf8;color:var(--ink);text-align:left;cursor:pointer;font:inherit;transition:background .18s ease,border-color .18s ease}
-.jobber-load-card:hover,.jobber-load-card:focus-visible{background:#f7f2e8;border-style:solid}
-.jobber-load-card b{font-size:1.25rem;color:var(--forest)}
-.jobber-load-card span{color:var(--muted);line-height:1.5}
+/* Request form placeholder until the form loads (scroll-near or tap). Sits on
+   the light .request-embed-wrap, so text is dark. */
+.request-load-card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;min-height:180px;justify-content:center;padding:26px 24px;border:1px dashed var(--gold);background:#fffdf8;color:var(--ink);text-align:left;cursor:pointer;font:inherit;transition:background .18s ease,border-color .18s ease}
+.request-load-card:hover,.request-load-card:focus-visible{background:#f7f2e8;border-style:solid}
+.request-load-card b{font-size:1.25rem;color:var(--forest)}
+.request-load-card span{color:var(--muted);line-height:1.5}
+/* The request form draws its own white card inside the dark quote panels.
+   Keep the panels' light text and big display-heading rules out of it; colors
+   come from the form's own variables so it stays readable. */
+#request-form .rhf h2{color:var(--ink)!important;font-size:clamp(1.3rem,4.6vw,1.6rem)!important;font-weight:700!important;line-height:1.15!important;letter-spacing:normal!important;margin:0 0 6px!important}
+#request-form .rhf .done h2{color:var(--m)!important}
+#request-form .rhf p,#request-form .rhf span,#request-form .rhf b{color:inherit!important}
+#request-form .rhf .stp,#request-form .rhf .small,#request-form .rhf .f .opt{color:var(--mut)!important}
+#request-form .rhf .lead,#request-form .rhf .consent{color:var(--ink2)!important}
+#request-form .rhf .em,#request-form .rhf .banner{color:var(--bad)!important}
+#request-form .rhf .drop b{color:var(--m)!important}
+#request-form .rhf a{color:var(--m)!important;text-decoration:underline!important}
+.request-load-error{margin:0;padding:22px 20px;color:#2b3528;font-weight:600;line-height:1.5}

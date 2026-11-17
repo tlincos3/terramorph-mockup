@@ -12,8 +12,15 @@ const TRACKING_STORAGE_KEY = 'terramorphAttributionContext';
 const QUICK_LEAD_KEY = 'terramorphQuickLeadContext';
 const PHONE_LEAD_KEY = 'terramorphPendingPhoneLead';
 const THANK_YOU_ATTRIBUTION_KEY = 'terramorphThankYouLeadTracked';
-const JOBBER_ORIGIN = 'https://clienthub.getjobber.com';
-const JOBBER_LEAD_TRACKED_KEY = 'terramorphJobberLeadTracked';
+// One quote-request conversion per browser session. The stored key name is
+// unchanged from the previous form so a session that spans the switch cannot
+// be counted twice.
+const QUOTE_LEAD_TRACKED_KEY = 'terramorphJobberLeadTracked';
+// Right Hand request form (Terramorph's CRM). The embed script renders the
+// form into a target element; the hosted page is for buttons and fallbacks.
+const REQUEST_FORM_SCRIPT = 'https://app.righthandcrm.com/intake/form.js';
+const REQUEST_FORM_COMPANY = 'terramorph';
+const REQUEST_FORM_HOST = 'app.righthandcrm.com';
 // Google Ads "Request quote" conversion label (the part after AW-17691366114/).
 // Blank skips the direct Google Ads conversion ping.
 const AW_QUOTE_REQUEST_LABEL = 'obvlCJaFougcEOKl8_NB';
@@ -198,8 +205,8 @@ function decorateTrackingLink(link){
     return;
   }
   const isTerramorphLink = destination.origin === window.location.origin;
-  const isJobberLink = destination.hostname === 'clienthub.getjobber.com';
-  if(!isTerramorphLink && !isJobberLink) return;
+  const isRequestFormLink = destination.hostname === REQUEST_FORM_HOST;
+  if(!isTerramorphLink && !isRequestFormLink) return;
   const context = getMergedTrackingContext();
   TRACKING_PARAM_KEYS.forEach(key => {
     const value = context[key];
@@ -209,7 +216,7 @@ function decorateTrackingLink(link){
 }
 
 function decorateAttributionLinks(){
-  document.querySelectorAll('a[href*="quote.html"], a[href*="clienthub.getjobber.com"]').forEach(decorateTrackingLink);
+  document.querySelectorAll('a[href*="quote.html"], a[href*="app.righthandcrm.com/request"]').forEach(decorateTrackingLink);
 }
 
 function trackQuoteIntent(source, link){
@@ -237,60 +244,6 @@ function trackPhoneClick(link){
   metaTrackCustom('PhoneClick', context);
 }
 
-const JOBBER_HOSTED_FORM_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new';
-
-// True only when the visitor actually clicked a paid ad. Deliberately does NOT
-// trust utm_source alone: getDetectedTrafficSource() infers that from
-// document.referrer, so an organic Facebook post click would look paid here.
-function hasPaidClickAttribution(context){
-  const medium = String(context.utm_medium || '').trim().toLowerCase();
-  return Boolean(
-    context.fbclid || context.fb_ad_id || context.fb_campaign_id ||
-    context.gclid || context.wbraid || context.gbraid || context.msclkid ||
-    medium === 'paid' || medium === 'cpc' || medium === 'ppc' || medium === 'paid_social'
-  );
-}
-
-// Jobber's EMBED is a cross-origin iframe. Jobber states in the form settings
-// that "custom confirmation pages won't work in embedded forms", so a
-// submission inside it can never redirect and can only ever be guessed at from
-// iframe load/height signals -- which is why Meta under-reported form leads
-// about 4x (1 counted vs 4 self-reported in Jobber, Oct 5-11 2026).
-//
-// For paid clicks only, swap the embed for the HOSTED form. It redirects to
-// /thank-you.html on submit, where trackAttributedThankYouView() fires exactly
-// one Meta Lead and one Google Ads conversion per real submission. Organic
-// visitors keep the inline embed, so their experience is unchanged.
-function routePaidTrafficToHostedForm(){
-  const panels = document.querySelectorAll('.jobber-quote-panel:not([data-request-route])');
-  if(!panels.length) return;
-  if(!hasPaidClickAttribution(getMergedTrackingContext())) return;
-  panels.forEach(panel => {
-    const embed = panel.querySelector('.jobber-embed-wrap');
-    const fallback = panel.querySelector('.jobber-fallback');
-    if(!embed) return;
-    const heading = panel.querySelector('h2')?.textContent?.trim() || 'Request My Free Estimate';
-    const action = document.createElement('div');
-    action.className = 'hosted-request-action';
-    action.innerHTML = [
-      '<p class="eyebrow">Takes about a minute</p>',
-      '<ul class="hosted-request-list">',
-      '<li>Your name, phone, and email</li>',
-      '<li>Property address and ZIP code</li>',
-      '<li>What the project needs and your timeline</li>',
-      '<li>Photos of the area, if you have them</li>',
-      '</ul>',
-      `<a class="btn btn-gold btn-request-primary" href="${JOBBER_HOSTED_FORM_URL}" rel="noopener">${heading}</a>`,
-      '<p class="hosted-request-note">Opens Terramorph\'s secure Jobber request form. No account needed.</p>',
-      '<p class="hosted-request-or">Would rather talk it through?</p>',
-      `<a class="btn btn-request-secondary" href="${TERRAMORPH_PHONE_HREF}">Call ${TERRAMORPH_PHONE_DISPLAY}</a>`
-    ].join('');
-    embed.replaceWith(action);
-    fallback?.remove();
-    panel.setAttribute('data-request-route', 'hosted');
-  });
-}
-
 function trackAttributedThankYouView(){
   if(!(window.location.pathname.endsWith('/thank-you.html') || window.location.pathname.endsWith('/thank-you'))) return;
   if(window.sessionStorage?.getItem(THANK_YOU_ATTRIBUTION_KEY)) return;
@@ -310,12 +263,13 @@ function trackAttributedThankYouView(){
     lead_stage: 'thank_you_return',
     ...context
   };
-  // Jobber's native form_submit event is mapped to GA4 generate_lead. This
-  // diagnostic must not emit another GA4 lead when the visitor returns here.
+  // The on-page request form already sent GA4 generate_lead at submit. This
+  // diagnostic must not emit another GA4 lead when the visitor lands here.
   pushAnalyticsEvent('quote_thank_you_attributed', attributionContext);
-  // Jobber's HOSTED form (not the embed) redirects here after submission, a
-  // path the iframe detector never sees. The Ads action counts one per click,
-  // so a double fire with the embed path cannot inflate conversions.
+  // Only reached without the session marker above, i.e. when the request was
+  // sent somewhere this page's submit listener could not see (the hosted
+  // request page returning the visitor here). The Ads action counts one per
+  // click, so it cannot inflate conversions.
   if(AW_QUOTE_REQUEST_LABEL && typeof gtag === 'function' &&
      (context.gclid || context.wbraid || context.gbraid)){
     try {
@@ -463,23 +417,55 @@ function handleQuickLeadSubmit(form, event){
   window.location.href = TERRAMORPH_PHONE_HREF;
 }
 
-function fireJobberLeadConversion(detection){
-  if(window.sessionStorage?.getItem(JOBBER_LEAD_TRACKED_KEY)) return;
-  const eventId = `jobber-lead-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+let quoteLeadFiredOnThisPage = false;
+
+function readSessionFlag(key){
+  try {
+    return window.sessionStorage?.getItem(key) || '';
+  } catch(error) {
+    return '';
+  }
+}
+
+function writeSessionFlag(key, value){
+  try {
+    window.sessionStorage?.setItem(key, value);
+  } catch(error) {
+    console.warn('Session storage write failed', key, error);
+  }
+}
+
+// The request form reports a real, accepted submission (it runs on this page,
+// not in a cross-origin frame), so every conversion below is exact: one
+// Google Ads conversion, one Meta Lead and one GA4 generate_lead per session.
+function fireQuoteLeadConversion(detail = {}){
+  if(quoteLeadFiredOnThisPage || readSessionFlag(QUOTE_LEAD_TRACKED_KEY)) return;
+  quoteLeadFiredOnThisPage = true;
+  const eventId = `quote-lead-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
   const context = {
-    source: detection.signal,
-    lead_stage: 'jobber_form_submitted',
-    iframe_load_count: detection.loadCount,
-    iframe_max_height: detection.maxHeight,
-    iframe_last_height: detection.lastHeight,
-    ...getTrackingContext()
+    ...getTrackingContext(),
+    source: 'right_hand_intake',
+    lead_stage: 'request_form_submitted',
+    form_name: 'right_hand_intake',
+    requested_service: String(detail.service || '')
   };
-  pushAnalyticsEvent('jobber_request_submitted', context);
-  if(AW_QUOTE_REQUEST_LABEL && typeof gtag === 'function'){
+  // Marked first so nothing below can cause a second count, and so
+  // thank-you.html stays quiet if the visitor is sent there afterwards.
+  writeSessionFlag(QUOTE_LEAD_TRACKED_KEY, eventId);
+  writeSessionFlag(THANK_YOU_ATTRIBUTION_KEY, eventId);
+  pushAnalyticsEvent('quote_request_submitted', context);
+  if(typeof gtag === 'function'){
     try {
-      gtag('event', 'conversion', {send_to: `AW-17691366114/${AW_QUOTE_REQUEST_LABEL}`});
+      gtag('event', 'generate_lead', context);
     } catch(error) {
-      console.warn('Google Ads conversion tracking failed', error);
+      console.warn('GA4 lead tracking failed', error);
+    }
+    if(AW_QUOTE_REQUEST_LABEL){
+      try {
+        gtag('event', 'conversion', {send_to: `AW-17691366114/${AW_QUOTE_REQUEST_LABEL}`});
+      } catch(error) {
+        console.warn('Google Ads conversion tracking failed', error);
+      }
     }
   }
   // Every submission goes to Meta. Meta does its own click/view matching, so
@@ -487,66 +473,21 @@ function fireJobberLeadConversion(detection){
   // as of 2026-09-09) and drops cross-device conversions it could have matched.
   const leadContext = {...context, meta_attributed: hasMetaAttribution(context)};
   metaTrack('Lead', {content_name: 'Terramorph quote request', content_category: context.service_category || 'quote_request', ...leadContext}, {eventId});
-  metaTrackCustom('JobberRequestSubmitted', leadContext);
-  window.sessionStorage?.setItem(JOBBER_LEAD_TRACKED_KEY, eventId);
-  // Shares the thank-you marker so one submission cannot produce a second
-  // Meta Lead if Jobber also returns the visitor to thank-you.html.
-  window.sessionStorage?.setItem(THANK_YOU_ATTRIBUTION_KEY, eventId);
+  metaTrackCustom('QuoteRequestSubmitted', leadContext);
 }
 
-function watchJobberFormSubmission(){
-  const wrap = document.querySelector('.jobber-embed-wrap');
-  if(!wrap) return;
-  const state = {iframe: null, loadCount: 0, firstLoadAt: 0, maxHeight: 0, lastHeight: 0, engaged: false, signaled: {}};
+function handleRequestFormEvent(event){
+  const detail = event?.detail || {};
+  if(detail.stage === 'submitted'){
+    fireQuoteLeadConversion(detail);
+  } else if(detail.stage === 'booked'){
+    // A visit time picked after the request. Not a second lead.
+    pushAnalyticsEvent('quote_visit_booked', {source: 'right_hand_intake', ...getTrackingContext()});
+  }
+}
 
-  const signalOnce = (signal, extras) => {
-    if(state.signaled[signal]) return;
-    state.signaled[signal] = true;
-    pushAnalyticsEvent('jobber_iframe_signal', {signal, engaged: state.engaged, ...extras, ...getTrackingContext()});
-    if(state.engaged){
-      fireJobberLeadConversion({signal, loadCount: state.loadCount, maxHeight: state.maxHeight, lastHeight: state.lastHeight});
-    }
-  };
-
-  const attach = iframe => {
-    if(!iframe || state.iframe === iframe) return;
-    state.iframe = iframe;
-    iframe.addEventListener('load', () => {
-      state.loadCount += 1;
-      if(state.loadCount === 1){
-        state.firstLoadAt = Date.now();
-        return;
-      }
-      // Jobber's form swaps to its confirmation page in a second iframe
-      // navigation; validation errors re-render without navigating.
-      signalOnce('iframe_reload', {iframe_load_count: state.loadCount});
-    });
-  };
-
-  attach(wrap.querySelector('iframe'));
-  new MutationObserver(() => attach(wrap.querySelector('iframe'))).observe(wrap, {childList: true, subtree: true});
-
-  // Clicking into the cross-origin iframe blurs the parent window while the
-  // iframe becomes the active element - the only visible sign of engagement.
-  window.addEventListener('blur', () => {
-    if(state.iframe && document.activeElement === state.iframe) state.engaged = true;
-  });
-
-  window.addEventListener('message', event => {
-    if(event.origin !== JOBBER_ORIGIN || !state.iframe) return;
-    const height = typeof event.data === 'string' ? Number.parseInt(event.data, 10) : NaN;
-    if(!Number.isFinite(height) || height <= 0) return;
-    state.lastHeight = height;
-    if(height > state.maxHeight){
-      state.maxHeight = height;
-      return;
-    }
-    const collapsed = state.maxHeight > 600 && height < state.maxHeight * 0.45;
-    const settled = state.firstLoadAt && Date.now() - state.firstLoadAt > 8000;
-    if(collapsed && settled){
-      signalOnce('iframe_collapse', {iframe_max_height: state.maxHeight, iframe_last_height: height});
-    }
-  });
+function watchRequestFormSubmission(){
+  window.addEventListener('rh:intake', handleRequestFormEvent);
 }
 
 function isQuotePopupDismissed(){
@@ -650,52 +591,57 @@ function scheduleQuotePopup(){
   window.setTimeout(() => openQuotePopup('engaged_time'), QUOTE_POPUP_FALLBACK_MS);
 }
 
-const JOBBER_EMBED_SCRIPT = 'https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js';
-
-// The Jobber embed pulls ~1.4 MB (reCAPTCHA, Google Maps, Jobber's app) the
-// moment its script runs. Load it only when the form is about to scroll into
-// view, or immediately on tap. Attributes and IDs are exactly Jobber's own.
-function loadJobberEmbed(holder){
-  if(!holder || holder.dataset.jobberLoaded) return;
-  holder.dataset.jobberLoaded = '1';
-  holder.querySelector('[data-jobber-load]')?.remove();
+// The request form is loaded only when it is about to scroll into view, on
+// tap, or right away on quote.html, so pages stay light until it is needed.
+function loadRequestForm(holder){
+  if(!holder || holder.dataset.rhLoaded) return;
+  const target = holder.querySelector('[id^="rh-intake-"]');
+  if(!target) return;
+  holder.dataset.rhLoaded = '1';
+  holder.querySelector('[data-rh-load]')?.remove();
   const script = document.createElement('script');
-  script.src = JOBBER_EMBED_SCRIPT;
-  script.setAttribute('clienthub_id', holder.dataset.clienthubId);
-  script.setAttribute('form_url', holder.dataset.formUrl);
+  script.src = REQUEST_FORM_SCRIPT;
+  script.async = true;
+  script.dataset.company = REQUEST_FORM_COMPANY;
+  script.dataset.target = `#${target.id}`;
+  if(holder.dataset.rhService) script.dataset.service = holder.dataset.rhService;
+  script.addEventListener('error', () => {
+    target.innerHTML = `<p class="request-load-error">The form did not load. Use the button below to open it in a new tab, or call ${TERRAMORPH_PHONE_DISPLAY}.</p>`;
+    pushAnalyticsEvent('request_form_load_failed', getTrackingContext());
+  });
   holder.appendChild(script);
-  pushAnalyticsEvent('jobber_form_loaded', {trigger: holder.dataset.jobberTrigger || 'scroll', ...getTrackingContext()});
+  pushAnalyticsEvent('request_form_loaded', {trigger: holder.dataset.rhTrigger || 'scroll', ...getTrackingContext()});
 }
 
-function initLazyJobber(){
-  const holders = [...document.querySelectorAll('[data-jobber-lazy]')];
+function initLazyRequestForm(){
+  const holders = [...document.querySelectorAll('[data-rh-lazy]')];
   if(!holders.length) return;
   holders.forEach(holder => {
-    holder.querySelector('[data-jobber-load]')?.addEventListener('click', () => {
-      holder.dataset.jobberTrigger = 'tap';
-      loadJobberEmbed(holder);
+    holder.querySelector('[data-rh-load]')?.addEventListener('click', () => {
+      holder.dataset.rhTrigger = 'tap';
+      loadRequestForm(holder);
     });
   });
   // On the quote page the form IS the page: load it right away.
   if(document.body.classList.contains('quote-page') || !('IntersectionObserver' in window)){
-    holders.forEach(loadJobberEmbed);
+    holders.forEach(loadRequestForm);
     return;
   }
   // Backup trigger in case the observer never reports (some in-app browsers).
   const nearCheck = () => {
     holders.forEach(holder => {
-      if(!holder.dataset.jobberLoaded && holder.getBoundingClientRect().top < window.innerHeight + 900){
-        loadJobberEmbed(holder);
+      if(!holder.dataset.rhLoaded && holder.getBoundingClientRect().top < window.innerHeight + 900){
+        loadRequestForm(holder);
       }
     });
-    if(holders.every(holder => holder.dataset.jobberLoaded)) window.removeEventListener('scroll', nearCheck);
+    if(holders.every(holder => holder.dataset.rhLoaded)) window.removeEventListener('scroll', nearCheck);
   };
   window.addEventListener('scroll', nearCheck, {passive: true});
   const io = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if(entry.isIntersecting){
         io.unobserve(entry.target);
-        loadJobberEmbed(entry.target);
+        loadRequestForm(entry.target);
       }
     });
   }, {rootMargin: '900px 0px'});
@@ -1110,10 +1056,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initTmPicker();
   initTmFlip();
   persistTrackingContext();
-  // Must run BEFORE decorateAttributionLinks() so the hosted-form button it
-  // creates gets the utm/fbclid query string appended, and before the
-  // clienthub click handlers below bind to it.
-  routePaidTrafficToHostedForm();
   decorateAttributionLinks();
   pushAnalyticsEvent('terramorph_page_view', getTrackingContext());
   if(document.querySelector('[data-funnel-service]')){
@@ -1123,8 +1065,8 @@ document.addEventListener('DOMContentLoaded', () => {
     metaTrack('ViewContent', {content_name: document.title, content_category: 'service_page', ...getTrackingContext()});
   }
   trackAttributedThankYouView();
-  watchJobberFormSubmission();
-  initLazyJobber();
+  watchRequestFormSubmission();
+  initLazyRequestForm();
   document.querySelectorAll('.links a').forEach(link => link.addEventListener('click', () => {
     const menu = document.querySelector('.links');
     const button = document.querySelector('.mobile-menu');
@@ -1141,8 +1083,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if(link.matches('[data-quote-service]')) return;
     link.addEventListener('click', () => trackQuoteIntent('website_quote_link', link));
   });
-  document.querySelectorAll('a[href*="clienthub.getjobber.com"]').forEach(link => {
-    link.addEventListener('click', () => trackQuoteIntent('jobber_direct', link));
+  document.querySelectorAll('a[href*="app.righthandcrm.com/request"]').forEach(link => {
+    link.addEventListener('click', () => trackQuoteIntent('request_form_direct', link));
   });
   document.querySelectorAll('[data-quick-lead-form]').forEach(form => {
     form.addEventListener('submit', event => handleQuickLeadSubmit(form, event));

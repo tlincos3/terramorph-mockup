@@ -190,19 +190,9 @@ def faq_html(faqs):
     return ''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q, a in faqs)
 
 def form_panel(c, title, service, embed_id_suffix=''):
-    return f'''<section class="quote-panel jobber-quote-panel quote-request-section tm-form-card" id="request-form" aria-label="Free quote request form" data-service="{service}">
+    return f'''<section class="quote-panel request-quote-panel quote-request-section tm-form-card" id="request-form" aria-label="Free quote request form" data-service="{service}">
   <h2 class="tm-visually-hidden" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{title}</h2>
-  <div class="jobber-embed-wrap" aria-label="Terramorph Jobber quote request form">
-    <div id="{c['JOBBER_CLIENTHUB_ID']}" data-jobber-lazy data-clienthub-id="{c['JOBBER_CLIENTHUB_ID']}" data-form-url="{c['JOBBER_FORM_URL']}">
-      <button type="button" class="jobber-load-card" data-jobber-load><b>Tell us about your project</b><span>Takes about 2 minutes. Tap to open the secure request form.</span></button>
-    </div>
-    <noscript><a class="btn btn-gold" href="{c['JOBBER_DIRECT_URL']}" rel="noopener">Open the secure request form</a></noscript>
-  </div>
-  <div class="jobber-fallback">
-    <p>Form not loading? Open it directly or call us.</p>
-    <a class="btn btn-gold" href="{c['JOBBER_DIRECT_URL']}" target="_blank" rel="noopener">Open the request form</a>
-    <a class="btn btn-outline-light" href="tel:{c['TEL']}">Call {c['PHONE']}</a>
-  </div>
+  {c['request_embed'](service, 'Form not loading? Open it directly or call us.')}
 </section>'''
 
 def _swap_head(html_text, home):
@@ -376,8 +366,8 @@ def render_quote(c):
 
 NO_GALLERY = {'privacy.html', 'terms.html', 'thank-you.html', 'warranty.html', 'review-notes.html', 'projects.html', 'before-after-gallery.html'}
 
-# Indexed city and service pages get the lazy Jobber form (2026-11-04). Same
-# markup as every other page ([data-jobber-lazy] + app.js initLazyJobber), so
+# Indexed city and service pages get the lazy request form (2026-11-04). Same
+# markup as every other page ([data-rh-lazy] + app.js initLazyRequestForm), so
 # nothing loads until the form nears the screen. Guides, cost pages, legal pages
 # and the noindex lp- pages are left alone.
 FORM_PREFIXES = ('landscaping-', 'drainage-solutions-', 'paver-patios-', 'lawn-maintenance-', 'leaf-removal-', 'snow-removal-',
@@ -387,7 +377,7 @@ FORM_PREFIXES = ('landscaping-', 'drainage-solutions-', 'paver-patios-', 'lawn-m
 FORM_PAGES = {'services.html'}
 
 def wants_form(name, t):
-    if 'data-jobber-lazy' in t or 'noindex' in t[:3000] or name in svc_v2.SERVICES:
+    if 'data-rh-lazy' in t or 'noindex' in t[:3000] or name in svc_v2.SERVICES:
         return False
     if name.startswith('lp-') or '-cost-' in name or name.endswith('-case-study.html'):
         return False
@@ -395,7 +385,7 @@ def wants_form(name, t):
 
 def inject_form(c, name, t):
     """Replace the legacy phone-only quote section with the v2 quote section that
-    carries the lazy Jobber embed. Keeps the page's reviews. Hero CTA jumps to it."""
+    carries the lazy request form. Keeps the page's reviews. Hero CTA jumps to it."""
     m_open = t.find('<main id="main">')
     m_close = t.find('</main>', m_open)
     if m_open < 0 or m_close < 0:

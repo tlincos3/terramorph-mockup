@@ -1,6 +1,6 @@
 # Terramorph Website
 
-Static site focused on local search visibility, clear service information, paid campaign landing pages, Jobber quote requests, and conversion measurement.
+Static site focused on local search visibility, clear service information, paid campaign landing pages, online quote requests, and conversion measurement.
 
 ## Open
 - `index.html` — homepage
@@ -28,7 +28,7 @@ Static site focused on local search visibility, clear service information, paid 
 - Accessibility improvements
 - Added an About page explaining the local, diagnosis-first approach
 - Added Outdoor Project Guides hub and eight SEO guide pages with FAQ/article schema and quote CTAs
-- Connected quote requests to the secure Jobber form and direct call CTAs
+- Connected quote requests to the secure request form and direct call CTAs
 - Added city/service pages for Toledo, Perrysburg, and Maumee core services
 
 ## V3.49 local growth/ad expansion

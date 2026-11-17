@@ -190,7 +190,7 @@ def rebuild(c, name, t):
             quote_title = quote_title or _txt(_first(r'<h2[^>]*>(.*?)</h2>', html))
             for href, label in re.findall(r'<a [^>]*href="([^"]+)"[^>]*>(.*?)</a>', html, re.S):
                 pass
-        elif 'jobber-quote-panel' in cls or 'quote-panel' in cls:
+        elif 'request-quote-panel' in cls or 'quote-panel' in cls:
             quote_title = _txt(_first(r'<h2[^>]*>(.*?)</h2>', html)) or quote_title
         elif 'proof-upgrade-section' in cls or 'work-section' in cls:
             continue  # generic proof copy + old gallery: replaced by reviews + service gallery

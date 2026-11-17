@@ -147,7 +147,7 @@ for _p in HTML_FILES:
     if not _cfg:
         errors.append(f'{_p.name}: no gtag config at all'); continue
     if _cfg[-1] != 'G-QRTSH6WXYK':
-        errors.append(f'{_p.name}: G-QRTSH6WXYK is not the LAST gtag config (Jobber form tracking breaks)')
+        errors.append(f'{_p.name}: G-QRTSH6WXYK is not the LAST gtag config (lead tracking breaks)')
     if 'AW-17691366114' not in _cfg:
         errors.append(f'{_p.name}: missing Google Ads config AW-17691366114')
     if 'QJLGCNu6wtscEOKl8_NB' not in _h or "phone_conversion_number" not in _h:
@@ -160,7 +160,54 @@ _app = (ROOT/'app.js').read_text()
 if "AW_QUOTE_REQUEST_LABEL = 'obvlCJaFougcEOKl8_NB'" not in _app:
     errors.append('app.js: quote conversion label missing or changed')
 if 'thank-you.html' not in {p.name for p in HTML_FILES}:
-    errors.append('thank-you.html missing (Jobber hosted form redirects there)')
+    errors.append('thank-you.html missing (request confirmations and old links land there)')
+# 1b) Quote request form (2026-11-16): requests go into Right Hand through the
+# lazy on-page form. app.js loads it and turns its submit signal into the
+# Google Ads conversion, Meta Lead and GA4 lead. A page that loses its holder
+# or target, or app.js losing the listener, means leads stop being counted.
+RH_REQUEST_URL = 'https://app.righthandcrm.com/request/?co=terramorph'
+for _need, _why in (
+        ("const REQUEST_FORM_SCRIPT = 'https://app.righthandcrm.com/intake/form.js'", 'request form script URL'),
+        ("const REQUEST_FORM_COMPANY = 'terramorph'", 'request form company'),
+        ("window.addEventListener('rh:intake', handleRequestFormEvent)", 'request form submit listener'),
+        ("detail.stage === 'submitted'", 'submit stage check'),
+        ("gtag('event', 'conversion', {send_to: `AW-17691366114/${AW_QUOTE_REQUEST_LABEL}`})", 'Google Ads quote conversion'),
+        ("metaTrack('Lead'", 'Meta Lead'),
+        ("gtag('event', 'generate_lead'", 'GA4 lead event'),
+        ("writeSessionFlag(THANK_YOU_ATTRIBUTION_KEY, eventId)", 'shared thank-you guard (stops double counting)'),
+        ('initLazyRequestForm();', 'lazy form loader call'),
+        ('watchRequestFormSubmission();', 'submit watcher call')):
+    if _need not in _app:
+        errors.append(f'app.js: {_why} missing or changed')
+if re.search(r'getjobber|d3ey4dbjkt2f6s', _app):
+    errors.append('app.js: still references the old request form')
+_form_pages = 0
+for _p in HTML_FILES:
+    _h = _p.read_text(errors='ignore')
+    if re.search(r'jobber', _h, re.I):
+        errors.append(f'{_p.name}: names or links the old request system')
+    _holders = len(re.findall(r'<div data-rh-lazy[ >]', _h))
+    _targets = re.findall(r'<div id="(rh-intake-[0-9]+)"></div>', _h)
+    if _holders != len(_targets) or len(set(_targets)) != len(_targets):
+        errors.append(f'{_p.name}: request form holders ({_holders}) and targets ({_targets}) do not match one to one')
+    if _holders:
+        _form_pages += 1
+        if 'data-rh-load' not in _h:
+            errors.append(f'{_p.name}: request form has no tap-to-open button')
+    for _href in re.findall(r'href="(https://app\.righthandcrm\.com[^"]*)"', _h):
+        if not (_href == RH_REQUEST_URL or _href.startswith(RH_REQUEST_URL + '&amp;service=')):
+            errors.append(f'{_p.name}: unexpected request page link {_href}')
+    if _holders and RH_REQUEST_URL not in _h:
+        errors.append(f'{_p.name}: request form has no fallback link to the hosted request page')
+for _name in ('quote.html', 'index.html'):
+    _f = ROOT/_name
+    if not _f.exists() or 'data-rh-lazy' not in _f.read_text(errors='ignore'):
+        errors.append(f'{_name}: request form missing')
+if _form_pages < 80:
+    errors.append(f'only {_form_pages} pages carry the request form (expected 80+)')
+for _css in ('styles.css', 'tm.css'):
+    if re.search(r'jobber', (ROOT/_css).read_text(errors='ignore'), re.I):
+        errors.append(f'{_css}: still uses old request form names')
 # 2) No invented "hypothetical" jobs presented anywhere.
 for _p in HTML_FILES:
     if re.search(r'hypothetical', _p.read_text(errors='ignore'), re.I):

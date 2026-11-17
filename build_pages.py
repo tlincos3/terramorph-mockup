@@ -26,9 +26,11 @@ BUSINESS_POSTAL = '43551'
 BUSINESS_COUNTRY = 'US'
 BUSINESS_CATEGORY = 'Landscaping, hardscaping, drainage, lawn care, and outdoor property services'
 OFFICIAL_NAP_NOTE = 'Terramorph LLC | Perrysburg, OH 43551 | 419-873-6801 | terramorphllc.com'
-JOBBER_CLIENTHUB_ID = 'e644a784-b214-4a2b-93df-ace28dbb2a70-1578803'
-JOBBER_FORM_URL = 'https://clienthub.getjobber.com/client_hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/work_request/embedded_work_request_form?form_id=1578803'
-JOBBER_DIRECT_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93df-ace28dbb2a70/public/requests/1578803/new'
+# Quote requests go straight into Right Hand (Terramorph's own CRM). The form is
+# loaded lazily by app.js (initLazyRequestForm); these are the hosted page for
+# buttons and fallback links, and the label that means "no specific service".
+RH_REQUEST_URL = 'https://app.righthandcrm.com/request/?co=terramorph'
+GENERIC_SERVICE = 'Outdoor Transformation'
 AREA_SERVED = [{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"}] + [{"@type":"City","name":t + ", OH"} for t in SERVICE_TOWNS] + [{"@type":"City","name":t + ", MI"} for t in SERVICE_TOWNS_MI]
 
 import sustainable as _sus  # the 4 sustainable-landscape pages (2026-10-27)
@@ -137,7 +139,7 @@ FOOT = f'''
     </div>
   </div>
 </footer>
-<script src="app.js?v=3.93"></script>
+<script src="app.js?v=3.94"></script>
 '''
 
 # Verbatim excerpts from Terramorph's public Google reviews (pulled 2026-08-26,
@@ -410,7 +412,7 @@ def head(title, desc, schema='', page_name=''):
     canonical_url = BASE_URL + ('/' if page_name in ('', 'index.html') else '/' + page_name)
     body_class = 'quote-page' if page_name == 'quote.html' else ''
     body_attr = f' class="{body_class}"' if body_class else ''
-    stylesheet_version = '3.66'
+    stylesheet_version = '3.67'
     schema_block = f'\n  <script type="application/ld+json">{schema}</script>' if schema else ''
     if page_name in ('thank-you.html', 'review-notes.html'):
         robots_block = '\n  <meta name="robots" content="noindex, nofollow">'
@@ -429,8 +431,8 @@ def head(title, desc, schema='', page_name=''):
     gtag('config', 'AW-17691366114/QJLGCNu6wtscEOKl8_NB', {
       'phone_conversion_number': '419-873-6801'
     });
-    // Jobber's embed stitches its form events to the visitor's GA4 session by
-    // reading the LAST gtag config on the page - keep G-QRTSH6WXYK last.
+    // Keep G-QRTSH6WXYK as the LAST config on the page. Lead events are tied
+    // to the visitor's GA4 session through it; validate_site.py enforces this.
     gtag('config', 'G-QRTSH6WXYK');
   </script>'''
     meta_pixel = '''
@@ -613,7 +615,7 @@ def quote_form(title='Request a Premium Project Quote', service='Outdoor Transfo
   <div class="phone-direct-card">
     <p class="eyebrow">Best next step</p>
     <h3>Send the project details, then Terramorph can follow up.</h3>
-    <p>The quote page asks for name, phone, city, address, service type, timeline, and project notes so the crew has enough context before the first call.</p>
+    <p>The quote page asks for name, phone, address, service type, and project notes so the crew has enough context before the first call.</p>
     <ul class="check-list">
       <li>Good for landscaping, patios, drainage, lighting, cleanups, maintenance, and snow service.</li>
       <li>Works on mobile so homeowners can text the request details directly.</li>
@@ -623,65 +625,52 @@ def quote_form(title='Request a Premium Project Quote', service='Outdoor Transfo
   </div>
 </section>'''
 
-def inline_jobber_quote_form(title='Request My Outdoor Transformation Quote', service='Outdoor Transformation'):
+def request_url(service=''):
+    """Hosted Right Hand request page, for buttons and fallback links."""
+    import html as _html
+    from urllib.parse import quote_plus
+    raw = _html.unescape(service or '').strip()
+    if not raw or raw == GENERIC_SERVICE:
+        return RH_REQUEST_URL
+    return f'{RH_REQUEST_URL}&amp;service={quote_plus(raw)}'
+
+def request_embed(service='', note='Form not loading? Open it in a new tab or call us.'):
+    """The lazy Right Hand request form plus its fallback links.
+
+    app.js initLazyRequestForm() injects the form script into the [data-rh-lazy]
+    holder when it nears the screen, on tap, or right away on quote.html. The
+    form reports a real submit (window event "rh:intake"), which app.js turns
+    into one Google Ads conversion, one Meta Lead and one GA4 lead.
+    One form per page, so the target id is fixed.
+    """
+    import html as _html
+    raw = _html.unescape(service or '').strip()
+    svc_attr = '' if (not raw or raw == GENERIC_SERVICE) else f' data-rh-service="{_html.escape(raw, quote=True)}"'
+    return f'''<div class="request-embed-wrap" aria-label="Terramorph quote request form">
+        <div data-rh-lazy{svc_attr}>
+          <button type="button" class="request-load-card" data-rh-load><b>Tell us about your project</b><span>Takes about 2 minutes. Tap to open the secure request form.</span></button>
+          <div id="rh-intake-1"></div>
+        </div>
+        <noscript><a class="btn btn-gold" href="tel:{TEL}">Call {PHONE} to request a quote</a></noscript>
+      </div>
+      <div class="request-fallback">
+        <p>{note}</p>
+        <a class="btn btn-gold" href="{request_url(service)}" target="_blank" rel="noopener">Open the request form</a>
+        <a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a>
+      </div>'''
+
+def inline_request_form(title='Request My Outdoor Transformation Quote', service='Outdoor Transformation'):
     return f'''
-<section class="quote-panel jobber-quote-panel quote-request-section" id="request-form" aria-labelledby="home-request-title" data-service="{service}">
+<section class="quote-panel request-quote-panel quote-request-section" id="request-form" aria-labelledby="home-request-title" data-service="{service}">
   <div class="quick-lead-card quote-request-card">
     <div class="quick-lead-copy">
       <p class="eyebrow light">Fast free estimate</p>
       <h2 id="home-request-title">{title}</h2>
-      <p>Share the service, property location, timeline, project notes, and photos in the secure form. The Terramorph team receives the request directly and can follow up with the right next step.</p>
+      <p>Share the service, property location, project notes, and photos in the secure form. The Terramorph team receives the request directly and can follow up with the right next step.</p>
       <div class="quick-lead-proof"><span>220+ 5-Star Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span></div>
     </div>
     <div>
-      <div class="jobber-embed-wrap" aria-label="Terramorph Jobber quote request form">
-        <div id="{JOBBER_CLIENTHUB_ID}" data-jobber-lazy data-clienthub-id="{JOBBER_CLIENTHUB_ID}" data-form-url="{JOBBER_FORM_URL}">
-          <button type="button" class="jobber-load-card" data-jobber-load><b>Tell us about your project</b><span>Takes about 2 minutes. Tap to open the secure request form.</span></button>
-        </div>
-        <noscript><a class="btn btn-gold" href="{JOBBER_DIRECT_URL}" rel="noopener">Open the secure request form</a></noscript>
-      </div>
-      <div class="jobber-fallback">
-        <p>If the embedded form does not load, open the secure Jobber request form directly.</p>
-        <a class="btn btn-gold" href="{JOBBER_DIRECT_URL}" target="_blank" rel="noopener">Open Jobber Quote Form</a>
-        <a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a>
-      </div>
-    </div>
-  </div>
-</section>'''
-
-def hosted_jobber_quote_form(title='Request My Outdoor Transformation Quote', service='Outdoor Transformation'):
-    """Paid-traffic version of the request panel.
-
-    Sends the visitor to Jobber's HOSTED request form instead of the embed. The
-    embed is a cross-origin iframe, so a submission inside it can only ever be
-    GUESSED at from iframe load/height signals -- Jobber states plainly in the
-    form settings that custom confirmation pages "won't work in embedded forms."
-    The hosted form redirects to /thank-you.html on submit, where app.js fires
-    one exact Meta Lead and Google Ads conversion per real submission. app.js
-    also appends the stored utm/fbclid context to any clienthub.getjobber.com
-    link, so the campaign that paid for the click keeps the credit.
-    """
-    return f'''
-<section class="quote-panel jobber-quote-panel quote-request-section hosted-request-panel" id="request-form" aria-labelledby="home-request-title" data-service="{service}" data-request-route="hosted">
-  <div class="quick-lead-card quote-request-card">
-    <div class="quick-lead-copy">
-      <p class="eyebrow light">Fast free estimate</p>
-      <h2 id="home-request-title">{title}</h2>
-      <p>Share the service, property location, timeline, project notes, and photos in the secure form. The Terramorph team receives the request directly and can follow up with the right next step.</p>
-      <div class="quick-lead-proof"><span>220+ 5-Star Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span></div>
-    </div>
-    <div class="hosted-request-action">
-      <p class="eyebrow">Takes about a minute</p>
-      <ul class="hosted-request-list">
-        <li>Your name, phone, and email</li>
-        <li>Property address and ZIP code</li>
-        <li>What the project needs and your timeline</li>
-        <li>Photos of the area, if you have them</li>
-      </ul>
-      <a class="btn btn-gold btn-request-primary" href="{JOBBER_DIRECT_URL}" rel="noopener">{title}</a>
-      <p class="hosted-request-note">Opens Terramorph's secure Jobber request form. No account needed.</p>
-      <p class="hosted-request-or">Would rather talk it through?</p>
-      <a class="btn btn-request-secondary" href="tel:{TEL}">Call {PHONE}</a>
+      {request_embed(service)}
     </div>
   </div>
 </section>'''
@@ -1003,7 +992,7 @@ home = f'''
 {review_section(10)}
 <section class="section quote-section">
   <div class="container quote-grid">
-    {inline_jobber_quote_form('Request My Outdoor Transformation Quote')}
+    {inline_request_form('Request My Outdoor Transformation Quote')}
     <div class="cta-proof">
       <p class="eyebrow">Send the useful details</p>
       <h2>Help the team qualify the project before the first call.</h2>
@@ -1093,15 +1082,15 @@ SERVICE_FAQS = {
 }
 SERVICE_FAQS.update(_sus.FAQS)
 
-def service_page(filename, title, eyebrow, image, headline, lead, problem, outcome, cta, embed_jobber=False, depth='',
+def service_page(filename, title, eyebrow, image, headline, lead, problem, outcome, cta, embed_form=False, depth='',
                  seo_title=None, seo_desc=None, crumb_parent=None, crumb=None, hero_alt=None, hero_credit=None,
                  service_name=None, extra_services=None, process=None, service_desc=None):
     """Optional keyword args (2026-10-27, sustainable pages): exact title/meta, a
     Home > Services > Page breadcrumb, an honest hero alt + credit line for
     reference photos, extra Service schema nodes, and a custom process timeline
     (h2, lead, [(step, text), ...]) in place of the generic one."""
-    hero_cta_href = '#request-form' if embed_jobber else 'quote.html'
-    inline_form = ('\n' + inline_jobber_quote_form(f'Request a {title} Quote', title).strip()) if embed_jobber else ''
+    hero_cta_href = '#request-form' if embed_form else 'quote.html'
+    inline_form = ('\n' + inline_request_form(f'Request a {title} Quote', title).strip()) if embed_form else ''
     crumb_html = (f'<a href="index.html">Home</a> / <a href="{crumb_parent[0]}">{crumb_parent[1]}</a> / {crumb or title}' if crumb_parent
                   else f'<a href="index.html">Home</a> / {crumb or title}')
     credit_html = f'\n  <p class="tm-hero-credit">{hero_credit}</p>' if hero_credit else ''
@@ -1170,7 +1159,7 @@ def meta_landing_page(filename, title, eyebrow, image, headline, lead, bullets, 
 </section>
 <section class="conversion-trust-strip" aria-label="Terramorph credibility"><div class="container conversion-trust-grid"><span>220+ 5-Star Google Reviews</span><span>Perrysburg-area team</span><span>BBB Accredited</span><span>Free estimates</span><span>Serving Toledo, Perrysburg, Maumee, Wood County, Lucas County</span></div></section>
 {priority_fit_strip(service)}
-{hosted_jobber_quote_form(form_title, service)}
+{inline_request_form(form_title, service)}
 <section class="section pain-proof-section"><div class="container pain-proof-grid"><div class="pain-card"><p class="eyebrow light">This is for you if</p><h2>{bullets[0]}</h2><ul>{''.join(f'<li>{item}</li>' for item in symptoms)}</ul><a class="btn btn-gold" href="#request-form">See What This Would Cost</a></div><div class="proof-card"><p class="eyebrow">What Terramorph checks</p><h2>{bullets[1]}</h2><div class="proof-steps">{''.join(f'<div><b>{i+1}. {title}</b><span>{copy}</span></div>' for i,(title,copy) in enumerate(next_steps))}</div></div></div></section>
 <section class="section clay-section"><div class="container local-grid"><div><p class="eyebrow">Why request now</p><h2>{bullets[2]}</h2><p>{bullets[3]}</p><a class="btn btn-primary" href="#request-form">Start My Free Assessment</a></div><div class="authority-list"><div><b>Fast next step</b><span>Submit the form or call and Terramorph can review the property, service need, timeline, and photos.</span></div><div><b>Project proof</b><span>Review photos and customer feedback before deciding whether Terramorph fits the project.</span></div><div><b>Local conditions</b><span>Wood and Lucas County soil, drainage, freeze-thaw, and weather are considered before recommending work.</span></div><div><b>Clear estimate</b><span>The goal is a practical scope, clean communication, and a path to getting the work handled.</span></div></div></div></section>
 <section class="section work-section"><div class="container section-heading compact"><p class="eyebrow">Project photos</p><h2>{gallery_heading_for_page(filename, 'See the kind of work this estimate can start.')}</h2></div><div class="container">{photo_gallery(photos_for_page(filename))}</div></section>
@@ -1351,7 +1340,7 @@ def seasonal_cleanups_page():
   <div class="container section-heading compact"><p class="eyebrow">What is included</p><h2>Everything a fall cleanup should cover, in one scheduled visit.</h2><p>Every property is different, so the estimate is built around what your lawn, beds, and trees actually need.</p></div>
   <div class="container cleanup-grid">{included_html}</div>
 </section>
-{inline_jobber_quote_form('Request a Fall Cleanup Estimate', service).strip()}
+{inline_request_form('Request a Fall Cleanup Estimate', service).strip()}
 <section class="section">
   <div class="container local-grid">
     <div>
@@ -1409,7 +1398,7 @@ service_page('snow-removal.html', 'Snow Removal', 'Winter snow plowing and ice s
 def snow_signup_page():
     """Seasonal snow sign-up page (2026-10-26). Residential + commercial, how it
     works, no prices or dollar amounts anywhere (Trent's rule). Uses the same
-    lazy Jobber embed + tracking head as every other page."""
+    lazy request form + tracking head as every other page."""
     filename = 'snow-removal-signup.html'
     title = 'Snow Removal'
     faqs = SERVICE_FAQS['Snow Removal']
@@ -1426,7 +1415,7 @@ def snow_signup_page():
   </div>
 </section>
 {trust_band()}
-{inline_jobber_quote_form('Reserve Seasonal Snow Service', 'Snow Removal')}
+{inline_request_form('Reserve Seasonal Snow Service', 'Snow Removal')}
 <section class="section">
   <div class="container section-heading compact"><p class="eyebrow">Two ways to sign up</p><h2>Residential driveways or commercial lots. One seasonal agreement.</h2></div>
   <div class="container tm-snow-plans">
@@ -1725,26 +1714,16 @@ quote_page = f'''
     <div class="cta-row"><a class="btn btn-gold" href="#request-form">Start Request</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div>
   </div>
 </section>
-<section class="section quote-panel jobber-quote-panel quote-request-section" id="request-form" aria-labelledby="quote-title">
+<section class="section quote-panel request-quote-panel quote-request-section" id="request-form" aria-labelledby="quote-title">
   <div class="container quote-request-layout">
     <div class="quick-lead-card quote-request-card">
       <div class="quick-lead-copy">
         <p class="eyebrow light">Project details</p>
         <h2 id="quote-title">Request a free outdoor project estimate.</h2>
-        <p>Use the secure Terramorph request form below. The team receives the service, city, photos, timeline, and project notes needed to plan the right follow-up.</p>
+        <p>Use the secure Terramorph request form below. The team receives the service, address, photos, and project notes needed to plan the right follow-up.</p>
         <div class="quick-lead-proof"><span>220+ 5-Star Google Reviews</span><span>BBB Accredited</span><span>Wood + Lucas County</span></div>
       </div>
-      <div class="jobber-embed-wrap" aria-label="Terramorph Jobber quote request form">
-        <div id="{JOBBER_CLIENTHUB_ID}" data-jobber-lazy data-clienthub-id="{JOBBER_CLIENTHUB_ID}" data-form-url="{JOBBER_FORM_URL}">
-          <button type="button" class="jobber-load-card" data-jobber-load><b>Tell us about your project</b><span>Takes about 2 minutes. Tap to open the secure request form.</span></button>
-        </div>
-        <noscript><a class="btn btn-gold" href="{JOBBER_DIRECT_URL}" rel="noopener">Open the secure request form</a></noscript>
-      </div>
-      <div class="jobber-fallback">
-        <p>If the embedded form does not load, open the secure Jobber request form directly.</p>
-        <a class="btn btn-gold" href="{JOBBER_DIRECT_URL}" target="_blank" rel="noopener">Open Jobber Quote Form</a>
-        <a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a>
-      </div>
+      {request_embed()}
     </div>
     <div class="quote-request-copy">
       <p class="eyebrow">Before Terramorph follows up</p>
@@ -1774,13 +1753,13 @@ privacy = f'''
 </section>
 <section class="section legal-page">
   <div class="container narrow-copy">
-    <p><strong>Last updated:</strong> October 7, 2026</p>
+    <p><strong>Last updated:</strong> November 16, 2026</p>
     <h2>Information we collect</h2>
     <p>Terramorph may collect information you choose to provide when requesting an estimate, calling, emailing, or using our online quote form. This can include your name, phone number, email address, property address, project details, service needs, preferred timeline, photos, and any notes you submit.</p>
     <h2>How we use information</h2>
     <p>We use submitted information to respond to quote requests, schedule site visits, prepare estimates, communicate about projects, improve our services, and keep accurate customer and project records.</p>
     <h2>Quote forms and third-party tools</h2>
-    <p>Terramorph uses Jobber to process quote requests and manage scheduling, customer communication, project records, and follow-up. Information submitted through the embedded or linked Jobber form is also handled under Jobber's privacy practices.</p>
+    <p>Terramorph uses customer-management software to receive quote requests and manage scheduling, customer communication, project records, and follow-up. Information submitted through the request form on this website, or through the linked request page, is stored in that system and handled under this policy.</p>
     <h2>Website analytics and advertising</h2>
     <p>This website uses Google Analytics, Google Ads, and the Meta Pixel to understand website traffic, measure marketing performance, and improve advertising. These tools may use cookies or similar identifiers and collect browser, device, page visit, referral, campaign, and interaction information.</p>
     <h2>Information sharing</h2>
@@ -1843,7 +1822,7 @@ review_notes_desc = 'Summary of Terramorph V3.49 local SEO, AI visibility, local
 
 readme = '''# Terramorph Website
 
-Static site focused on local search visibility, clear service information, paid campaign landing pages, Jobber quote requests, and conversion measurement.
+Static site focused on local search visibility, clear service information, paid campaign landing pages, online quote requests, and conversion measurement.
 
 ## Open
 - `index.html` — homepage
@@ -1871,7 +1850,7 @@ Static site focused on local search visibility, clear service information, paid 
 - Accessibility improvements
 - Added an About page explaining the local, diagnosis-first approach
 - Added Outdoor Project Guides hub and eight SEO guide pages with FAQ/article schema and quote CTAs
-- Connected quote requests to the secure Jobber form and direct call CTAs
+- Connected quote requests to the secure request form and direct call CTAs
 - Added city/service pages for Toledo, Perrysburg, and Maumee core services
 '''
 (root/'README.md').write_text(readme)
@@ -1909,7 +1888,7 @@ def post_process_html():
         if path.name != 'contact.html':
             html = html.replace('href="contact.html"', 'href="quote.html"')
         html = html.replace('href="#quote"', 'href="quote.html"')
-        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.93"></script>', html)
+        html = re.sub(r'<script src="app\.js(?:\?v=[^"]+)?"></script>', '<script src="app.js?v=3.94"></script>', html)
         path.write_text(html)
 
 write_static_seo_files()
@@ -2092,7 +2071,7 @@ def sitemap_lastmod():
     path.write_text(re.sub(r'<loc>([^<]+)</loc>', add, xml))
     (root / f'{INDEXNOW_KEY}.txt').write_text(INDEXNOW_KEY)
 
-TM_CSS_VERSION = '3.18'
+TM_CSS_VERSION = '3.19'
 
 def apply_v2_design():
     import v2_pages
