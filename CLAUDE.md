@@ -9,12 +9,13 @@ This has broken silently before and it costs real leads. Curl the live site and 
 four:
 
 1. Homepage has gtag config for `AW-17691366114` AND `G-QRTSH6WXYK`, and
-   **G-QRTSH6WXYK must come AFTER the AW configs.** The Jobber form embed reads the LAST
-   config. Wrong order kills form tracking with no error.
+   **G-QRTSH6WXYK must come AFTER the AW configs.** Keep this order: GA4 reads the LAST
+   config, and wrong order breaks tracking with no error.
 2. Homepage carries `phone_conversion_number '419-873-6801'` and label
    `QJLGCNu6wtscEOKl8_NB`.
 3. `app.js` carries `AW_QUOTE_REQUEST_LABEL = 'obvlCJaFougcEOKl8_NB'`.
-4. `/thank-you.html` returns 200 — the hosted Jobber form redirects there.
+4. `/thank-you.html` returns 200 (kept for old links and ad final URLs; the on-page form
+   no longer redirects there).
 
 If any fail, that is the headline of your report, above everything else.
 
@@ -31,15 +32,24 @@ The 10 invented "planning example" case-study pages are now redirect pages to pr
 (RETIRED_REDIRECTS in build_pages.py). Do not bring invented jobs back. The June ad-launch
 spreadsheets moved out of this public repo to ~/projects/terramorph/04-marketing/.
 
-## Phase 1 facts (2026-10-13)
+## The quote form (switched 2026-11-16)
 
-- The Jobber embed is LAZY: markup is a `[data-jobber-lazy]` div with a "Tell us about your
-  project" button; app.js `initLazyJobber()` injects Jobber's own script (same clienthub_id /
-  form_url) when the form is within ~900px of view, on tap, or immediately on quote.html.
-  It runs AFTER `routePaidTrafficToHostedForm()`, so paid clicks never load the embed.
-  Testing gotcha: Jobber's bot check blocks the in-app preview browser and localhost (form
-  stays a 40px strip even with the old code) - test the form in real Chrome on the live site,
-  in a FOREGROUND tab (background tabs leave the iframe at 40px until shown).
+- Every quote panel loads Right Hand's request form (Terramorph's own CRM), not a
+  third-party embed. Markup is a `[data-rh-lazy]` holder with a `#rh-intake-N` target;
+  app.js `initLazyRequestForm()` injects `https://app.righthandcrm.com/intake/form.js` with
+  `data-company="terramorph"` and the page's `data-service` (the form pre-picks the closest
+  service) when it is within ~900px of view, on tap, or immediately on quote.html.
+- Requests land on Right Hand's Requests page with the client, property, photos and videos,
+  and a follow-up task is made automatically. The form's fields, service list and
+  "how did you hear" choices live in Right Hand under Settings > Website form, not here.
+- Conversions: the form fires `rh:intake` (stage `submitted`); app.js fires exactly one
+  Google Ads conversion (`AW_QUOTE_REQUEST_LABEL`), one Meta Lead with an event id and GA4
+  `quote_request_submitted` per session, and sets the thank-you guard so nothing double
+  counts. Custom event names changed from the old ones on 2026-11-16.
+- Fallback/no-form buttons go to `https://app.righthandcrm.com/request/?co=terramorph`
+  (`&service=` optional). Leads from that hosted page are NOT counted by this site's tags.
+- Never name the old request system on the site. Some internal storage keys keep old names
+  so existing visitors' guards still work; leave them.
 - `responsive_images()` makes -w480/-w960 WebP copies + srcset for every on-site photo.
   The hero keeps its full 1280px file: smaller/AVIF versions visibly blurred the stone wall.
 - After a deploy that changes pages, ping IndexNow: key file is INDEXNOW_KEY in build_pages.py;
@@ -76,7 +86,6 @@ the scheduled task `terramorph-callback-lead-alert` is paused.
 
 ## Known gap
 
-There is no first-party lead capture on this site. Leads go to a phone number or into a
-cross-origin Jobber iframe, so a missed call or abandoned form leaves no record Trent
-controls. `quick_lead_form()` exists in the generator but no deployed page renders it, and
-it only writes to localStorage anyway. See `terramorph-leads`.
+Since 2026-11-16 form leads go straight into Right Hand. An abandoned form still leaves no
+record (the form saves a draft only in the visitor's own browser). `quick_lead_form()`
+exists in the generator but no deployed page renders it. See `terramorph-leads`.
