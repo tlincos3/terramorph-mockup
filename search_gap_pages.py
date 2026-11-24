@@ -324,7 +324,7 @@ LEAF_GUIDE_CARD = (LEAF_GUIDE_FILE, 'Seasonal guide', 'City Leaf Collection vs. 
 LAWN_TOWNS = [
     {
         'city': 'Toledo', 'slug': 'toledo', 'hero': 'real-brick-home-stripes.webp',
-        'title': 'Lawn Care & Mowing in Toledo, OH | Terramorph',
+        'title': 'Lawn Care & Maintenance in Toledo, OH | Terramorph',
         'h1': 'Lawn care in Toledo for older lots, big shade trees, and tight side yards.',
         'desc': 'Lawn care and lawn mowing service in Toledo, OH: mowing, edging, trimming, and bed upkeep for city lots, shaded yards, and commercial frontage. Free estimates.',
         'lead': 'Toledo lawn mowing services from a local crew: mowing, edging, string trimming, and bed upkeep on a set schedule for homes and businesses across West Toledo, South Toledo, and the neighborhoods in between. Free estimates.',
@@ -369,7 +369,7 @@ LAWN_TOWNS = [
     },
     {
         'city': 'Perrysburg', 'slug': 'perrysburg', 'hero': 'real-navy-home-stripes.webp',
-        'title': 'Lawn Care & Lawn Mowing in Perrysburg, OH | Terramorph',
+        'title': 'Lawn Care & Maintenance in Perrysburg, OH | Terramorph',
         'h1': 'Lawn care in Perrysburg, Ohio, from the crew based here.',
         'desc': 'Lawn care and lawn mowing in Perrysburg, Ohio from a Perrysburg-based crew: mowing, edging, trimming, and bed upkeep for subdivision and larger lawns. Free estimates.',
         'lead': 'Lawn mowing in Perrysburg, Ohio, with edging, trimming, and bed upkeep on a set schedule. Terramorph is based on North Dixie Highway, and Perrysburg lawns are the ones our crews know best. Free estimates.',
@@ -415,7 +415,7 @@ LAWN_TOWNS = [
     },
     {
         'city': 'Maumee', 'slug': 'maumee', 'hero': 'real-curved-beds-stripes.webp',
-        'title': 'Lawn Care & Mowing in Maumee, OH | Terramorph',
+        'title': 'Lawn Care & Maintenance in Maumee, OH | Terramorph',
         'h1': 'Lawn care in Maumee for shaded yards and established neighborhoods near the river.',
         'desc': 'Lawn care and mowing in Maumee, OH: mowing, edging, trimming, and bed upkeep for shaded, established lots near Uptown, the river, and Side Cut. Free estimates.',
         'lead': 'Lawn mowing service in Maumee with edging, trimming, and bed upkeep on a set schedule, for homes near Uptown and the river and for business properties across town. Free estimates.',
