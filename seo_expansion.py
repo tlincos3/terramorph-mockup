@@ -19,6 +19,7 @@ def generate(ctx):
     TEL = ctx['TEL']
     BASE_URL = ctx['BASE_URL']
     DEFAULT_FAQS = ctx['DEFAULT_FAQS']
+    import search_gap_pages as _gap  # lawn care town pages, Toledo leaf page, leaf guide (2026-11-24)
 
     cities = ['Sylvania', 'Bowling Green', 'Holland', 'Waterville', 'Whitehouse', 'Oregon', 'Rossford']
     notes = {
@@ -146,6 +147,7 @@ def generate(ctx):
           'Newer subdivisions near Levis Commons, Fort Meigs, River Road, and Roachton Road have flat lots and HOA curb-appeal expectations, so the cleanup also includes bed edges and a final mow when it is part of the plan.'],
          [('Does Perrysburg pick up leaves at the curb?', "Perrysburg's yard-waste program takes leaves as tagged bags or toters on the weekly route through November 30, then by request only on Wednesdays in December through March. Terramorph hauls leaves away instead, so there is no bagging or tagging."),
           ('When should a Perrysburg leaf cleanup be scheduled?', 'Book in September or October. The main visit happens in the second half of November, after the first hard freezes (typically November 4 and November 16) have brought down most of the leaves. Wooded lots often get one more pass.')]),
+        _gap.LEAF_TOLEDO,  # city facts read on toledo.oh.gov 2026-11-24
         ('Maumee', 'maumee', 'real-fall-windstorm-blower.webp',
          'Leaf removal in Maumee for shaded lots, rentals, and the properties the city truck skips.',
          'Leaf removal in Maumee, OH. City curbside pickup is owner-occupied homes only; Terramorph hauls leaves for any property, rentals and businesses included. Free estimates.',
@@ -305,7 +307,9 @@ def generate(ctx):
             ('seasonal-cleanups.html', 'Service page', 'Leaf Removal & Fall Cleanup', 'What a Terramorph fall cleanup includes, the Northwest Ohio timeline, and what a good cleanup leaves alone.'),
             ('fall-cleanup-checklist-northwest-ohio.html', 'Seasonal guide', 'Fall Cleanup Checklist for Northwest Ohio', 'What to clear, cut back, and leave standing before winter.'),
             (f'snow-removal-{slug}-ohio.html' if f'snow-removal-{slug}-ohio.html' in snow_files else 'snow-removal-signup.html', 'Winter service', f'Snow Removal in {city}' if f'snow-removal-{slug}-ohio.html' in snow_files else 'Seasonal Snow Removal Sign-Up', 'Book winter service at the same time so the property is covered from leaf season into snow.'),
-        ] + others)
+            _gap.LEAF_GUIDE_CARD,
+        ] + ([(_gap.lawn_town_file(city), f'{city} lawn care', f'Lawn Care in {city}', 'Mowing, edging, trimming, and bed upkeep on a set schedule.')] if _gap.lawn_town_file(city) else [])
+          + ([('spring-fall-cleanups-toledo-ohio.html', 'Toledo cleanups', 'Spring & Fall Cleanups in Toledo', 'Bed resets, pruning, debris removal, and mulch for Toledo properties.')] if city == 'Toledo' else []) + others)
         body = f'''
 <section class="page-hero premium-page-hero authority-page-hero"><div class="page-hero-image"><img src="assets/{hero}" alt="Terramorph fall leaf cleanup crew, serving {city}, Ohio"></div><div class="hero-overlay"></div><div class="container page-hero-content"><p class="crumb"><a href="index.html">Home</a> / <a href="seasonal-cleanups.html">Leaf Removal &amp; Fall Cleanup</a> / {city}</p><p class="eyebrow light">Leaf removal in {city}, Ohio</p><h1>{h1}</h1><p>Leaves blown out of the lawn, beds, fence lines, and from under the shrubs, then loaded and hauled away. Spent perennials cut back, debris gone, and the property ready for winter. Free estimates for {city} homes and businesses.</p><div class="cta-row"><a class="btn btn-gold" href="#quote">Request a {city} Leaf Removal Estimate</a><a class="btn btn-outline-light" href="tel:{TEL}">Call {PHONE}</a></div></div></section>
 {trust_band()}
@@ -343,6 +347,11 @@ def generate(ctx):
         schema = schema_for(filename, title, desc, faqs, 'Snow Removal', extra_services=['Snow Plowing'], crumb_parent=('snow-removal.html', 'Snow Removal'), crumb_name=f'Snow Removal in {city}', service_desc=ctx['SNOW_SERVICE_DESC'])
         (root / filename).write_text(page(title, desc, body, schema))
         seasonal_city_meta[filename] = (city, 'snow', h1, desc)
+
+    # Lawn care town pages for Toledo, Perrysburg, Maumee (search_gap_pages.py, 2026-11-24).
+    lawn_town_meta = _gap.build_lawn_town_pages(ctx)
+    city_page_meta.update(lawn_town_meta)
+    extra_city_pages.extend(lawn_town_meta)
 
     case_studies = [
         ('perrysburg-paver-patio-case-study.html','Perrysburg','Paver Patios and Hardscapes','Perrysburg Paver Patio Planning Example','The backyard needed a better place to grill, sit, and connect the house to the lawn without creating drainage or freeze-thaw problems.','Terramorph reviews door transitions, base prep, water movement, access, seating layout, edge restraint, lighting options, and how the patio should tie into beds and lawn.','A clearer patio scope gives the homeowner a usable outdoor living area, cleaner flow, and fewer surprises before installation.','real-patio.webp?v=3.14'),
@@ -576,6 +585,9 @@ def generate(ctx):
             ('seasonal-cleanups.html', 'Seasonal', 'Leaf Removal & Fall Cleanup', 'Leaves hauled away, beds cut back the right way, debris gone, and spring cleanups when the snow melts.'),
             ('snow-removal.html', 'Winter', 'Snow Removal & Plowing', 'Seasonal plowing and salting for driveways, walks, and commercial lots. Reserve before the first storm.'),
             ('snow-removal-signup.html', 'Winter', 'Snow Removal Sign-Up', 'Residential and commercial seasonal snow service, one winter agreement.'),
+            (_gap.AERATION_FILE, 'Lawn', 'Lawn Aeration & Overseeding', 'Core aeration and seed for thin, compacted clay lawns. Best done in early fall.'),
+            (_gap.SHRUB_FILE, 'Beds', 'Shrub & Hedge Trimming', 'Shrubs, bushes, and hedges shaped at the right time for each plant, clippings hauled away.'),
+            _gap.LEAF_GUIDE_CARD,
         ])
         services_html = services_html.replace('<section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">Related resources</p><h2>Keep planning the right scope.</h2></div><div class="container guide-grid"></div></section>',
                                               f'<section class="section guide-index-section"><div class="container section-heading compact"><p class="eyebrow">Seasonal and winter service</p><h2>Cleanups and snow, plus the Toledo service pages.</h2></div><div class="container guide-grid">{core_cards}{toledo_cards}</div></section>\n{seasonal_hub}', 1)
@@ -665,6 +677,7 @@ def generate(ctx):
     import re, html
     title_overrides = {
         'services.html':'Landscaping Services: Cleanups, Snow, Patios & Drainage | Terramorph',
+        _gap.LEAF_GUIDE_FILE: _gap.LEAF_GUIDE_SEO_TITLE,
         'landscaping-toledo-ohio.html':'Landscaping in Toledo, OH | Terramorph',
         'landscaping-perrysburg-ohio.html':'Landscaping in Perrysburg, OH | Terramorph',
         'landscaping-maumee-ohio.html':'Landscaping in Maumee, OH | Terramorph',

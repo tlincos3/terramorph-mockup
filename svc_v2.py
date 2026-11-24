@@ -20,6 +20,17 @@ SERVICES = {
     'lawn-maintenance.html': {'name': 'Lawn Maintenance', 'city_prefix': 'lawn-maintenance-', 'photos': 'lawn'},
     'seasonal-cleanups.html': {'name': 'Seasonal Cleanups', 'city_prefix': ('spring-fall-cleanups-', 'leaf-removal-'), 'photos': 'fall-cleanup'},
     'snow-removal.html': {'name': 'Snow Removal', 'city_prefix': 'snow-removal-', 'photos': 'snow'},
+    # Search-gap service pages (2026-11-24, search_gap_pages.py). Optional keys:
+    #   chapter_photos = exact photo (or None for copy-only) per chapter, in order
+    #   caption_alt    = chapter photos use their own plain caption as alt text
+    #   gallery_h2     = gallery heading when "work by our crews" would overclaim
+    #   reviewed       = month shown on the answer card
+    'lawn-aeration-overseeding-northwest-ohio.html': {'name': 'Lawn Aeration and Overseeding', 'city_prefix': None, 'photos': 'aeration', 'caption_alt': True, 'reviewed': 'November 2026',
+        'gallery_h2': 'Aeration, seeding, and the lawns that follow.',
+        'chapter_photos': ['assets/real-estate-lawn-stripes.webp', 'assets/real-striped-lawn-lot.webp', 'assets/real-navy-home-stripes.webp', None, 'assets/real-pool-lawn-stripes.webp', None, 'assets/real-striped-lawn-deck.webp']},
+    'shrub-hedge-trimming-northwest-ohio.html': {'name': 'Shrub and Hedge Trimming', 'city_prefix': None, 'photos': 'shrubs', 'caption_alt': True, 'reviewed': 'November 2026',
+        'gallery_h2': 'Shrubs and hedge rows from Terramorph project photos.',
+        'chapter_photos': ['assets/real-front-bed-curved-boxwood.webp', 'assets/real-foundation-planting.webp', 'assets/real-fence-line-planting.webp', None, None, 'assets/real-estate-front-bed.webp']},
     # Sustainable-landscape pages (2026-10-27). Empty photo sets: no Terramorph job
     # photos yet, so no "our crews built" gallery. Chapter photos are credited
     # reference photos from sustainable.py (CHAPTER_MEDIA), never shown as our work.
@@ -85,6 +96,8 @@ ANSWERS = {
 }
 import sustainable as _sus
 ANSWERS.update(_sus.ANSWERS)
+import search_gap_pages as _gap
+ANSWERS.update(_gap.ANSWERS)
 
 ICONS = {
     'walk': '<path d="M12 21s-6-5.6-6-10.5A6 6 0 0 1 18 10.5C18 15.4 12 21 12 21z"/><circle cx="12" cy="10.5" r="2.2"/>',
@@ -166,11 +179,16 @@ def rebuild(c, name, t):
         # One service photo per chapter, never repeated. When the set runs out
         # the chapter renders copy-only instead of showing an unrelated photo.
         nonlocal pi
+        if 'chapter_photos' in cfg:
+            p = cfg['chapter_photos'][pi] if pi < len(cfg['chapter_photos']) else None
+            pi += 1
+            return p if p and (c['root'] / p).exists() else None
         if pi >= len(photos):
             return None
         p = photos[pi]
         pi += 1
         return p
+    captions = {p: cap for cap, p in photo_set}
 
     hero = glance = trust = chips = problem = outcome = process = faq = reviews = quote_title = ''
     chapters, raw_after, links = [], [], []
@@ -264,7 +282,7 @@ def rebuild(c, name, t):
     out = [hero]
     if name in ANSWERS:
         glance = (f'<div class="tm-glance-card tm-answer tm-reveal"><b>{svc} in Northwest Ohio: the short answer</b><span>{ANSWERS[name]}</span>'
-                  '<small class="tm-updated">Reviewed October 2026 &middot; Terramorph LLC, Perrysburg, Ohio</small></div>') + glance
+                  '<small class="tm-updated">Reviewed ' + cfg.get('reviewed', 'October 2026') + ' &middot; Terramorph LLC, Perrysburg, Ohio</small></div>') + glance
     if glance:
         out.append(f'<section class="tm-sec-tight tm-glance-sec"><div class="tm-wrap"><div class="tm-glance">{glance}</div></div></section>')
     if trust:
@@ -296,7 +314,7 @@ def rebuild(c, name, t):
             r_src, r_alt, r_cap = ref
             media = f'<figure class="tm-ch-media tm-reveal"><img src="{r_src}" alt="{r_alt}" loading="lazy"><span class="tm-ch-num">0{n}</span><figcaption class="tm-photo-credit">{r_cap}</figcaption></figure>'
         else:
-            media = f'<figure class="tm-ch-media tm-reveal"><img src="{img}" alt="Terramorph {svc.lower()} work in Northwest Ohio" loading="lazy"><span class="tm-ch-num">0{n}</span></figure>' if img else f'<div class="tm-ch-num tm-ch-num-solo" aria-hidden="true">0{n}</div>'
+            media = f'<figure class="tm-ch-media tm-reveal"><img src="{img}" alt="{captions.get(img, '') if cfg.get('caption_alt') else f'Terramorph {svc.lower()} work in Northwest Ohio'}" loading="lazy"><span class="tm-ch-num">0{n}</span></figure>' if img else f'<div class="tm-ch-num tm-ch-num-solo" aria-hidden="true">0{n}</div>'
         solo = '' if (img or ref) else ' tm-ch-solo'
         id_attr = f' id="{ch["id"]}"' if ch.get('id') else ''
         out.append(f'''<section class="tm-sec tm-ch{flip}{dark}"{id_attr}><div class="tm-wrap tm-ch-grid{solo}">
@@ -311,7 +329,7 @@ def rebuild(c, name, t):
         out.append(process)
     gal = c['photo_gallery'](photo_set) if len(photo_set) >= 3 else ''
     if gal:
-        out.append(f'<section class="tm-sec-tight tm-work"><div class="tm-wrap"><div class="tm-head-row tm-reveal"><div><p class="tm-label">Recent work</p><h2 class="tm-h2">Real {svc.lower()} work by our crews.</h2></div><a class="tm-btn tm-btn-line" href="projects.html">All project photos</a></div></div><div class="tm-work-rail">{gal}</div></section>')
+        out.append(f'<section class="tm-sec-tight tm-work"><div class="tm-wrap"><div class="tm-head-row tm-reveal"><div><p class="tm-label">Recent work</p><h2 class="tm-h2">{cfg.get('gallery_h2') or f'Real {svc.lower()} work by our crews.'}</h2></div><a class="tm-btn tm-btn-line" href="projects.html">All project photos</a></div></div><div class="tm-work-rail">{gal}</div></section>')
     if reviews:
         out.append(f'''<section class="tm-sec tm-dark tm-svc-reviews"><div class="tm-wrap"><div class="tm-head-row tm-reveal"><div><p class="tm-label">Reviews</p><h2 class="tm-h2">Homeowners who hired us.</h2></div>
   <div class="tm-rating-big"><b>4.9</b><div><div class="tm-stars">★★★★★</div><a href="{c['GOOGLE_PROFILE_URL']}" target="_blank" rel="noopener" style="color:#fff">Read all 220+ on Google &rarr;</a></div></div></div><div class="tm-reviews">{reviews}</div></div></section>''')

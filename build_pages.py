@@ -32,6 +32,7 @@ JOBBER_DIRECT_URL = 'https://clienthub.getjobber.com/hubs/e644a784-b214-4a2b-93d
 AREA_SERVED = [{"@type":"AdministrativeArea","name":"Wood County, OH"},{"@type":"AdministrativeArea","name":"Lucas County, OH"}] + [{"@type":"City","name":t + ", OH"} for t in SERVICE_TOWNS] + [{"@type":"City","name":t + ", MI"} for t in SERVICE_TOWNS_MI]
 
 import sustainable as _sus  # the 4 sustainable-landscape pages (2026-10-27)
+import search_gap_pages as _gap  # lawn town pages, leaf guide, aeration + shrub pages (2026-11-24)
 
 SAME_AS_URLS = [
     GOOGLE_PROFILE_URL,
@@ -336,6 +337,9 @@ SERVICE_PHOTOS = {
         ('Striped front lawn', 'assets/real-striped-lawn-front.webp'),
         ('Commercial building beds and walkway', 'assets/real-commercial-walkway.webp'),
     ],
+    # Shrub and hedge trimming page (2026-11-24): real photos that plainly show shaped
+    # shrubs and hedge rows. Captions say only what is in the photo.
+    'shrubs': _gap.SHRUB_PHOTOS,
     # No real fall-decor photos exist yet (ad graphics are not proof). Show the
     # entries and porches the crews already keep sharp until Trent sends some.
     'fall-decor': [
@@ -369,12 +373,14 @@ SERVICE_PHOTO_HEADINGS = {
     'spring-cleanup': 'Beds and lawns after a spring reset by our crews.',
     'aeration': 'Aeration, seeding, and the lawns that follow.',
     'lawn': 'Lawns our crews maintain.',
+    'shrubs': 'Shrubs and hedge rows from Terramorph project photos.',
     'fall-decor': 'Front entries our crews keep sharp.',
     'snow': 'Winter service.',
 }
 
 # Page filename -> service photo set. Checked in order; first hit wins.
 PAGE_PHOTO_RULES = [
+    ('shrub', 'shrubs'), ('leaf-collection', 'fall-cleanup'),
     ('permaculture', 'permaculture'), ('native-landscaping', 'native'), ('food-forest', 'edible'), ('natural-swimming', 'water'),
     ('snow', 'snow'), ('retaining-wall', 'retaining'),
     ('patio', 'patios'), ('fire-pit', 'patios'), ('outdoor-kitchen', 'patios'), ('outdoor-living', 'patios'),
@@ -828,6 +834,9 @@ SERVICE_REVIEWS = {
     'Seasonal Cleanups': ['Nat B', 'Jennifer Tierney', 'Patrick Walker', 'Larry Calcamuggio'],
     'Outdoor Lighting': ['Jack Higgins', 'Altur Earth', 'jon mercurio'],
     'Snow Removal': ['Richard Hansen', 'Larry Calcamuggio', 'jon mercurio', 'Teresa Thompson'],
+    # Search-gap service pages (2026-11-24). The shrub page says no tree work, so the tree-removal review never shows there.
+    'Lawn Aeration and Overseeding': ['Derrick Fawley', 'Adam Schmidbauer', 'CJ Miller'],
+    'Shrub and Hedge Trimming': ['Nat B', 'Kate Vallerand', 'Patrick Walker'],
 }
 _REVIEWS_BY_NAME = dict((name, quote) for name, quote in REVIEW_SNIPPETS)
 
@@ -1092,6 +1101,7 @@ SERVICE_FAQS = {
     ] + DEFAULT_FAQS[:2],
 }
 SERVICE_FAQS.update(_sus.FAQS)
+SERVICE_FAQS.update(_gap.FAQS)
 
 def service_page(filename, title, eyebrow, image, headline, lead, problem, outcome, cta, embed_jobber=False, depth='',
                  seo_title=None, seo_desc=None, crumb_parent=None, crumb=None, hero_alt=None, hero_credit=None,
@@ -1265,11 +1275,19 @@ service_page('landscape-design.html', 'Landscape Design', 'Landscape design for 
 service_page('paver-patios-hardscapes.html', 'Paver Patios and Hardscapes', 'Premium patios and outdoor living', 'real-patio.webp?v=3.14', 'Build the backyard space people actually want to use.', 'Paver patios, walkways, hardscape structure, and outdoor living environments designed around entertaining, durability, and property value.', 'There is no comfortable place to grill, host, relax, or enjoy the backyard, especially after rain.', 'A durable patio or outdoor room that expands living space and makes the property feel more valuable.', 'Plan My Patio', depth=PATIOS_DEPTH)
 service_page('drainage-solutions.html', 'Drainage Solutions', 'Drainage expertise for clay soil and flat lots', 'real-drainage.webp', 'Stop fighting standing water and start using your yard again.', 'Practical drainage solutions for wet yards, pooling water, soggy lawns, and water moving toward patios or foundations in Northwest Ohio conditions.', 'Flat lots, clay soil, poor grading, or runoff make the yard frustrating and sometimes unusable.', 'A drier, more functional landscape with water routed intentionally and finished beautifully.', 'Fix My Drainage', depth=DRAINAGE_DEPTH)
 service_page('outdoor-lighting.html', 'Outdoor Lighting', 'Outdoor lighting for paths, patios, and entries', 'real-lighting.webp?v=3.14', 'Make the property safer, warmer, and better looking at night.', 'Low-voltage outdoor lighting for walkways, patios, entries, landscape beds, feature areas, safety, security, and nighttime curb appeal.', 'The property disappears after dark, paths feel unsafe, and the finished landscape or patio loses impact at night.', 'A cleaner nighttime look with better visibility, safer movement, and outdoor spaces that feel usable after sunset.', 'Light My Property')
-service_page('lawn-maintenance.html', 'Lawn Maintenance', 'Recurring lawn and property upkeep', 'real-lawn.webp', 'Professional lawn maintenance for Northwest Ohio properties.', 'Request recurring residential or commercial mowing, edging, trimming, bed upkeep, brush control, and seasonal property maintenance. Terramorph maintains properties; we do not repair mowers or equipment.', 'The property starts looking overgrown, uneven, or neglected because mowing, edging, beds, weeds, and trimming are not handled consistently.', 'A cleaner, better-maintained property with dependable upkeep and less weekend work for the owner.', 'Request Lawn Maintenance', True)
+service_page('lawn-maintenance.html', 'Lawn Maintenance', 'Recurring lawn and property upkeep', 'real-lawn.webp', 'Professional lawn maintenance for Northwest Ohio properties.', 'Request recurring residential or commercial mowing, edging, trimming, bed upkeep, brush control, and seasonal property maintenance. Terramorph maintains properties; we do not repair mowers or equipment.', 'The property starts looking overgrown, uneven, or neglected because mowing, edging, beds, weeds, and trimming are not handled consistently.', 'A cleaner, better-maintained property with dependable upkeep and less weekend work for the owner.', 'Request Lawn Maintenance', True,
+             depth='<section class="section guide-index-section"><div class="container guide-grid">' + ''.join(f'<a class="guide-card" href="{h}"><span>Related</span><h3>{t}</h3><p>{d}</p><b>Open page &rarr;</b></a>' for h, t, d in [
+                 (_gap.AERATION_FILE, 'Lawn Aeration and Overseeding', 'Core aeration and seed for thin, compacted clay lawns. Best done in early fall.'),
+                 (_gap.SHRUB_FILE, 'Shrub and Hedge Trimming', 'Shrubs, bushes, and hedges shaped at the right time for each plant.'),
+                 ('lawn-maintenance-cost-northwest-ohio.html', 'Lawn Maintenance Cost in Northwest Ohio', 'What changes the price of recurring lawn maintenance.'),
+                 ('seasonal-cleanups.html', 'Leaf Removal and Fall Cleanup', 'Leaves cleared and hauled away before the first snow.')]) + '</div></section>')
 _sus.build(globals())  # 4 sustainable-landscape pages (sustainable.py)
+_keep_rotation = _review_rotation[0]  # new pages must not shift the review rotation on every later page
+_gap.build_service_pages(globals())  # aeration + shrub trimming service pages (search_gap_pages.py)
+_review_rotation[0] = _keep_rotation
 CHAPTER_MEDIA = _sus.chapter_media()          # svc_v2: credited reference photos per chapter
 EXTRA_IMAGE_SITEMAP = _sus.image_sitemap_entries()
-AUTHORITY_SKIP = set(_sus.FILES)              # they carry their own answer card and FAQ schema
+AUTHORITY_SKIP = set(_sus.FILES) | set(_gap.SKIP_AUTHORITY)              # they carry their own answer card and FAQ schema
 CLEANUP_PHOTOS = [
     ('Fall leaf cleanup crew at work', 'assets/real-fall-leaf-crew.webp'),
     ('Commercial walk-behind leaf blower on a finished lawn', 'assets/real-fall-windstorm-blower.webp'),
@@ -1324,6 +1342,9 @@ def seasonal_cleanups_page():
         ('spring-cleanup-northwest-ohio.html', 'Seasonal guide', 'Spring Cleanup Checklist for Northwest Ohio Properties', 'The spring reset that gets beds and lawns ready for the season.'),
         ('spring-cleanup-cost-toledo-ohio.html', 'Cost guide', 'Spring Cleanup Cost in Toledo and Northwest Ohio', 'What changes the price of a seasonal cleanup.'),
         ('snow-removal.html', 'Winter service', 'Seasonal Snow Removal', 'Book winter service now and the property is covered from fall into snow season.'),
+        _gap.LEAF_GUIDE_CARD,
+        (_gap.SHRUB_FILE, 'Bed service', 'Shrub and Hedge Trimming', 'Shrubs, bushes, and hedges shaped at the right time for each plant.'),
+        (_gap.AERATION_FILE, 'Lawn service', 'Lawn Aeration and Overseeding', 'Core aeration and seed for thin, compacted lawns in early fall.'),
     ]
     related_html = ''.join(f'<a class="guide-card" href="{href}"><span>{cat}</span><h3>{title}</h3><p>{blurb}</p><b>Read more &rarr;</b></a>' for href, cat, title, blurb in related)
     body = f"""
@@ -1489,6 +1510,8 @@ GUIDES = [
     {'file':'landscape-design-process-northwest-ohio.html','title':'What to Expect From a Landscape Design Consultation','short':'A good design consultation ends with a layout you can picture, a plant palette matched to your yard, and a scope that can be phased to fit the budget.','category':'Landscape guide','service':'Landscape Design','image':'real-mature-front-bed.webp','cta':'Book a Design Visit','sections':[('Before the visit','Photos of the areas that bother you, a rough budget range, and a sense of how you want to use the space make the first conversation far more productive.'),('The walkthrough','Terramorph looks at sun and shade, soil, grade, drainage, existing plants worth keeping, and how the front and back of the property connect - because a design that ignores water or maintenance fails no matter how good it looks on paper.'),('The layout and palette','You get a layout you can react to - bed shapes, walkway connections, focal points - and a plant palette chosen for clay soil, mature size, and the maintenance level you actually want.'),('Phasing the work','Most projects phase cleanly: front curb appeal first, then the patio, lighting, or backyard beds later, without redoing earlier work. The design is what makes phasing possible.')],'faqs':[('Does a design consultation cost anything?','Terramorph offers free estimates. Send photos, your city, and goals through the quote form to get started.'),('Do I have to install everything at once?','No. Designs are built to phase, so the budget can spread across seasons without wasted work.'),('Does Terramorph install its own designs?','Yes. The same company plans and installs, so nothing gets lost between a designer and a separate installer.')]},
 ]
 
+GUIDES.append(_gap.LEAF_GUIDE)  # city leaf collection vs. hiring a crew (2026-11-24)
+
 def guide_schema(g):
     import json
     url = BASE_URL + '/' + g['file']
@@ -1535,7 +1558,10 @@ def guide_page(g):
 def write_guides():
     guides_hub()
     for g in GUIDES:
+        keep = _review_rotation[0]
         guide_page(g)
+        if g['file'] == _gap.LEAF_GUIDE_FILE:
+            _review_rotation[0] = keep  # added 2026-11-24: leave later pages' reviews as they were
 
 write_guides()
 
@@ -1663,7 +1689,7 @@ def city_service_schema(item):
     return schema_for(item['file'], item['headline'] + ' | Terramorph', desc, faqs, item['service'])
 
 def city_service_page(item):
-    related = ''.join(city_service_card(x) for x in CITY_SERVICE_PAGES if x['city'] == item['city'] and x['file'] != item['file'])
+    related = ''.join(city_service_card(x) for x in CITY_SERVICE_PAGES if x['city'] == item['city'] and x['file'] != item['file']) + _gap.town_cards(item['city'])
     service_related = ''.join(city_service_card(x) for x in CITY_SERVICE_PAGES if x['service'] == item['service'] and x['file'] != item['file'])
     faqs = [(f'Does Terramorph serve {item["city"]}?', f'Yes. Terramorph serves {item["city"]}, Wood County, Lucas County, and surrounding Northwest Ohio communities.'),(f'Can I get a free {item["service"].lower()} estimate in {item["city"]}?', f'Yes. Call Terramorph at {PHONE} to request a free estimate and confirm the best next step.'),('Can photos be included with the request?', 'Yes. Photos are helpful for drainage, patios, beds, cleanups, and landscape projects because they help the team understand the property before follow-up.')]
     body = f'''
@@ -1885,7 +1911,7 @@ thank_you = f"""
 (root/'thank-you.html').write_text(page('Quote Request Received | Terramorph', 'Thank-you page for Terramorph quote requests in Wood and Lucas County.', thank_you, schema_for('thank-you.html', 'Quote Request Received', 'Thank-you page for Terramorph quote requests.')))
 
 def write_static_seo_files():
-    pages = ['index.html','quote.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','snow-removal.html','snow-removal-signup.html'] + _sus.FILES + ['guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','terms.html']
+    pages = ['index.html','quote.html','landscape-design.html','paver-patios-hardscapes.html','drainage-solutions.html','outdoor-lighting.html','lawn-maintenance.html','seasonal-cleanups.html','snow-removal.html','snow-removal-signup.html', _gap.AERATION_FILE, _gap.SHRUB_FILE] + _sus.FILES + ['guides.html'] + [g['file'] for g in GUIDES] + [p['file'] for p in CITY_SERVICE_PAGES] + ['projects.html','about.html','service-areas.html','contact.html','privacy.html','terms.html']
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     priorities = {'index.html':'1.0','quote.html':'0.95','contact.html':'0.9','drainage-solutions.html':'0.9','paver-patios-hardscapes.html':'0.9','landscape-design.html':'0.9'}
     for page_name in pages:

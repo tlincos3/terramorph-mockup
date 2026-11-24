@@ -436,6 +436,10 @@ def write_llms_txt(c):
     B = c['BASE_URL']
     svc_lines = '\n'.join(f"- [{v['name']}]({B}/{k}): {svc_v2.ANSWERS.get(k, '')}" for k, v in svc_v2.SERVICES.items())
     towns = ', '.join(n for n, *_ in TOWNS)
+    import search_gap_pages as _gap  # town lawn pages, Toledo leaf page, city leaf guide (2026-11-24)
+    local_lines = '\n'.join([f"- [Lawn care in {t['city']}, Ohio]({B}/lawn-maintenance-{t['slug']}-ohio.html): {t['desc']}" for t in _gap.LAWN_TOWNS]
+                            + [f"- [Leaf removal in Toledo, Ohio]({B}/leaf-removal-toledo-ohio.html): {_gap.LEAF_TOLEDO[4]}",
+                               f"- [City leaf collection in Toledo, Perrysburg and Maumee vs. hiring a crew]({B}/{_gap.LEAF_GUIDE_FILE}): {_gap.LEAF_GUIDE['short']}"])
     text = f"""# Terramorph LLC
 
 > Landscape design and build company in Perrysburg, Ohio, serving homes and businesses across Wood and Lucas County (Greater Toledo): paver patios and hardscapes, drainage solutions, landscape design and installation, outdoor lighting, lawn maintenance, seasonal cleanups, and snow removal. Founded by brothers Ty and Trent Lincoln. 4.9 stars from more than 220 Google reviews. BBB accredited. Free estimates.
@@ -452,6 +456,9 @@ def write_llms_txt(c):
 
 ## Services
 {svc_lines}
+
+## Local pages and guides
+{local_lines}
 
 ## More
 - [Project photos]({B}/projects.html): real Terramorph jobs.
